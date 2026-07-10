@@ -48,9 +48,9 @@ export const products: Product[] = [
     formFactor: "Card",
     tagline: "Turn happy customers into 5-star reviews",
     summary:
-      "A premium tap card that sends customers straight to your Google review page — no app, no typing.",
+      "Sits by your register. Customers tap their phone and land straight on your Google review page — no app, no typing, no “I'll do it later.”",
     description:
-      "The fastest way to grow your Google rating. Customers tap the card with their phone and land directly on your review page. More reviews mean higher search ranking, more trust, and more walk-ins. Perfect for the counter, the checkout, or handing out after a great interaction.",
+      "The moment you hand back the card reader is the moment to ask for a review — and this card makes the ask effortless. Your customer taps their phone to it, your Google review page opens, and they post while the receipt prints. We program it to your exact review link before it ships, so it works out of the box. More reviews mean you show up higher on Google Maps and win the customer who's comparing you to the shop down the street.",
     basePrice: 14.99,
     customUpcharge: 10,
     features: [
@@ -78,9 +78,9 @@ export const products: Product[] = [
     formFactor: "Stand",
     tagline: "A “Tap for Reviews” display for your counter",
     summary:
-      "A weighted tabletop stand that invites every customer to leave a review as they pay.",
+      "A weighted counter stand that asks for the review so you don't have to — every customer sees it while they pay.",
     description:
-      "Put reviews on autopilot. This weighted acrylic stand sits on your counter with a clear “Tap here to leave us a review” call to action. Every customer who pays sees it — and tapping takes two seconds. Ideal for high-traffic counters where a card can get lost.",
+      "Some days you're too busy to ask. The stand asks for you. It sits next to your card reader with a clear “Tap here to leave us a review” message, so every paying customer gets the invitation — even during the lunch rush. Weighted base means it doesn't slide, tip, or walk away. If a card can get buried under receipts, the stand can't.",
     basePrice: 29.99,
     customUpcharge: 12,
     features: [

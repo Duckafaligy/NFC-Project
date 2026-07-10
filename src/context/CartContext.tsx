@@ -8,6 +8,7 @@ import {
   useReducer,
   type ReactNode,
 } from "react";
+import { lineTotal } from "@/lib/pricing";
 
 export type DesignType = "standard" | "custom";
 export type CustomMethod = "upload" | "we-design";
@@ -122,8 +123,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = state.items.reduce((n, i) => n + i.quantity, 0);
+    // Subtotal applies volume tier discounts per line (see lib/pricing).
     const subtotal = state.items.reduce(
-      (sum, i) => sum + i.unitPrice * i.quantity,
+      (sum, i) => sum + lineTotal(i.unitPrice, i.quantity),
       0,
     );
     return {

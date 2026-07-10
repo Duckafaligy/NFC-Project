@@ -4,9 +4,9 @@
  */
 export const site = {
   name: "TapLink",
-  tagline: "Tap. Connect. Grow.",
+  tagline: "More reviews. More followers. One tap.",
   description:
-    "Premium NFC cards and tags that turn a single tap into more Google reviews, more followers, instant WiFi, menus, and links for your business.",
+    "NFC review cards and smart tags for local businesses. Customers tap their phone, your Google review page opens — no app, no QR hunting. More reviews, more followers, instant WiFi and menus.",
   // Contact + business details — replace with your real info.
   email: "hello@taplink.example",
   phone: "(555) 000-0000",
@@ -24,6 +24,8 @@ export const site = {
     handlingDays: "1–2 business days",
     deliveryDays: "3–7 business days",
   },
+  // Money-back guarantee window (days), surfaced across the store.
+  guaranteeDays: 30,
 } as const;
 
 export type Site = typeof site;

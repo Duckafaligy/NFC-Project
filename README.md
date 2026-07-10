@@ -57,9 +57,22 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 4. Deploy. Every push to the connected branch triggers a new deploy, so you
    see real-time changes.
 
-No environment variables are required yet (nothing talks to a backend). When
-payments/email are added, their keys go in Vercel → Project → Settings →
-Environment Variables (see [Roadmap](#roadmap)).
+### Environment variables
+
+| Variable            | Required | What it does                                                        |
+| ------------------- | -------- | ------------------------------------------------------------------- |
+| `STRIPE_SECRET_KEY` | For real payments | Enables Stripe Checkout. Without it, checkout falls back to a clearly-labelled test-order flow (no card charged). |
+
+**To turn on real payments:**
+1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
+2. Copy the **Secret key** (`sk_test_…` for test mode, `sk_live_…` for real money).
+3. In Vercel → Project → **Settings → Environment Variables**, add
+   `STRIPE_SECRET_KEY` with that value, then **Redeploy**.
+4. Test with card number `4242 4242 4242 4242` (any future expiry/CVC) while
+   using the `sk_test_` key. Swap to `sk_live_` when ready to take real money.
+
+Order details (product, design choice, customer notes) appear in the Stripe
+Dashboard on each payment under **metadata** — that's your fulfilment queue.
 
 ---
 
@@ -225,15 +238,13 @@ nothing gets lost.
 
 ## What's mocked / not yet real
 
-These are deliberately stubbed so the site deploys and demos today. Each is a
-clear integration point later:
-
 | Area              | Current behaviour                        | To make real                                  |
 | ----------------- | ---------------------------------------- | --------------------------------------------- |
-| **Payments**      | "Place order" simulates success, clears cart | Integrate Stripe Checkout / a payment provider |
-| **Order storage** | Orders are not saved anywhere            | Add a DB / order API + email confirmation      |
-| **File uploads**  | Captures filename only                   | Upload to storage (e.g. Vercel Blob/S3) + attach URL |
+| **Payments**      | ✅ **REAL** — Stripe Checkout via `/api/checkout` once `STRIPE_SECRET_KEY` is set. Prices recomputed server-side (tamper-proof). Falls back to a labelled test-order flow without the key. | Add the env var (see [Environment variables](#environment-variables)) |
+| **Order storage** | Paid orders live in the Stripe Dashboard (with design notes in metadata) | Optionally add a DB + email notifications      |
+| **File uploads**  | Captures filename only (attached to order metadata) | Upload to storage (e.g. Vercel Blob/S3) + attach URL |
 | **Contact form**  | Simulates send                           | Wire to an email service / form endpoint       |
+| **Testimonials**  | ⚠️ Placeholder quotes, visibly labelled "Example" (`src/components/Testimonials.tsx`) | Replace with real customer quotes (with permission). **Never ship invented testimonials as real — FTC rules prohibit it.** |
 | **Analytics**     | None                                     | Add Vercel Analytics or similar                |
 
 ---
@@ -255,8 +266,9 @@ clear integration point later:
 
 Ordered roughly by priority. Update as things get done.
 
-- [ ] **Payments** — Stripe Checkout integration for real orders.
-- [ ] **Order backend** — persist orders + send confirmation emails.
+- [x] **Payments** — Stripe Checkout integrated; just add `STRIPE_SECRET_KEY` in Vercel.
+- [ ] **Replace placeholder testimonials with real customer quotes** (legally required before ads).
+- [ ] **Order backend** — persist orders + send confirmation emails (Stripe webhook → email).
 - [ ] **Real file uploads** for custom artwork (Vercel Blob / S3).
 - [ ] **Contact form backend** (email delivery).
 - [ ] Product photography / 3D to replace CSS `ProductVisual` (optional).
@@ -270,6 +282,30 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-10 — Real-world overhaul: Stripe, photos, volume pricing, conversion copy
+- **Stripe Checkout is live** (`src/app/api/checkout/route.ts`): server-side
+  price computation from the catalog (client can't tamper), shipping address +
+  phone collected by Stripe, free-shipping threshold honoured, design/custom
+  notes passed as metadata for fulfilment, `/checkout/success` landing page.
+  Falls back to a labelled test-order flow when `STRIPE_SECRET_KEY` is unset.
+- **Volume pricing** (`src/lib/pricing.ts`): 3+ → 10% off, 5+ → 15%, 10+ → 20%.
+  Pack selector (Single/3/5/10) in the configurator with live savings; applied
+  consistently in cart, order summary, and the Stripe charge.
+- **Real photography** (`public/images/`, 8 photos, Unsplash license — free for
+  commercial use): full-bleed hero (customer tapping at a counter), industries
+  grid (barbershop, café, restaurant, salon, food truck), custom-design banner.
+- **Copy rewritten for conversion**: counter-moment hero, attributed stat
+  (BrightLocal 98%), "It happens at the counter" 3-step play, NFC vs QR vs
+  asking comparison table, 30-day guarantee section, objection-focused FAQ
+  ("Is this against Google's rules?"), announcement bar, trust rows on product
+  + checkout pages, "What happens after you order" timeline.
+- **Testimonials section added with visibly-labelled placeholder quotes** —
+  must be swapped for real ones before running ads (see the table above).
+- Flagship product copy (review card, review stand) rewritten around the
+  real-world counter moment.
+- Verified: `npm run build` clean; smoke-tested pages, images, demo checkout,
+  and tamper rejection on a running production server.
 
 ### 2026-07-10 — Upgrade Next.js to patched 15.5.20 (security)
 - Bumped `next` and `eslint-config-next` from `15.1.6` → `15.5.20` to resolve
@@ -311,8 +347,10 @@ Newest first. **Add an entry for every meaningful change.**
 - **Read this whole README first** — it captures every decision and what is / isn't
   real. Then skim `src/lib/products.ts` and `src/lib/site.ts` (all the content
   knobs) and `src/components/ProductConfigurator.tsx` (the core custom-design UX).
-- The site is **image-free by design** (CSS product visuals). Don't add image
-  assets unless replacing `ProductVisual` deliberately.
+- Lifestyle photos live in `public/images/` (Unsplash license, commercial use
+  OK). Product "photos" are still CSS-rendered (`ProductVisual`) using each
+  product's accent gradient — replace with real product photography when
+  available.
 - Keep the working branch as instructed and **commit + push** when a unit of work
   is done. Update the [Change Log](#change-log) and [Roadmap](#roadmap) in the same
   commit.

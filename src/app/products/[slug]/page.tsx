@@ -133,6 +133,42 @@ export default async function ProductPage({
         </div>
       </div>
 
+      {/* After you order */}
+      <div className="mt-20 rounded-3xl border border-white/10 bg-ink-900 p-8 sm:p-10">
+        <h2 className="font-display text-2xl font-bold text-white">
+          What happens after you order
+        </h2>
+        <div className="mt-8 grid gap-8 md:grid-cols-3">
+          {[
+            {
+              step: "Within 48 hours",
+              title: "We program (and design)",
+              desc: "Standard orders are programmed to your link right away. Custom orders get a digital proof by email — nothing prints until you approve it.",
+            },
+            {
+              step: "1–2 business days",
+              title: "It ships",
+              desc: "Your card leaves our hands programmed, tested, and ready. Tracking lands in your inbox.",
+            },
+            {
+              step: "Day one at the counter",
+              title: "You start asking",
+              desc: "Put it by the register and use one line: “Would you mind leaving us a quick review? Just tap your phone here.” That's it.",
+            },
+          ].map((s) => (
+            <div key={s.title}>
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-300">
+                {s.step}
+              </p>
+              <h3 className="mt-2 font-display text-lg font-semibold text-white">
+                {s.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Related */}
       {suggestions.length > 0 && (
         <div className="mt-20">

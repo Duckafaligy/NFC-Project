@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { site } from "@/lib/site";
 
 const inter = Inter({
@@ -41,6 +42,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${sora.variable}`}>
       <body className="min-h-screen font-sans">
         <CartProvider>
+          <AnnouncementBar />
           <Navbar />
           <main>{children}</main>
           <Footer />
