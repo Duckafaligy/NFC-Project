@@ -11,8 +11,8 @@ interface ProductVisualProps {
 
 /**
  * A CSS-rendered "product photo" — a stylised NFC card / tag with the
- * product's accent gradient and a tap ripple. Keeps the site image-free and
- * fast while still looking premium. Swap for real photography later.
+ * product's accent gradient on a soft neutral studio background.
+ * Swap for real product photography later without touching layouts.
  */
 export function ProductVisual({
   name,
@@ -24,19 +24,19 @@ export function ProductVisual({
   return (
     <div
       className={cn(
-        "relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl",
+        "relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-paper",
         className,
       )}
       style={{
-        background: `radial-gradient(120% 120% at 20% 0%, ${from}22 0%, rgba(5,6,10,0) 55%), radial-gradient(120% 120% at 100% 100%, ${to}22 0%, rgba(5,6,10,0) 55%)`,
+        background: `radial-gradient(120% 120% at 20% 0%, ${from}14 0%, transparent 55%), radial-gradient(120% 120% at 100% 100%, ${to}14 0%, transparent 55%), #f7f6f3`,
       }}
     >
-      <div className="absolute inset-0 grid-texture opacity-40" />
+      <div className="grid-texture absolute inset-0 opacity-50" />
 
       {/* The card */}
       <div
         className={cn(
-          "relative aspect-[1.6/1] w-3/5 rotate-[-8deg] rounded-xl shadow-card ring-1 ring-white/20",
+          "relative aspect-[1.6/1] w-3/5 rotate-[-8deg] rounded-xl shadow-card-hover ring-1 ring-black/10",
           featured && "animate-float",
         )}
         style={{
@@ -48,7 +48,7 @@ export function ProductVisual({
         {/* NFC glyph + tap ring */}
         <div className="absolute right-3 top-3 text-white/90">
           <span className="relative flex h-8 w-8 items-center justify-center">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-white/40 animate-pulse-ring" />
+            <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-white/40" />
             <Nfc className="relative h-5 w-5" strokeWidth={2.2} />
           </span>
         </div>

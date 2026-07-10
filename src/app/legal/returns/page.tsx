@@ -44,7 +44,7 @@ export default function ReturnsPage() {
       <LegalSection heading="How to start a return">
         <p>
           Email{" "}
-          <a href={`mailto:${site.email}`} className="text-brand-300 underline">
+          <a href={`mailto:${site.email}`} className="font-medium text-blue-700 underline">
             {site.email}
           </a>{" "}
           with your order number and the reason for the return. We&apos;ll reply

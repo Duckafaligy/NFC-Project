@@ -33,12 +33,15 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-white/5 bg-ink-950">
+    <footer className="mt-24 bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
-            <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold text-white">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient shadow-glow">
+            <Link
+              href="/"
+              className="flex items-center gap-2 font-display text-lg font-bold text-white"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
                 <Nfc className="h-5 w-5 text-white" />
               </span>
               {site.name}
@@ -85,7 +88,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/5 pt-6 text-sm text-slate-500 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-sm text-slate-500 sm:flex-row">
           <p>
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>

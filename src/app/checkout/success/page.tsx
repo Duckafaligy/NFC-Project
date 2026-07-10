@@ -22,13 +22,13 @@ export default function CheckoutSuccessPage() {
 
   return (
     <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
         <CheckCircle2 className="h-9 w-9" />
       </div>
-      <h1 className="mt-6 font-display text-3xl font-bold text-white">
+      <h1 className="mt-6 font-display text-3xl font-bold text-slate-900">
         Payment received — you&apos;re all set
       </h1>
-      <p className="mx-auto mt-3 max-w-md text-slate-300">
+      <p className="mx-auto mt-3 max-w-md text-slate-600">
         A receipt is on its way to your email. Standard orders ship within{" "}
         {site.shipping.handlingDays}. If you ordered a custom design, we&apos;ll
         email you a proof to approve before anything gets printed.

@@ -61,12 +61,12 @@ export default function HowItWorksPage() {
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
       <Reveal>
         <div className="max-w-2xl">
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            How <span className="text-gradient">tap-to-connect</span> works
+          <h1 className="font-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+            How tap-to-connect works
           </h1>
-          <p className="mt-4 text-lg text-slate-300">
-            NFC turns a physical tap into a digital action. Here&apos;s the whole
-            thing, start to finish.
+          <p className="mt-4 text-lg text-slate-600">
+            NFC turns a physical tap into a digital action. Here&apos;s the
+            whole thing, start to finish.
           </p>
         </div>
       </Reveal>
@@ -74,14 +74,14 @@ export default function HowItWorksPage() {
       <div className="mt-14 grid gap-6 sm:grid-cols-2">
         {steps.map((s, i) => (
           <Reveal key={s.title} delay={i * 0.06}>
-            <div className="h-full rounded-2xl border border-white/10 bg-ink-900 p-6">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-gradient shadow-glow">
+            <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900">
                 <s.icon className="h-6 w-6 text-white" />
               </span>
-              <h3 className="mt-4 font-display text-lg font-semibold text-white">
+              <h3 className="mt-4 font-display text-lg font-semibold text-slate-900">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm text-slate-400">{s.desc}</p>
+              <p className="mt-2 text-sm text-slate-500">{s.desc}</p>
             </div>
           </Reveal>
         ))}
@@ -90,21 +90,21 @@ export default function HowItWorksPage() {
       {/* FAQ */}
       <div className="mt-20">
         <Reveal>
-          <h2 className="font-display text-3xl font-bold text-white">
+          <h2 className="font-display text-3xl font-bold text-slate-900">
             Frequently asked
           </h2>
         </Reveal>
         <div className="mt-8 space-y-4">
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
-              <details className="group rounded-2xl border border-white/10 bg-ink-900 p-5 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex cursor-pointer items-center justify-between font-semibold text-white">
+              <details className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-card [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between font-semibold text-slate-900">
                   {f.q}
-                  <span className="ml-4 text-brand-300 transition-transform group-open:rotate-45">
+                  <span className="ml-4 text-blue-600 transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-3 text-sm text-slate-400">{f.a}</p>
+                <p className="mt-3 text-sm text-slate-500">{f.a}</p>
               </details>
             </Reveal>
           ))}
@@ -113,13 +113,13 @@ export default function HowItWorksPage() {
 
       {/* CTA */}
       <Reveal>
-        <div className="mt-16 flex flex-col items-center gap-4 rounded-3xl border border-white/10 bg-ink-900 p-10 text-center">
-          <h2 className="font-display text-2xl font-bold text-white">
+        <div className="mt-16 flex flex-col items-center gap-4 rounded-3xl border border-slate-200 bg-paper p-10 text-center">
+          <h2 className="font-display text-2xl font-bold text-slate-900">
             Ready to start tapping?
           </h2>
-          <p className="max-w-md text-slate-400">
-            Pick a product and we&apos;ll program it for {site.name} — you just
-            hand it over and watch it work.
+          <p className="max-w-md text-slate-500">
+            Pick a product and we&apos;ll program it before it ships — you just
+            put it on the counter and start asking.
           </p>
           <ButtonLink href="/products" size="lg">
             Browse products

@@ -34,7 +34,7 @@ export function Testimonials() {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <Reveal>
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold text-slate-900 sm:text-4xl">
             From counters like yours
           </h2>
         </div>
@@ -42,18 +42,18 @@ export function Testimonials() {
       <div className="mt-12 grid gap-6 md:grid-cols-3">
         {testimonials.map((t, i) => (
           <Reveal key={t.name} delay={i * 0.06}>
-            <figure className="flex h-full flex-col rounded-2xl border border-white/10 bg-ink-900 p-7">
+            <figure className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-card">
               <div className="flex gap-1">
                 {[...Array(5)].map((_, s) => (
                   <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />
                 ))}
               </div>
-              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-slate-300">
+              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-slate-600">
                 “{t.quote}”
               </blockquote>
-              <figcaption className="mt-5 border-t border-white/10 pt-4">
-                <p className="text-sm font-semibold text-white">{t.name}</p>
-                <p className="text-xs text-slate-500">{t.detail}</p>
+              <figcaption className="mt-5 border-t border-slate-100 pt-4">
+                <p className="text-sm font-semibold text-slate-900">{t.name}</p>
+                <p className="text-xs text-slate-400">{t.detail}</p>
               </figcaption>
             </figure>
           </Reveal>

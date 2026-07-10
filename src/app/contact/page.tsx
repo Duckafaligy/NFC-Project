@@ -18,10 +18,10 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="max-w-2xl">
-        <h1 className="font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-          Let&apos;s <span className="text-gradient">talk</span>
+        <h1 className="font-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+          Let&apos;s talk
         </h1>
-        <p className="mt-4 text-lg text-slate-300">
+        <p className="mt-4 text-lg text-slate-600">
           Questions about products, custom designs, or bulk orders? We usually
           reply within one business day.
         </p>
@@ -32,35 +32,35 @@ export default function ContactPage() {
         <div className="space-y-4">
           <a
             href={`mailto:${site.email}`}
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900 p-5 transition-colors hover:border-white/20"
+            className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition-colors hover:border-slate-300"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <Mail className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm text-slate-400">Email</p>
-              <p className="font-semibold text-white">{site.email}</p>
+              <p className="text-sm text-slate-500">Email</p>
+              <p className="font-semibold text-slate-900">{site.email}</p>
             </div>
           </a>
           <a
             href={`tel:${site.phone.replace(/[^0-9+]/g, "")}`}
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900 p-5 transition-colors hover:border-white/20"
+            className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition-colors hover:border-slate-300"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <Phone className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm text-slate-400">Phone</p>
-              <p className="font-semibold text-white">{site.phone}</p>
+              <p className="text-sm text-slate-500">Phone</p>
+              <p className="font-semibold text-slate-900">{site.phone}</p>
             </div>
           </a>
-          <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900 p-5">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
+          <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <MessageSquare className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm text-slate-400">Bulk & custom</p>
-              <p className="font-semibold text-white">
+              <p className="text-sm text-slate-500">Bulk & custom</p>
+              <p className="font-semibold text-slate-900">
                 Ask about volume pricing
               </p>
             </div>
@@ -68,49 +68,49 @@ export default function ContactPage() {
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-white/10 bg-ink-900 p-6 sm:p-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card sm:p-8">
           {sent ? (
             <div className="flex flex-col items-center py-10 text-center">
-              <CheckCircle2 className="h-12 w-12 text-emerald-400" />
-              <h2 className="mt-4 font-display text-xl font-bold text-white">
+              <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+              <h2 className="mt-4 font-display text-xl font-bold text-slate-900">
                 Message sent!
               </h2>
-              <p className="mt-2 max-w-sm text-sm text-slate-400">
-                Thanks for reaching out — we&apos;ll get back to you at the email
-                you provided shortly.
+              <p className="mt-2 max-w-sm text-sm text-slate-500">
+                Thanks for reaching out — we&apos;ll get back to you at the
+                email you provided shortly.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                  <span className="text-sm text-slate-300">Name</span>
+                  <span className="text-sm text-slate-700">Name</span>
                   <input
                     required
-                    className="mt-1.5 w-full rounded-lg border border-white/10 bg-ink-950 px-3 py-2.5 text-sm text-white focus:border-brand-400 focus:outline-none"
+                    className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </label>
                 <label className="block">
-                  <span className="text-sm text-slate-300">Email</span>
+                  <span className="text-sm text-slate-700">Email</span>
                   <input
                     required
                     type="email"
-                    className="mt-1.5 w-full rounded-lg border border-white/10 bg-ink-950 px-3 py-2.5 text-sm text-white focus:border-brand-400 focus:outline-none"
+                    className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </label>
               </div>
               <label className="block">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-slate-700">
                   Business name (optional)
                 </span>
-                <input className="mt-1.5 w-full rounded-lg border border-white/10 bg-ink-950 px-3 py-2.5 text-sm text-white focus:border-brand-400 focus:outline-none" />
+                <input className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
               </label>
               <label className="block">
-                <span className="text-sm text-slate-300">Message</span>
+                <span className="text-sm text-slate-700">Message</span>
                 <textarea
                   required
                   rows={5}
-                  className="mt-1.5 w-full rounded-lg border border-white/10 bg-ink-950 px-3 py-2.5 text-sm text-white focus:border-brand-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Tell us what you're looking for…"
                 />
               </label>

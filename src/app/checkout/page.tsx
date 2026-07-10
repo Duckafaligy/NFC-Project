@@ -77,13 +77,13 @@ export default function CheckoutPage() {
   if (payState === "demo-placed") {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
           <CheckCircle2 className="h-9 w-9" />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-bold text-white">
+        <h1 className="mt-6 font-display text-3xl font-bold text-slate-900">
           Test order placed
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-slate-300">
+        <p className="mx-auto mt-3 max-w-md text-slate-600">
           Payments aren&apos;t switched on yet, so no card was charged — this
           confirms the checkout flow works end to end. Once the Stripe key is
           added, this same button takes customers to a real payment page.
@@ -101,13 +101,13 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-slate-200 bg-paper text-slate-400">
           <ShoppingBag className="h-8 w-8" />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-bold text-white">
+        <h1 className="mt-6 font-display text-3xl font-bold text-slate-900">
           Your cart is empty
         </h1>
-        <p className="mt-3 text-slate-400">Add a card or tag to get started.</p>
+        <p className="mt-3 text-slate-500">Add a card or tag to get started.</p>
         <div className="mt-8 flex justify-center">
           <ButtonLink href="/products">Browse products</ButtonLink>
         </div>
@@ -117,11 +117,11 @@ export default function CheckoutPage() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-extrabold text-white sm:text-4xl">
+      <h1 className="font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
         Checkout
       </h1>
       {awayFromFree > 0 && (
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-slate-500">
           You&apos;re {formatPrice(awayFromFree)} away from free shipping.
         </p>
       )}
@@ -136,12 +136,12 @@ export default function CheckoutPage() {
             return (
               <div
                 key={item.key}
-                className="flex gap-4 rounded-2xl border border-white/10 bg-ink-900 p-4"
+                className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-card"
               >
                 <div className="w-28 flex-shrink-0">
                   <ProductVisual
                     name={item.name}
-                    accent={product?.accent ?? ["#6d5efc", "#22d3ee"]}
+                    accent={product?.accent ?? ["#2563eb", "#0ea5e9"]}
                     className="aspect-square rounded-xl"
                   />
                 </div>
@@ -150,11 +150,11 @@ export default function CheckoutPage() {
                     <div>
                       <Link
                         href={`/products/${item.slug}`}
-                        className="font-semibold text-white hover:text-brand-200"
+                        className="font-semibold text-slate-900 hover:text-blue-700"
                       >
                         {item.name}
                       </Link>
-                      <p className="mt-0.5 text-xs text-slate-400">
+                      <p className="mt-0.5 text-xs text-slate-500">
                         {item.designType === "custom"
                           ? item.customMethod === "upload"
                             ? "Custom · your artwork"
@@ -163,20 +163,20 @@ export default function CheckoutPage() {
                         {" · "}
                         {formatPrice(discounted)} each
                         {hasDiscount && (
-                          <span className="ml-1 font-semibold text-emerald-400">
+                          <span className="ml-1 font-semibold text-emerald-600">
                             (pack discount applied)
                           </span>
                         )}
                       </p>
                       {item.note && (
-                        <p className="mt-1 max-w-sm text-xs text-slate-500">
+                        <p className="mt-1 max-w-sm text-xs text-slate-400">
                           “{item.note}”
                         </p>
                       )}
                     </div>
                     <button
                       onClick={() => removeItem(item.key)}
-                      className="text-slate-500 hover:text-red-400"
+                      className="text-slate-400 hover:text-red-500"
                       aria-label="Remove item"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -184,26 +184,26 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="mt-auto flex items-center justify-between pt-3">
-                    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1">
+                    <div className="flex items-center gap-2 rounded-full border border-slate-300 bg-white p-1">
                       <button
                         onClick={() => setQuantity(item.key, item.quantity - 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
                         aria-label="Decrease"
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
-                      <span className="w-5 text-center text-sm font-semibold text-white">
+                      <span className="w-5 text-center text-sm font-semibold text-slate-900">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => setQuantity(item.key, item.quantity + 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-white hover:bg-white/10"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
                         aria-label="Increase"
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                    <span className="font-semibold text-white">
+                    <span className="font-semibold text-slate-900">
                       {formatPrice(lineTotal(item.unitPrice, item.quantity))}
                     </span>
                   </div>
@@ -212,7 +212,7 @@ export default function CheckoutPage() {
             );
           })}
 
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             Buy 3+ of a product and save 10% · 5+ saves 15% · 10+ saves 20%.
             Discounts apply automatically.
           </p>
@@ -220,27 +220,27 @@ export default function CheckoutPage() {
 
         {/* Order summary */}
         <div className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="rounded-2xl border border-white/10 bg-ink-900 p-6">
-            <h2 className="font-display text-lg font-semibold text-white">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+            <h2 className="font-display text-lg font-semibold text-slate-900">
               Order summary
             </h2>
             <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex justify-between text-slate-300">
+              <div className="flex justify-between text-slate-600">
                 <dt>Subtotal</dt>
                 <dd>{formatPrice(subtotal)}</dd>
               </div>
-              <div className="flex justify-between text-slate-300">
+              <div className="flex justify-between text-slate-600">
                 <dt>Shipping</dt>
                 <dd>{shipping === 0 ? "Free" : formatPrice(shipping)}</dd>
               </div>
-              <div className="flex justify-between border-t border-white/10 pt-3 text-base font-bold text-white">
+              <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-bold text-slate-900">
                 <dt>Total</dt>
                 <dd>{formatPrice(total)}</dd>
               </div>
             </dl>
 
             {payState === "error" && (
-              <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-400/20 bg-red-400/5 p-3 text-xs text-red-300">
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
                 <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
                 {errorMsg}
               </div>
@@ -253,16 +253,18 @@ export default function CheckoutPage() {
               disabled={payState === "loading"}
             >
               <Lock className="h-4 w-4" />
-              {payState === "loading" ? "Opening secure checkout…" : "Pay securely"}
+              {payState === "loading"
+                ? "Opening secure checkout…"
+                : "Pay securely"}
             </Button>
 
-            <p className="mt-3 text-center text-xs text-slate-500">
+            <p className="mt-3 text-center text-xs text-slate-400">
               Payment and shipping details are collected on Stripe&apos;s
               encrypted checkout — we never see your card number.
             </p>
 
-            <div className="mt-4 flex items-center justify-center gap-2 border-t border-white/10 pt-4 text-xs text-slate-400">
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            <div className="mt-4 flex items-center justify-center gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500">
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
               {site.guaranteeDays}-day money-back guarantee on every order
             </div>
           </div>

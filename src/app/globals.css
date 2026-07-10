@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 @layer base {
@@ -12,71 +12,46 @@
   }
 
   body {
-    @apply bg-ink-950 text-slate-200 antialiased;
-    background-image:
-      radial-gradient(
-        50% 40% at 50% -5%,
-        rgba(109, 94, 252, 0.18) 0%,
-        rgba(5, 6, 10, 0) 70%
-      ),
-      radial-gradient(
-        40% 30% at 100% 0%,
-        rgba(34, 211, 238, 0.1) 0%,
-        rgba(5, 6, 10, 0) 60%
-      );
-    background-attachment: fixed;
+    @apply bg-white text-slate-600 antialiased;
   }
 
   ::selection {
-    @apply bg-brand-500/40 text-white;
+    @apply bg-blue-100 text-slate-900;
   }
 }
 
 @layer components {
-  /* Gradient text used for headline accents. */
-  .text-gradient {
-    @apply bg-brand-gradient bg-clip-text text-transparent;
-  }
-
-  /* Frosted glass panel. */
-  .glass {
-    @apply border border-white/10 bg-white/5 backdrop-blur-xl;
-  }
-
-  /* Subtle grid dot texture overlay. */
+  /* Subtle dot texture for light sections. */
   .grid-texture {
     background-image: radial-gradient(
-      rgba(255, 255, 255, 0.06) 1px,
+      rgba(15, 23, 42, 0.07) 1px,
       transparent 1px
     );
     background-size: 22px 22px;
   }
 
-  /* Animated gradient border wrapper. */
-  .border-shine {
-    position: relative;
-    background:
-      linear-gradient(theme("colors.ink.900"), theme("colors.ink.900"))
-        padding-box,
-      linear-gradient(120deg, #6d5efc, #22d3ee, #6d5efc) border-box;
-    background-size: 100% 100%, 200% 100%;
-    border: 1px solid transparent;
-    animation: shimmer 6s linear infinite;
+  /* White-dot variant for dark panels (footer CTA, photo overlays). */
+  .grid-texture-invert {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.09) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
   }
 }
 
-/* Custom scrollbar for a polished feel. */
+/* Light, unobtrusive scrollbar. */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0b12;
+  background: #f8fafc;
 }
 ::-webkit-scrollbar-thumb {
-  background: #272b42;
+  background: #cbd5e1;
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3f5e;
+  background: #94a3b8;
 }

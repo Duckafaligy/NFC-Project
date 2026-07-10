@@ -49,7 +49,7 @@ export default function ShippingPage() {
       <LegalSection heading="Questions">
         <p>
           Need an order by a specific date? Email{" "}
-          <a href={`mailto:${site.email}`} className="text-brand-300 underline">
+          <a href={`mailto:${site.email}`} className="font-medium text-blue-700 underline">
             {site.email}
           </a>{" "}
           and we&apos;ll do our best to help.

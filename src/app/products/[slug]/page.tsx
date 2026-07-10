@@ -44,39 +44,43 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-slate-400">
-        <Link href="/products" className="inline-flex items-center gap-1 hover:text-white">
+      <nav className="flex items-center gap-1.5 text-sm text-slate-500">
+        <Link
+          href="/products"
+          className="inline-flex items-center gap-1 hover:text-slate-900"
+        >
           <ArrowLeft className="h-4 w-4" /> Products
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-slate-300">{product.name}</span>
+        <span className="text-slate-900">{product.name}</span>
       </nav>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-2">
         {/* Visual + copy */}
         <div>
           <Reveal>
-            <div className="relative rounded-3xl border border-white/10 bg-ink-900/60 p-4 shadow-card">
-              <div className="absolute -inset-4 rounded-[2rem] bg-radial-glow opacity-60 blur-2xl" />
+            <div className="overflow-hidden rounded-3xl border border-slate-200 shadow-card">
               <ProductVisual
                 name={product.name}
                 accent={product.accent}
                 featured
-                className="relative aspect-[4/3.4]"
+                className="aspect-[4/3.4] rounded-none"
               />
             </div>
           </Reveal>
 
           <Reveal delay={0.05}>
             <div className="mt-6">
-              <p className="text-xs font-medium uppercase tracking-wider text-brand-300">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
                 {product.category}
               </p>
-              <h1 className="mt-1 font-display text-3xl font-extrabold text-white sm:text-4xl">
+              <h1 className="mt-1 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
                 {product.name}
               </h1>
-              <p className="mt-2 text-lg text-brand-200">{product.tagline}</p>
-              <p className="mt-4 text-slate-300">{product.description}</p>
+              <p className="mt-2 text-lg font-medium text-slate-700">
+                {product.tagline}
+              </p>
+              <p className="mt-4 text-slate-600">{product.description}</p>
             </div>
           </Reveal>
 
@@ -84,8 +88,11 @@ export default async function ProductPage({
           <Reveal delay={0.1}>
             <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
               {product.features.map((f) => (
-                <div key={f} className="flex items-start gap-2 text-sm text-slate-300">
-                  <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" />
+                <div
+                  key={f}
+                  className="flex items-start gap-2 text-sm text-slate-700"
+                >
+                  <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600" />
                   {f}
                 </div>
               ))}
@@ -95,12 +102,14 @@ export default async function ProductPage({
           {/* Specs */}
           <Reveal delay={0.15}>
             <div className="mt-8">
-              <h2 className="text-sm font-semibold text-white">Specifications</h2>
-              <dl className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:grid-cols-4">
+              <h2 className="text-sm font-semibold text-slate-900">
+                Specifications
+              </h2>
+              <dl className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
                 {product.specs.map((s) => (
-                  <div key={s.label} className="bg-ink-900 p-4">
-                    <dt className="text-xs text-slate-400">{s.label}</dt>
-                    <dd className="mt-1 text-sm font-semibold text-white">
+                  <div key={s.label} className="bg-white p-4">
+                    <dt className="text-xs text-slate-500">{s.label}</dt>
+                    <dd className="mt-1 text-sm font-semibold text-slate-900">
                       {s.value}
                     </dd>
                   </div>
@@ -112,12 +121,14 @@ export default async function ProductPage({
           {/* Use cases */}
           <Reveal delay={0.2}>
             <div className="mt-6">
-              <h2 className="text-sm font-semibold text-white">Perfect for</h2>
+              <h2 className="text-sm font-semibold text-slate-900">
+                Perfect for
+              </h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {product.useCases.map((u) => (
                   <span
                     key={u}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300"
+                    className="rounded-full border border-slate-200 bg-paper px-3 py-1 text-xs text-slate-600"
                   >
                     {u}
                   </span>
@@ -134,8 +145,8 @@ export default async function ProductPage({
       </div>
 
       {/* After you order */}
-      <div className="mt-20 rounded-3xl border border-white/10 bg-ink-900 p-8 sm:p-10">
-        <h2 className="font-display text-2xl font-bold text-white">
+      <div className="mt-20 rounded-3xl border border-slate-200 bg-paper p-8 sm:p-10">
+        <h2 className="font-display text-2xl font-bold text-slate-900">
           What happens after you order
         </h2>
         <div className="mt-8 grid gap-8 md:grid-cols-3">
@@ -157,13 +168,15 @@ export default async function ProductPage({
             },
           ].map((s) => (
             <div key={s.title}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-brand-300">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
                 {s.step}
               </p>
-              <h3 className="mt-2 font-display text-lg font-semibold text-white">
+              <h3 className="mt-2 font-display text-lg font-semibold text-slate-900">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-400">{s.desc}</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                {s.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -172,7 +185,7 @@ export default async function ProductPage({
       {/* Related */}
       {suggestions.length > 0 && (
         <div className="mt-20">
-          <h2 className="font-display text-2xl font-bold text-white">
+          <h2 className="font-display text-2xl font-bold text-slate-900">
             You might also like
           </h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -154,20 +154,28 @@ src/
 
 ## Design system
 
-Modern, professional, cinematic — dark and glowing.
+Light, premium, real-world — closer to a high-end Shopify/Apple store than a
+SaaS landing page.
 
-- **Surface:** deep near-black `ink` palette (`#05060a` → `#272b42`).
-- **Brand accent:** electric violet → cyan gradient (`brand.500 #6d5efc` → `cyanx.400 #22d3ee`),
-  exposed as the `bg-brand-gradient` / `.text-gradient` utilities.
-- **Type:** `Sora` for display/headlines, `Inter` for body (CSS vars `--font-sora`, `--font-inter`).
-- **Effects:** frosted glass (`.glass`), dot-grid texture (`.grid-texture`), soft glows
-  (`shadow-glow`, `shadow-glow-cyan`), floating/pulse/shimmer keyframe animations.
-- **Motion:** `Reveal` component fades content up as it scrolls into view (restrained, once-only).
-- **Product imagery:** `ProductVisual` renders a stylised NFC card in pure CSS using each
-  product's `accent` gradient — so the site needs **zero image assets** and stays fast.
-  Swap this for real photography later without touching page layouts.
+- **Surfaces:** white base + warm off-white `paper` (`#f7f6f3`) for alternating
+  sections and subtle panels.
+- **Text:** slate-900 headings, slate-600 body, slate-500/400 for secondary.
+- **Accent:** a single confident **blue-600** for links, highlights, selected
+  states, and stat numbers. Emerald for guarantees/savings, amber for stars.
+- **Buttons:** primary = near-black `slate-900` pill; secondary = white with
+  slate border; on dark photo panels use white-fill overrides.
+- **Dark anchors:** footer, final CTA, hero overlay, and custom-design banner
+  use `slate-950` — white text inside those is intentional.
+- **Type:** `Bricolage Grotesque` for display/headlines, `Inter` for body
+  (CSS vars `--font-bricolage`, `--font-inter`).
+- **Depth:** soft `shadow-card` / `shadow-card-hover`, `grid-texture` dot
+  pattern (dark dots on light, `.grid-texture-invert` for dark panels).
+- **Motion:** `Reveal` fades content up on scroll (restrained, once-only);
+  `float` + `pulse-ring` on the product visual.
+- **Imagery:** real photos in `public/images/` for hero/industries/banner;
+  `ProductVisual` renders product cards in CSS on a neutral studio background.
 
-All theme tokens live in `tailwind.config.ts`. Change the brand there once and it
+All theme tokens live in `tailwind.config.ts`. Change them once and it
 propagates everywhere.
 
 ---
@@ -282,6 +290,22 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-10 — Complete redesign: light premium theme (replaces dark neon)
+- **The dark violet/cyan "cinematic" theme is gone** at the owner's request.
+  New design language: white + warm `paper` (#f7f6f3) surfaces, slate text,
+  a single blue-600 accent, near-black primary buttons, soft card shadows,
+  dark slate-950 footer/CTA panels for contrast. Think premium Shopify/Apple
+  store rather than neon SaaS.
+- Display font switched Sora → **Bricolage Grotesque** (body stays Inter).
+- Every component and page restyled: navbar, footer, buttons, announcement
+  bar, product cards/grid/visuals, configurator, checkout, contact,
+  how-it-works, legal pages, 404. Hero and custom-design banner keep photo
+  backgrounds with dark overlays (white text there is intentional).
+- `tailwind.config.ts` rewritten: removed `ink`/`brand`/`cyanx` palettes,
+  glows, and gradient utilities; added `paper` color + `shadow-card(-hover)`.
+- Verified visually with headless-Chromium screenshots (hero, light sections,
+  product page) plus clean build and API smoke test.
 
 ### 2026-07-10 — Real-world overhaul: Stripe, photos, volume pricing, conversion copy
 - **Stripe Checkout is live** (`src/app/api/checkout/route.ts`): server-side
