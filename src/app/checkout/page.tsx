@@ -59,7 +59,7 @@ export default function CheckoutPage() {
         return;
       }
       if (data.demo) {
-        // Stripe key not configured yet — clearly-labelled test order.
+        // Stripe key not configured yet. Clearly-labelled test order.
         setPayState("demo-placed");
         clear();
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -77,16 +77,16 @@ export default function CheckoutPage() {
   if (payState === "demo-placed") {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-          <CheckCircle2 className="h-9 w-9" />
+        <div className="box mx-auto flex h-16 w-16 items-center justify-center bg-mint">
+          <CheckCircle2 className="h-9 w-9 text-ink" />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-bold text-slate-900">
+        <h1 className="mt-6 font-display text-3xl uppercase text-ink">
           Test order placed
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-slate-600">
-          Payments aren&apos;t switched on yet, so no card was charged — this
+        <p className="mx-auto mt-3 max-w-md text-ink/70">
+          Payments aren&apos;t switched on yet, so no card was charged. This
           confirms the checkout flow works end to end. Once the Stripe key is
-          added, this same button takes customers to a real payment page.
+          added, this same button opens a real payment page.
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <ButtonLink href="/products">Continue shopping</ButtonLink>
@@ -101,13 +101,13 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-slate-200 bg-paper text-slate-400">
-          <ShoppingBag className="h-8 w-8" />
+        <div className="box mx-auto flex h-16 w-16 items-center justify-center">
+          <ShoppingBag className="h-8 w-8 text-ink" />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-bold text-slate-900">
+        <h1 className="mt-6 font-display text-3xl uppercase text-ink">
           Your cart is empty
         </h1>
-        <p className="mt-3 text-slate-500">Add a card or tag to get started.</p>
+        <p className="mt-3 text-ink/60">Add a card or tag to get started.</p>
         <div className="mt-8 flex justify-center">
           <ButtonLink href="/products">Browse products</ButtonLink>
         </div>
@@ -117,12 +117,12 @@ export default function CheckoutPage() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
+      <h1 className="font-display text-3xl uppercase text-ink sm:text-4xl">
         Checkout
       </h1>
       {awayFromFree > 0 && (
-        <p className="mt-2 text-sm text-slate-500">
-          You&apos;re {formatPrice(awayFromFree)} away from free shipping.
+        <p className="mt-2 inline-block border-2 border-ink bg-yolk px-2 py-1 text-sm font-bold text-ink">
+          {formatPrice(awayFromFree)} away from free shipping
         </p>
       )}
 
@@ -134,15 +134,12 @@ export default function CheckoutPage() {
             const discounted = unitPriceFor(item.unitPrice, item.quantity);
             const hasDiscount = tierDiscount(item.quantity) > 0;
             return (
-              <div
-                key={item.key}
-                className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-card"
-              >
-                <div className="w-28 flex-shrink-0">
+              <div key={item.key} className="box flex gap-4 p-4">
+                <div className="w-28 flex-shrink-0 border-2 border-ink">
                   <ProductVisual
                     name={item.name}
-                    accent={product?.accent ?? ["#2563eb", "#0ea5e9"]}
-                    className="aspect-square rounded-xl"
+                    accent={product?.accent ?? ["#FFC700", "#FF90E8"]}
+                    className="aspect-square"
                   />
                 </div>
                 <div className="flex flex-1 flex-col">
@@ -150,33 +147,33 @@ export default function CheckoutPage() {
                     <div>
                       <Link
                         href={`/products/${item.slug}`}
-                        className="font-semibold text-slate-900 hover:text-blue-700"
+                        className="font-bold text-ink underline-offset-2 hover:underline"
                       >
                         {item.name}
                       </Link>
-                      <p className="mt-0.5 text-xs text-slate-500">
+                      <p className="mt-0.5 font-mono text-xs text-ink/60">
                         {item.designType === "custom"
                           ? item.customMethod === "upload"
-                            ? "Custom · your artwork"
-                            : "Custom · designed by us"
+                            ? "Custom / your artwork"
+                            : "Custom / designed by us"
                           : "Standard design"}
                         {" · "}
                         {formatPrice(discounted)} each
                         {hasDiscount && (
-                          <span className="ml-1 font-semibold text-emerald-600">
-                            (pack discount applied)
+                          <span className="ml-1 font-bold text-ink">
+                            (pack discount)
                           </span>
                         )}
                       </p>
                       {item.note && (
-                        <p className="mt-1 max-w-sm text-xs text-slate-400">
+                        <p className="mt-1 max-w-sm font-mono text-xs text-ink/50">
                           “{item.note}”
                         </p>
                       )}
                     </div>
                     <button
                       onClick={() => removeItem(item.key)}
-                      className="text-slate-400 hover:text-red-500"
+                      className="flex h-8 w-8 items-center justify-center border-2 border-ink bg-white text-ink hover:bg-bubble"
                       aria-label="Remove item"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -184,26 +181,26 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="mt-auto flex items-center justify-between pt-3">
-                    <div className="flex items-center gap-2 rounded-full border border-slate-300 bg-white p-1">
+                    <div className="flex items-center border-2 border-ink bg-white">
                       <button
                         onClick={() => setQuantity(item.key, item.quantity - 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
+                        className="flex h-8 w-8 items-center justify-center border-r-2 border-ink text-ink hover:bg-cream"
                         aria-label="Decrease"
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
-                      <span className="w-5 text-center text-sm font-semibold text-slate-900">
+                      <span className="w-9 text-center font-mono text-sm font-bold text-ink">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => setQuantity(item.key, item.quantity + 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
+                        className="flex h-8 w-8 items-center justify-center border-l-2 border-ink text-ink hover:bg-cream"
                         aria-label="Increase"
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-mono text-lg font-bold text-ink">
                       {formatPrice(lineTotal(item.unitPrice, item.quantity))}
                     </span>
                   </div>
@@ -212,35 +209,35 @@ export default function CheckoutPage() {
             );
           })}
 
-          <p className="text-xs text-slate-400">
-            Buy 3+ of a product and save 10% · 5+ saves 15% · 10+ saves 20%.
-            Discounts apply automatically.
+          <p className="font-mono text-xs text-ink/50">
+            3+ of a product saves 10% · 5+ saves 15% · 10+ saves 20%. Applied
+            automatically.
           </p>
         </div>
 
         {/* Order summary */}
         <div className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h2 className="font-display text-lg font-semibold text-slate-900">
+          <div className="box p-6">
+            <h2 className="font-display text-lg uppercase text-ink">
               Order summary
             </h2>
-            <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex justify-between text-slate-600">
+            <dl className="mt-4 space-y-3 font-mono text-sm">
+              <div className="flex justify-between text-ink/70">
                 <dt>Subtotal</dt>
                 <dd>{formatPrice(subtotal)}</dd>
               </div>
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-ink/70">
                 <dt>Shipping</dt>
-                <dd>{shipping === 0 ? "Free" : formatPrice(shipping)}</dd>
+                <dd>{shipping === 0 ? "FREE" : formatPrice(shipping)}</dd>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-bold text-slate-900">
-                <dt>Total</dt>
+              <div className="flex justify-between border-t-2 border-ink pt-3 text-base font-bold text-ink">
+                <dt>TOTAL</dt>
                 <dd>{formatPrice(total)}</dd>
               </div>
             </dl>
 
             {payState === "error" && (
-              <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 flex items-start gap-2 border-2 border-ink bg-bubble p-3 text-xs font-bold text-ink">
                 <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
                 {errorMsg}
               </div>
@@ -253,18 +250,16 @@ export default function CheckoutPage() {
               disabled={payState === "loading"}
             >
               <Lock className="h-4 w-4" />
-              {payState === "loading"
-                ? "Opening secure checkout…"
-                : "Pay securely"}
+              {payState === "loading" ? "Opening checkout..." : "Pay securely"}
             </Button>
 
-            <p className="mt-3 text-center text-xs text-slate-400">
+            <p className="mt-3 text-center font-mono text-xs text-ink/50">
               Payment and shipping details are collected on Stripe&apos;s
-              encrypted checkout — we never see your card number.
+              encrypted checkout. We never see your card number.
             </p>
 
-            <div className="mt-4 flex items-center justify-center gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            <div className="mt-4 flex items-center justify-center gap-2 border-t-2 border-ink pt-4 text-xs font-bold text-ink">
+              <ShieldCheck className="h-4 w-4" />
               {site.guaranteeDays}-day money-back guarantee on every order
             </div>
           </div>

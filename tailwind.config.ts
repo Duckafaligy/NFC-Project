@@ -1,9 +1,10 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Light, premium e-commerce theme.
- * Surfaces: white + warm "paper" off-white. Text: slate. Accent: blue-600.
- * Primary buttons are near-black (slate-900) for an Apple-store feel.
+ * Neubrutalist minimal theme.
+ * Cream background, true-black 2px borders, hard offset shadows (no blur),
+ * flat accent blocks (yellow / pink / green / blue), sharp corners.
+ * Display: Archivo Black. Body: Space Grotesk. Labels: Space Mono.
  */
 const config: Config = {
   content: [
@@ -14,30 +15,31 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#f7f6f3",
+        cream: "#FAF6EE",
+        ink: "#111111",
+        yolk: "#FFC700",
+        bubble: "#FF90E8",
+        mint: "#3ECF8E",
+        sky: "#69B9FF",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-bricolage)", "var(--font-inter)", "sans-serif"],
+        display: ["var(--font-archivo)", "system-ui", "sans-serif"],
+        sans: ["var(--font-grotesk)", "system-ui", "sans-serif"],
+        mono: ["var(--font-space-mono)", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        card: "0 1px 2px rgb(2 6 23 / 0.04), 0 8px 24px -12px rgb(2 6 23 / 0.12)",
-        "card-hover":
-          "0 2px 4px rgb(2 6 23 / 0.05), 0 16px 40px -12px rgb(2 6 23 / 0.18)",
+        brutal: "4px 4px 0 0 #111111",
+        "brutal-lg": "8px 8px 0 0 #111111",
+        "brutal-sm": "2px 2px 0 0 #111111",
       },
       keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-12px)" },
-        },
-        "pulse-ring": {
-          "0%": { transform: "scale(0.9)", opacity: "0.7" },
-          "100%": { transform: "scale(1.6)", opacity: "0" },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
       },
       animation: {
-        float: "float 6s ease-in-out infinite",
-        "pulse-ring": "pulse-ring 2.4s ease-out infinite",
+        marquee: "marquee 28s linear infinite",
       },
     },
   },

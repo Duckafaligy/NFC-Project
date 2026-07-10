@@ -154,29 +154,36 @@ src/
 
 ## Design system
 
-Light, premium, real-world — closer to a high-end Shopify/Apple store than a
-SaaS landing page.
+**Minimal neubrutalism with bento grids.** Grounded in the documented
+neobrutalism pattern language (NN/g, neubrutalism.com): thick black outlines,
+hard offset shadows with zero blur, flat bold color blocks, chunky type, and
+generous whitespace to keep it minimal rather than chaotic.
 
-- **Surfaces:** white base + warm off-white `paper` (`#f7f6f3`) for alternating
-  sections and subtle panels.
-- **Text:** slate-900 headings, slate-600 body, slate-500/400 for secondary.
-- **Accent:** a single confident **blue-600** for links, highlights, selected
-  states, and stat numbers. Emerald for guarantees/savings, amber for stars.
-- **Buttons:** primary = near-black `slate-900` pill; secondary = white with
-  slate border; on dark photo panels use white-fill overrides.
-- **Dark anchors:** footer, final CTA, hero overlay, and custom-design banner
-  use `slate-950` — white text inside those is intentional.
-- **Type:** `Bricolage Grotesque` for display/headlines, `Inter` for body
-  (CSS vars `--font-bricolage`, `--font-inter`).
-- **Depth:** soft `shadow-card` / `shadow-card-hover`, `grid-texture` dot
-  pattern (dark dots on light, `.grid-texture-invert` for dark panels).
-- **Motion:** `Reveal` fades content up on scroll (restrained, once-only);
-  `float` + `pulse-ring` on the product visual.
-- **Imagery:** real photos in `public/images/` for hero/industries/banner;
-  `ProductVisual` renders product cards in CSS on a neutral studio background.
+- **Surfaces:** warm `cream` (`#FAF6EE`) page background; white boxes.
+- **The box:** every card/button/input is `border-2 border-ink` +
+  `shadow-brutal` (hard `4px 4px 0` offset, no blur). Utility classes `.box`
+  and `.box-hover` (lifts on hover, presses flat on click) in `globals.css`.
+- **Ink:** true near-black `#111111` for borders and text.
+- **Accents (flat, no gradients):** `yolk` yellow `#FFC700` (primary/CTA),
+  `bubble` pink `#FF90E8`, `mint` green `#3ECF8E`, `sky` blue `#69B9FF`.
+  Used as whole-tile background colors in bento grids.
+- **Corners:** sharp. No border radius anywhere.
+- **Type:** `Archivo Black` for display (uppercase headlines), `Space Grotesk`
+  for body, `Space Mono` for labels/prices/eyebrows (`.tag` utility).
+- **Bento grids:** the hero is a 12-column bento (main tile + photo tile +
+  four colored stat tiles); industries section is a mixed-size photo bento.
+- **Brutalist furniture:** scrolling `Marquee` strip, black announcement bar,
+  black footer, comparison table with a highlighted yellow column.
+- **Motion:** `Reveal` fade-up on scroll; marquee scroll; translate-on-hover
+  with shadow growth on interactive boxes.
+- **Imagery:** real photos in `public/images/` inside bordered boxes;
+  `ProductVisual` renders a flat-color card with black border + hard shadow.
 
 All theme tokens live in `tailwind.config.ts`. Change them once and it
 propagates everywhere.
+
+**Copy rules:** no em dashes, no AI-flavored filler. Short sentences, concrete
+counter-moment language. Keep this voice when adding content.
 
 ---
 
@@ -290,6 +297,23 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-10 — Redesign #2: minimal neubrutalism + bento grids (replaces light premium)
+- Full re-theme at the owner's request, grounded in researched neobrutalism
+  patterns (NN/g, neubrutalism.com): 2px black borders, hard offset shadows
+  (`shadow-brutal`, no blur), flat color tiles (yolk/bubble/mint/sky on cream),
+  sharp corners, uppercase Archivo Black headlines, Space Grotesk body,
+  Space Mono labels.
+- **Bento-grid hero** (main tile, photo tile, 4 colored stat tiles) and a
+  mixed-size **industries photo bento**. Added a scrolling `Marquee` strip.
+- New `.box` / `.box-hover` / `.tag` utilities in `globals.css`; press-down
+  button interaction (translate + shadow collapse).
+- **Copy sweep:** removed em dashes and AI-sounding phrasing from all
+  customer-facing text (home, product catalog, legal pages, Stripe line-item
+  labels). Product catalog descriptions rewritten in plain counter language.
+- Product accent colors switched from gradients to the flat brutalist palette.
+- Verified with clean build and headless-Chromium screenshots (bento hero,
+  comparison table, product page).
 
 ### 2026-07-10 — Complete redesign: light premium theme (replaces dark neon)
 - **The dark violet/cyan "cinematic" theme is gone** at the owner's request.

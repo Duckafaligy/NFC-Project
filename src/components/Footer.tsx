@@ -33,26 +33,28 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="mt-24 bg-slate-950">
+    <footer className="mt-24 border-t-2 border-ink bg-ink text-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <Link
               href="/"
-              className="flex items-center gap-2 font-display text-lg font-bold text-white"
+              className="flex items-center gap-2 font-display text-lg uppercase tracking-tight text-white"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
-                <Nfc className="h-5 w-5 text-white" />
+              <span className="flex h-9 w-9 items-center justify-center border-2 border-white bg-yolk">
+                <Nfc className="h-5 w-5 text-ink" strokeWidth={2.5} />
               </span>
               {site.name}
             </Link>
-            <p className="mt-4 max-w-xs text-sm text-slate-400">{site.tagline}</p>
+            <p className="mt-4 max-w-xs text-sm text-white/70">
+              {site.tagline}
+            </p>
             <div className="mt-5 flex gap-3">
               <a
                 href={site.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-colors hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border-2 border-white/40 text-white/70 transition-colors hover:border-white hover:text-white"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
@@ -61,7 +63,7 @@ export function Footer() {
                 href={site.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-colors hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border-2 border-white/40 text-white/70 transition-colors hover:border-white hover:text-white"
                 aria-label="Facebook"
               >
                 <Facebook className="h-4 w-4" />
@@ -71,13 +73,13 @@ export function Footer() {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-sm font-semibold text-white">{col.title}</h4>
+              <h4 className="tag text-yolk">{col.title}</h4>
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((l) => (
                   <li key={l.href}>
                     <Link
                       href={l.href}
-                      className="text-sm text-slate-400 transition-colors hover:text-white"
+                      className="text-sm text-white/70 transition-colors hover:text-white hover:underline"
                     >
                       {l.label}
                     </Link>
@@ -88,11 +90,11 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-sm text-slate-500 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t-2 border-white/20 pt-6 font-mono text-xs text-white/50 sm:flex-row">
           <p>
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
-          <p>Tap-to-connect NFC products for modern businesses.</p>
+          <p>NFC products for businesses with counters.</p>
         </div>
       </div>
     </footer>

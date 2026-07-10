@@ -61,7 +61,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
       name: product.name,
       designType,
       customMethod: designType === "custom" ? customMethod : undefined,
-      note: noteParts.join(" — ") || undefined,
+      note: noteParts.join(" / ") || undefined,
       unitPrice,
       quantity: qty,
     });
@@ -75,53 +75,51 @@ export function ProductConfigurator({ product }: { product: Product }) {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+    <div className="box p-6">
       {/* Price */}
       <div className="flex items-end justify-between">
         <div>
-          <span className="text-sm text-slate-500">Price</span>
-          <p className="font-display text-3xl font-bold text-slate-900">
+          <span className="tag text-ink/50">Price</span>
+          <p className="font-display text-3xl text-ink">
             {formatPrice(unitPrice)}
           </p>
         </div>
-        <span className="rounded-full border border-slate-200 bg-paper px-3 py-1 text-xs text-slate-600">
+        <span className="border-2 border-ink bg-cream px-3 py-1 font-mono text-xs font-bold uppercase text-ink">
           {product.formFactor}
         </span>
       </div>
 
       {/* Design type choice */}
       <div className="mt-6">
-        <p className="text-sm font-semibold text-slate-900">
-          Choose your design
-        </p>
+        <p className="tag text-ink">Choose your design</p>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <button
             onClick={() => setDesignType("standard")}
             className={cn(
-              "rounded-xl border p-4 text-left transition-all",
+              "border-2 border-ink p-4 text-left transition-all",
               designType === "standard"
-                ? "border-blue-600 bg-blue-50"
-                : "border-slate-200 bg-white hover:border-slate-300",
+                ? "bg-yolk shadow-brutal"
+                : "bg-white hover:bg-cream",
             )}
           >
-            <Sparkles className="h-5 w-5 text-blue-600" />
-            <p className="mt-2 font-semibold text-slate-900">Standard</p>
-            <p className="mt-0.5 text-xs text-slate-500">
+            <Sparkles className="h-5 w-5 text-ink" />
+            <p className="mt-2 font-bold uppercase text-ink">Standard</p>
+            <p className="mt-0.5 text-xs text-ink/70">
               Clean, ready-made design
             </p>
           </button>
           <button
             onClick={() => setDesignType("custom")}
             className={cn(
-              "relative rounded-xl border p-4 text-left transition-all",
+              "border-2 border-ink p-4 text-left transition-all",
               designType === "custom"
-                ? "border-blue-600 bg-blue-50"
-                : "border-slate-200 bg-white hover:border-slate-300",
+                ? "bg-yolk shadow-brutal"
+                : "bg-white hover:bg-cream",
             )}
           >
-            <PenTool className="h-5 w-5 text-blue-600" />
-            <p className="mt-2 font-semibold text-slate-900">Custom</p>
-            <p className="mt-0.5 text-xs text-slate-500">
+            <PenTool className="h-5 w-5 text-ink" />
+            <p className="mt-2 font-bold uppercase text-ink">Custom</p>
+            <p className="mt-0.5 text-xs text-ink/70">
               +{formatPrice(product.customUpcharge)} · your brand
             </p>
           </button>
@@ -130,26 +128,22 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
       {/* Custom sub-options */}
       {designType === "custom" && (
-        <div className="mt-5 space-y-4 rounded-xl border border-slate-200 bg-paper p-4">
-          <p className="text-sm font-semibold text-slate-900">
-            How should we handle the design?
-          </p>
+        <div className="mt-4 space-y-4 border-2 border-ink bg-cream p-4">
+          <p className="tag text-ink">How should we handle the design?</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={() => setCustomMethod("upload")}
               className={cn(
-                "flex items-start gap-3 rounded-lg border p-3 text-left transition-all",
+                "flex items-start gap-3 border-2 border-ink p-3 text-left transition-all",
                 customMethod === "upload"
-                  ? "border-blue-600 bg-white"
-                  : "border-slate-200 bg-white/60 hover:border-slate-300",
+                  ? "bg-bubble shadow-brutal-sm"
+                  : "bg-white",
               )}
             >
-              <Upload className="mt-0.5 h-5 w-5 text-blue-600" />
+              <Upload className="mt-0.5 h-5 w-5 text-ink" />
               <div>
-                <p className="text-sm font-semibold text-slate-900">
-                  Upload my design
-                </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-sm font-bold text-ink">Upload my design</p>
+                <p className="text-xs text-ink/70">
                   I have artwork ready to go
                 </p>
               </div>
@@ -157,19 +151,17 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <button
               onClick={() => setCustomMethod("we-design")}
               className={cn(
-                "flex items-start gap-3 rounded-lg border p-3 text-left transition-all",
+                "flex items-start gap-3 border-2 border-ink p-3 text-left transition-all",
                 customMethod === "we-design"
-                  ? "border-blue-600 bg-white"
-                  : "border-slate-200 bg-white/60 hover:border-slate-300",
+                  ? "bg-bubble shadow-brutal-sm"
+                  : "bg-white",
               )}
             >
-              <PenTool className="mt-0.5 h-5 w-5 text-blue-600" />
+              <PenTool className="mt-0.5 h-5 w-5 text-ink" />
               <div>
-                <p className="text-sm font-semibold text-slate-900">
-                  Design it for me
-                </p>
-                <p className="text-xs text-slate-500">
-                  Our team creates it on-brand
+                <p className="text-sm font-bold text-ink">Design it for me</p>
+                <p className="text-xs text-ink/70">
+                  We design it around your brand
                 </p>
               </div>
             </button>
@@ -186,30 +178,30 @@ export function ProductConfigurator({ product }: { product: Product }) {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-white px-4 py-4 text-sm text-slate-600 transition-colors hover:border-blue-500 hover:text-slate-900"
+                className="flex w-full items-center justify-center gap-2 border-2 border-dashed border-ink bg-white px-4 py-4 text-sm font-bold text-ink transition-colors hover:bg-yolk/30"
               >
                 {fileName ? (
                   <>
-                    <FileCheck2 className="h-4 w-4 text-emerald-600" />
+                    <FileCheck2 className="h-4 w-4 text-ink" />
                     {fileName}
                   </>
                 ) : (
                   <>
                     <Upload className="h-4 w-4" />
-                    Choose file (PNG, PDF, AI, SVG…)
+                    Choose file (PNG, PDF, AI, SVG)
                   </>
                 )}
               </button>
-              <p className="mt-2 text-xs text-slate-400">
-                We&apos;ll confirm your artwork by email before printing.
+              <p className="mt-2 font-mono text-xs text-ink/60">
+                We confirm your artwork by email before printing.
               </p>
             </div>
           )}
 
           <div>
-            <label className="text-sm text-slate-700">
+            <label className="text-sm font-bold text-ink">
               {customMethod === "we-design"
-                ? "Tell us about your brand & what you want"
+                ? "Tell us about your brand and what you want"
                 : "Notes for our team (optional)"}
             </label>
             <textarea
@@ -218,10 +210,10 @@ export function ProductConfigurator({ product }: { product: Product }) {
               rows={3}
               placeholder={
                 customMethod === "we-design"
-                  ? "Business name, colors, vibe, link the card should point to…"
-                  : "Anything we should know…"
+                  ? "Business name, colors, the link the card should open..."
+                  : "Anything we should know..."
               }
-              className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-2 w-full border-2 border-ink bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:bg-yolk/10 focus:outline-none"
             />
           </div>
         </div>
@@ -230,23 +222,21 @@ export function ProductConfigurator({ product }: { product: Product }) {
       {/* Quantity + pack pricing */}
       <div className="mt-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-slate-900">
-            How many?
-          </span>
-          <div className="flex items-center gap-3 rounded-full border border-slate-300 bg-white p-1">
+          <span className="tag text-ink">How many?</span>
+          <div className="flex items-center border-2 border-ink bg-white">
             <button
               onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
+              className="flex h-9 w-9 items-center justify-center border-r-2 border-ink text-ink hover:bg-cream"
               aria-label="Decrease quantity"
             >
               <Minus className="h-4 w-4" />
             </button>
-            <span className="w-6 text-center font-semibold text-slate-900">
+            <span className="w-10 text-center font-mono font-bold text-ink">
               {qty}
             </span>
             <button
               onClick={() => setQty((q) => q + 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"
+              className="flex h-9 w-9 items-center justify-center border-l-2 border-ink text-ink hover:bg-cream"
               aria-label="Increase quantity"
             >
               <Plus className="h-4 w-4" />
@@ -265,45 +255,43 @@ export function ProductConfigurator({ product }: { product: Product }) {
               key={pack.qty}
               onClick={() => setQty(pack.qty)}
               className={cn(
-                "relative rounded-lg border px-2 py-2.5 text-center transition-all",
-                qty === pack.qty
-                  ? "border-blue-600 bg-blue-50"
-                  : "border-slate-200 bg-white hover:border-slate-300",
+                "border-2 border-ink px-2 py-2.5 text-center transition-all",
+                qty === pack.qty ? "bg-mint shadow-brutal-sm" : "bg-white hover:bg-cream",
               )}
             >
-              <span className="block text-xs font-semibold text-slate-900">
+              <span className="block text-xs font-bold uppercase text-ink">
                 {pack.label}
               </span>
               {pack.badge && (
-                <span className="mt-0.5 block text-[10px] font-bold text-emerald-600">
+                <span className="mt-0.5 block font-mono text-[10px] font-bold text-ink">
                   {pack.badge}
                 </span>
               )}
             </button>
           ))}
         </div>
-        <p className="mt-2 text-xs text-slate-400">
-          Most shops grab 3 — counter, door, and a spare.
+        <p className="mt-2 font-mono text-xs text-ink/50">
+          Most shops take 3: counter, door, spare.
         </p>
       </div>
 
       {/* Total + actions */}
-      <div className="mt-6 space-y-1.5 border-t border-slate-200 pt-4">
+      <div className="mt-6 space-y-1.5 border-t-2 border-ink pt-4">
         {tierDiscount(qty) > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-500">
+            <span className="font-mono text-ink/60">
               {formatPrice(unitPriceFor(unitPrice, qty))} each × {qty}
             </span>
-            <span className="font-semibold text-emerald-600">
-              You save {formatPrice(unitPrice * qty - lineTotal(unitPrice, qty))}
+            <span className="border-2 border-ink bg-mint px-2 py-0.5 font-mono text-xs font-bold text-ink">
+              SAVE {formatPrice(unitPrice * qty - lineTotal(unitPrice, qty))}
             </span>
           </div>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-500">Subtotal</span>
-          <span className="font-display text-xl font-bold text-slate-900">
+          <span className="tag text-ink/60">Subtotal</span>
+          <span className="font-display text-2xl text-ink">
             {tierDiscount(qty) > 0 && (
-              <span className="mr-2 text-sm font-normal text-slate-400 line-through">
+              <span className="mr-2 font-mono text-sm font-normal text-ink/40 line-through">
                 {formatPrice(unitPrice * qty)}
               </span>
             )}
@@ -319,7 +307,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
         <Button variant="secondary" onClick={() => handleAdd(false)}>
           {added ? (
             <>
-              <Check className="h-5 w-5 text-emerald-600" /> Added to cart
+              <Check className="h-5 w-5" /> Added to cart
             </>
           ) : (
             "Add to cart"
@@ -328,23 +316,23 @@ export function ProductConfigurator({ product }: { product: Product }) {
       </div>
 
       {/* Trust row */}
-      <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-200 pt-4 text-center">
+      <div className="mt-5 grid grid-cols-3 gap-2 border-t-2 border-ink pt-4 text-center">
         <div>
-          <ShieldCheck className="mx-auto h-4 w-4 text-emerald-600" />
-          <p className="mt-1 text-[11px] leading-tight text-slate-500">
+          <ShieldCheck className="mx-auto h-4 w-4 text-ink" />
+          <p className="mt-1 font-mono text-[10px] font-bold uppercase leading-tight text-ink/70">
             {site.guaranteeDays}-day money back
           </p>
         </div>
         <div>
-          <Truck className="mx-auto h-4 w-4 text-blue-600" />
-          <p className="mt-1 text-[11px] leading-tight text-slate-500">
+          <Truck className="mx-auto h-4 w-4 text-ink" />
+          <p className="mt-1 font-mono text-[10px] font-bold uppercase leading-tight text-ink/70">
             Ships in {site.shipping.handlingDays}
           </p>
         </div>
         <div>
-          <RefreshCw className="mx-auto h-4 w-4 text-slate-500" />
-          <p className="mt-1 text-[11px] leading-tight text-slate-500">
-            Free replacement if it stops scanning
+          <RefreshCw className="mx-auto h-4 w-4 text-ink" />
+          <p className="mt-1 font-mono text-[10px] font-bold uppercase leading-tight text-ink/70">
+            Free replacement
           </p>
         </div>
       </div>

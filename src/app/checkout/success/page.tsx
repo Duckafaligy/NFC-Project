@@ -8,13 +8,12 @@ import { site } from "@/lib/site";
 
 /**
  * Landing page after a successful Stripe payment.
- * Stripe redirects here with ?session_id=... — payment is already confirmed
- * by Stripe before the redirect happens.
+ * Stripe redirects here with ?session_id=... after the payment is confirmed.
  */
 export default function CheckoutSuccessPage() {
   const { clear } = useCart();
 
-  // The order is paid — empty the local cart.
+  // The order is paid. Empty the local cart.
   useEffect(() => {
     clear();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -22,13 +21,13 @@ export default function CheckoutSuccessPage() {
 
   return (
     <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-        <CheckCircle2 className="h-9 w-9" />
+      <div className="box mx-auto flex h-16 w-16 items-center justify-center bg-mint">
+        <CheckCircle2 className="h-9 w-9 text-ink" />
       </div>
-      <h1 className="mt-6 font-display text-3xl font-bold text-slate-900">
-        Payment received — you&apos;re all set
+      <h1 className="mt-6 font-display text-3xl uppercase text-ink">
+        Payment received
       </h1>
-      <p className="mx-auto mt-3 max-w-md text-slate-600">
+      <p className="mx-auto mt-3 max-w-md text-ink/70">
         A receipt is on its way to your email. Standard orders ship within{" "}
         {site.shipping.handlingDays}. If you ordered a custom design, we&apos;ll
         email you a proof to approve before anything gets printed.

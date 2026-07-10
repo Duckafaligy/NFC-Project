@@ -22,10 +22,10 @@ export function ProductGrid() {
             key={f}
             onClick={() => setFilter(f)}
             className={cn(
-              "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+              "border-2 border-ink px-4 py-2 text-sm font-bold transition-all",
               filter === f
-                ? "border-slate-900 bg-slate-900 text-white"
-                : "border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-900",
+                ? "bg-ink text-white"
+                : "bg-white text-ink shadow-brutal-sm hover:-translate-y-0.5 hover:shadow-brutal",
             )}
           >
             {f}
@@ -40,7 +40,7 @@ export function ProductGrid() {
       </div>
 
       {filtered.length === 0 && (
-        <p className="mt-12 text-center text-slate-500">
+        <p className="mt-12 text-center text-ink/60">
           No products in this category yet.
         </p>
       )}

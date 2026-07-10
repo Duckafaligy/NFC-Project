@@ -6,18 +6,19 @@ type Variant = "primary" | "secondary" | "ghost";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 border-2 border-ink font-bold uppercase tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-slate-900 text-white shadow-sm hover:bg-slate-700 active:scale-[0.98]",
+    "bg-yolk text-ink shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-x-1 active:translate-y-1 active:shadow-none",
   secondary:
-    "border border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98]",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+    "bg-white text-ink shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-x-1 active:translate-y-1 active:shadow-none",
+  ghost:
+    "border-transparent bg-transparent normal-case tracking-normal font-semibold text-ink hover:border-ink hover:bg-white",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "px-4 py-2 text-sm",
+  sm: "px-4 py-2 text-xs",
   md: "px-5 py-2.5 text-sm",
   lg: "px-7 py-3.5 text-base",
 };

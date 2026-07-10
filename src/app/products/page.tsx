@@ -5,7 +5,7 @@ import { Reveal } from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Products",
   description:
-    "Browse NFC review cards, tags, stickers, and stands for Google reviews, social media, menus, WiFi, and more.",
+    "NFC review cards, tags, stickers, and stands for Google reviews, social media, menus, WiFi, and more.",
 };
 
 export default function ProductsPage() {
@@ -13,12 +13,13 @@ export default function ProductsPage() {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <Reveal>
         <div className="max-w-2xl">
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-            Pick the card that fits your counter
+          <p className="tag text-ink/50">The lineup</p>
+          <h1 className="mt-3 font-display text-4xl uppercase leading-[0.95] text-ink sm:text-5xl">
+            Pick the card for your counter
           </h1>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-4 text-lg text-ink/70">
             Every product ships programmed to your link and can carry your own
-            design. Buy 3+ and pack discounts apply automatically.
+            design. Pack discounts apply automatically from 3 units up.
           </p>
         </div>
       </Reveal>

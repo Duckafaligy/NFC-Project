@@ -60,8 +60,8 @@ export async function POST(request: Request) {
 
     const designLabel = isCustom
       ? item.customMethod === "upload"
-        ? "Custom design — customer artwork"
-        : "Custom design — designed by us"
+        ? "Custom design: customer artwork"
+        : "Custom design: designed by us"
       : "Standard design";
 
     const note = (item.note ?? "").slice(0, 400);

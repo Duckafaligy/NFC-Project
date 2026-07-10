@@ -21,14 +21,14 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b-2 border-ink bg-cream">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-lg font-bold text-slate-900"
+          className="flex items-center gap-2 font-display text-lg uppercase tracking-tight text-ink"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900">
-            <Nfc className="h-5 w-5 text-white" />
+          <span className="flex h-9 w-9 items-center justify-center border-2 border-ink bg-yolk shadow-brutal-sm">
+            <Nfc className="h-5 w-5 text-ink" strokeWidth={2.5} />
           </span>
           {site.name}
         </Link>
@@ -41,10 +41,10 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "border-2 px-4 py-1.5 text-sm font-bold transition-colors",
                   active
-                    ? "bg-slate-100 text-slate-900"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+                    ? "border-ink bg-white shadow-brutal-sm"
+                    : "border-transparent text-ink/70 hover:border-ink hover:bg-white hover:text-ink",
                 )}
               >
                 {l.label}
@@ -56,18 +56,18 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <Link
             href="/checkout"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-900"
+            className="relative flex h-10 w-10 items-center justify-center border-2 border-ink bg-white shadow-brutal-sm transition-all hover:-translate-y-0.5 hover:shadow-brutal"
             aria-label="Cart"
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingBag className="h-5 w-5 text-ink" />
             {itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[11px] font-bold text-white">
+              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center border-2 border-ink bg-bubble px-0.5 font-mono text-[11px] font-bold text-ink">
                 {itemCount}
               </span>
             )}
           </Link>
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 md:hidden"
+            className="flex h-10 w-10 items-center justify-center border-2 border-ink bg-white shadow-brutal-sm md:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >
@@ -77,13 +77,13 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-slate-200 bg-white px-4 py-3 md:hidden">
+        <div className="border-t-2 border-ink bg-cream px-4 py-3 md:hidden">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="block border-2 border-transparent px-4 py-3 text-sm font-bold text-ink hover:border-ink hover:bg-white"
             >
               {l.label}
             </Link>

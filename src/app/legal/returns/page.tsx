@@ -44,7 +44,7 @@ export default function ReturnsPage() {
       <LegalSection heading="How to start a return">
         <p>
           Email{" "}
-          <a href={`mailto:${site.email}`} className="font-medium text-blue-700 underline">
+          <a href={`mailto:${site.email}`} className="font-bold text-ink underline">
             {site.email}
           </a>{" "}
           with your order number and the reason for the return. We&apos;ll reply
@@ -55,7 +55,7 @@ export default function ReturnsPage() {
       <LegalSection heading="Refund timing">
         <p>
           Approved refunds are issued to your original payment method and
-          typically appear within 5–10 business days.
+          typically appear within 5-10 business days.
         </p>
       </LegalSection>
     </LegalLayout>

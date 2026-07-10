@@ -1,7 +1,7 @@
 /**
  * Product catalog (single source of truth).
  *
- * This is a static catalog for the initial build — no database yet.
+ * This is a static catalog for the initial build, no database yet.
  * Swap `products` for a CMS/DB fetch later without changing the UI, as long
  * as the shape of `Product` stays the same.
  */
@@ -34,7 +34,7 @@ export interface Product {
   features: string[];
   useCases: string[];
   specs: { label: string; value: string }[];
-  /** Two-stop gradient (from, to) used for the cinematic product visual. */
+  /** Two accent colors (main, secondary) used for the product visual. */
   accent: [string, string];
   popular?: boolean;
 }
@@ -48,13 +48,13 @@ export const products: Product[] = [
     formFactor: "Card",
     tagline: "Turn happy customers into 5-star reviews",
     summary:
-      "Sits by your register. Customers tap their phone and land straight on your Google review page — no app, no typing, no “I'll do it later.”",
+      "Sits by your register. Customers tap their phone and land on your Google review page. No app, no typing.",
     description:
-      "The moment you hand back the card reader is the moment to ask for a review — and this card makes the ask effortless. Your customer taps their phone to it, your Google review page opens, and they post while the receipt prints. We program it to your exact review link before it ships, so it works out of the box. More reviews mean you show up higher on Google Maps and win the customer who's comparing you to the shop down the street.",
+      "The best moment to ask for a review is right after you hand back the card reader. This card makes the ask easy. Your customer taps their phone to it, your Google review page opens, and they post while the receipt prints. We program it to your exact review link before it ships, so it works out of the box. More reviews push you up in Google Maps and win over the customer comparing you to the shop down the street.",
     basePrice: 14.99,
     customUpcharge: 10,
     features: [
-      "Instant tap-to-review — no app required",
+      "Instant tap-to-review, no app required",
       "Works on virtually all modern smartphones",
       "Direct link to your Google Business review page",
       "Waterproof, scratch-resistant PVC",
@@ -67,7 +67,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215 (504 bytes)" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#f59e0b", "#ef4444"],
+    accent: ["#FFC700", "#FF90E8"],
     popular: true,
   },
   {
@@ -78,16 +78,16 @@ export const products: Product[] = [
     formFactor: "Stand",
     tagline: "A “Tap for Reviews” display for your counter",
     summary:
-      "A weighted counter stand that asks for the review so you don't have to — every customer sees it while they pay.",
+      "A weighted counter stand that asks for the review so you don't have to. Every paying customer sees it.",
     description:
-      "Some days you're too busy to ask. The stand asks for you. It sits next to your card reader with a clear “Tap here to leave us a review” message, so every paying customer gets the invitation — even during the lunch rush. Weighted base means it doesn't slide, tip, or walk away. If a card can get buried under receipts, the stand can't.",
+      "Some days you're too busy to ask. The stand asks for you. It sits next to your card reader with a clear “Tap here to leave us a review” message, so every paying customer gets the invitation, even during the lunch rush. The weighted base doesn't slide, tip, or walk away. A card can get buried under receipts. The stand can't.",
     basePrice: 29.99,
     customUpcharge: 12,
     features: [
-      "Weighted base — won’t tip or slide",
-      "Eye-catching “Tap for Reviews” design",
+      "Weighted base that stays put",
+      "Clear “Tap for Reviews” call to action",
       "Programmed to your Google review link",
-      "Premium acrylic + metal finish",
+      "Acrylic and metal build",
       "Reprogrammable any time",
     ],
     useCases: ["Checkout counters", "Reception desks", "Food trucks", "Bars"],
@@ -97,7 +97,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#f97316", "#db2777"],
+    accent: ["#FF90E8", "#FFC700"],
     popular: true,
   },
   {
@@ -106,17 +106,17 @@ export const products: Product[] = [
     name: "Social Media Card",
     category: "Social Media",
     formFactor: "Card",
-    tagline: "Grow your Instagram, TikTok & Facebook in one tap",
+    tagline: "Grow Instagram, TikTok and Facebook in one tap",
     summary:
-      "One tap opens your social profile so customers can follow you on the spot.",
+      "One tap opens your profile so customers can follow you on the spot, not later.",
     description:
-      "Stop losing followers to forgotten handles. A single tap opens your Instagram, TikTok, or Facebook — or a link hub with all of them — so customers follow you before they walk away. Great for events, pop-ups, and anywhere you want to build an audience.",
+      "Nobody remembers a handle they heard once. With this card, a single tap opens your Instagram, TikTok, or Facebook (or a hub with all of them) so customers hit follow before they walk away. Made for events, pop-ups, and any counter where people are already holding their phones.",
     basePrice: 14.99,
     customUpcharge: 10,
     features: [
       "Link one profile or a full link hub",
-      "Instant follow — no searching handles",
-      "Perfect for events and pop-ups",
+      "Instant follow, no searching handles",
+      "Great for events and pop-ups",
       "Durable matte finish",
       "Reprogrammable in seconds",
     ],
@@ -127,7 +127,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#8b5cf6", "#ec4899"],
+    accent: ["#FF90E8", "#69B9FF"],
   },
   {
     id: "business-card",
@@ -139,14 +139,14 @@ export const products: Product[] = [
     summary:
       "A smart business card that shares your contact, website, and socials instantly.",
     description:
-      "The last business card you’ll ever need. Tap a phone and share your name, phone, email, website, and socials instantly — they can save your contact with one button. Never run out, never reprint. Looks premium and impossible to lose.",
+      "The last business card you'll ever print. Tap a phone and share your name, number, email, website, and socials in one go. They save your contact with one button. Update your details whenever they change and the card keeps working. One card, unlimited shares.",
     basePrice: 19.99,
     customUpcharge: 12,
     features: [
-      "Share contact, website & socials in one tap",
+      "Contact, website and socials in one tap",
       "Save-to-contacts in a single button",
       "Update your details any time",
-      "Premium metal or PVC options",
+      "PVC or brushed metal options",
       "One card, unlimited shares",
     ],
     useCases: ["Sales & real estate", "Consultants", "Networking", "Executives"],
@@ -156,7 +156,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#6d5efc", "#22d3ee"],
+    accent: ["#69B9FF", "#3ECF8E"],
     popular: true,
   },
   {
@@ -169,14 +169,14 @@ export const products: Product[] = [
     summary:
       "A slim tap sticker for tables that opens your digital menu instantly.",
     description:
-      "Give guests your menu without printing a single page. Stick these slim tags on tables, and a tap opens your up-to-date digital menu — change prices or items any time without reprinting. Cleaner tables, happier guests, zero waste.",
+      "Give guests your menu without printing a single page. Stick these slim tags on tables and a tap opens your up-to-date digital menu. Change prices or items any time without reprinting. Cleaner tables, faster ordering, zero paper waste.",
     basePrice: 9.99,
     customUpcharge: 8,
     features: [
       "Opens your digital menu instantly",
       "Update the menu without reprinting",
       "Slim, table-friendly sticker",
-      "Water- and spill-resistant",
+      "Water and spill resistant",
       "Sold individually or in packs",
     ],
     useCases: ["Restaurants", "Cafés & bars", "Food trucks", "Hotels"],
@@ -186,7 +186,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG213" },
       { label: "Range", value: "Up to 3 cm" },
     ],
-    accent: ["#10b981", "#14b8a6"],
+    accent: ["#3ECF8E", "#FFC700"],
   },
   {
     id: "wifi-tag",
@@ -196,13 +196,13 @@ export const products: Product[] = [
     formFactor: "Sticker",
     tagline: "Guest WiFi with a single tap",
     summary:
-      "Guests tap to join your WiFi — no passwords typed, no photos of a sticky note.",
+      "Guests tap to join your WiFi. No passwords read out loud, no sticky notes on the wall.",
     description:
-      "Share guest WiFi the modern way. A tap connects phones to your network automatically — no more spelling out passwords or taping notes to the wall. Perfect for cafés, salons, offices, and rentals.",
+      "Share guest WiFi the modern way. A tap connects phones to your network automatically. Nobody spells out a password, nobody photographs a note taped to the register. When you change the password, reprogram the tag and keep going.",
     basePrice: 9.99,
     customUpcharge: 8,
     features: [
-      "One-tap WiFi join — no password typing",
+      "One-tap WiFi join, no typing",
       "Great for guests and customers",
       "Discreet sticker form factor",
       "Reprogrammable when your password changes",
@@ -215,7 +215,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG213" },
       { label: "Range", value: "Up to 3 cm" },
     ],
-    accent: ["#22d3ee", "#3b82f6"],
+    accent: ["#69B9FF", "#FF90E8"],
   },
   {
     id: "keychain-tag",
@@ -225,15 +225,15 @@ export const products: Product[] = [
     formFactor: "Keychain",
     tagline: "Your link, always on your keys",
     summary:
-      "A durable keychain tag you can hand-tap anywhere to share any link.",
+      "A rugged keychain tag you can tap to any phone, anywhere you work.",
     description:
-      "Carry your link everywhere. This rugged keychain tag can point to your reviews, socials, website, or a link hub — tap it to any phone, any time. Built to survive keys, pockets, and daily life.",
+      "Carry your link everywhere. This keychain tag points to your reviews, socials, website, or a link hub, and you tap it to any customer's phone on the spot. Built with an epoxy coating that survives keys, pockets, and job sites. Made for people whose counter is wherever they're standing.",
     basePrice: 12.99,
     customUpcharge: 9,
     features: [
       "Point it at any link you like",
       "Rugged epoxy-coated build",
-      "Always with you — clips to keys",
+      "Clips to your keys",
       "Reprogrammable any time",
       "Great giveaway item",
     ],
@@ -244,7 +244,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 3 cm" },
     ],
-    accent: ["#a855f7", "#6366f1"],
+    accent: ["#FFC700", "#69B9FF"],
   },
   {
     id: "allinone-card",
@@ -252,18 +252,18 @@ export const products: Product[] = [
     name: "All-in-One Link Card",
     category: "All-in-One",
     formFactor: "Card",
-    tagline: "Reviews, socials, menu & WiFi — one card",
+    tagline: "Reviews, socials, menu and WiFi on one card",
     summary:
       "A single tap opens a branded hub with every link your business needs.",
     description:
-      "Why choose? This card opens a branded link hub with everything at once — Google reviews, Instagram, Facebook, your website, menu, and WiFi. One card does it all, and you can rearrange links any time from your dashboard.",
+      "One card, every link. A tap opens a branded hub with your Google reviews, Instagram, Facebook, website, menu, and WiFi in one place. Rearrange the links whenever your priorities change. If you can't pick one thing to promote, don't.",
     basePrice: 24.99,
     customUpcharge: 12,
     features: [
       "Branded hub with all your links",
-      "Reviews, socials, menu, WiFi & website",
+      "Reviews, socials, menu, WiFi and website",
       "Rearrange links any time",
-      "Premium finish options",
+      "PVC or brushed metal options",
       "One tap, everything",
     ],
     useCases: ["Full-service businesses", "Multi-location brands", "Agencies", "Franchises"],
@@ -273,7 +273,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG216 (888 bytes)" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#6d5efc", "#22d3ee"],
+    accent: ["#3ECF8E", "#FF90E8"],
     popular: true,
   },
 ];

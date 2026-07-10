@@ -41,8 +41,8 @@ export default function PrivacyPage() {
 
       <LegalSection heading="3. Sharing with third parties">
         <p>
-          We share information only with service providers that help us operate —
-          such as payment processors, shipping carriers, and print partners —
+          We share information only with service providers that help us operate,
+          such as payment processors, shipping carriers, and print partners,
           and only as needed to fulfil your order.
         </p>
       </LegalSection>
@@ -60,7 +60,7 @@ export default function PrivacyPage() {
           Depending on where you live, you may have the right to access,
           correct, or delete your personal information. To make a request, email
           us at{" "}
-          <a href={`mailto:${site.email}`} className="font-medium text-blue-700 underline">
+          <a href={`mailto:${site.email}`} className="font-bold text-ink underline">
             {site.email}
           </a>
           .
@@ -78,7 +78,7 @@ export default function PrivacyPage() {
       <LegalSection heading="7. Contact">
         <p>
           Questions about your privacy? Email{" "}
-          <a href={`mailto:${site.email}`} className="font-medium text-blue-700 underline">
+          <a href={`mailto:${site.email}`} className="font-bold text-ink underline">
             {site.email}
           </a>
           .

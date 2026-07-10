@@ -19,7 +19,7 @@ export default function TermsPage() {
       <LegalSection heading="1. Products & services">
         <p>
           {site.name} sells NFC (Near Field Communication) cards, tags,
-          stickers, and stands that link to destinations you choose — such as
+          stickers, and stands that link to destinations you choose, such as
           Google review pages, social media profiles, WiFi networks, menus, and
           websites. You are responsible for the legality and accuracy of the
           destinations you ask us to program.
@@ -80,7 +80,7 @@ export default function TermsPage() {
       <LegalSection heading="8. Contact">
         <p>
           Questions about these Terms? Email us at{" "}
-          <a href={`mailto:${site.email}`} className="font-medium text-blue-700 underline">
+          <a href={`mailto:${site.email}`} className="font-bold text-ink underline">
             {site.email}
           </a>
           .

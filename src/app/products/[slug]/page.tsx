@@ -44,43 +44,41 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-slate-500">
+      <nav className="tag flex items-center gap-1.5 text-ink/50">
         <Link
           href="/products"
-          className="inline-flex items-center gap-1 hover:text-slate-900"
+          className="inline-flex items-center gap-1 hover:text-ink"
         >
           <ArrowLeft className="h-4 w-4" /> Products
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-slate-900">{product.name}</span>
+        <span className="text-ink">{product.name}</span>
       </nav>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-2">
+      <div className="mt-8 grid gap-8 lg:grid-cols-2">
         {/* Visual + copy */}
         <div>
           <Reveal>
-            <div className="overflow-hidden rounded-3xl border border-slate-200 shadow-card">
+            <div className="box group overflow-hidden">
               <ProductVisual
                 name={product.name}
                 accent={product.accent}
                 featured
-                className="aspect-[4/3.4] rounded-none"
+                className="aspect-[4/3.2]"
               />
             </div>
           </Reveal>
 
           <Reveal delay={0.05}>
             <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                {product.category}
-              </p>
-              <h1 className="mt-1 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
+              <p className="tag text-ink/50">{product.category}</p>
+              <h1 className="mt-2 font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
                 {product.name}
               </h1>
-              <p className="mt-2 text-lg font-medium text-slate-700">
+              <p className="mt-2 text-lg font-bold text-ink">
                 {product.tagline}
               </p>
-              <p className="mt-4 text-slate-600">{product.description}</p>
+              <p className="mt-4 text-ink/80">{product.description}</p>
             </div>
           </Reveal>
 
@@ -90,9 +88,11 @@ export default async function ProductPage({
               {product.features.map((f) => (
                 <div
                   key={f}
-                  className="flex items-start gap-2 text-sm text-slate-700"
+                  className="flex items-start gap-2 text-sm font-medium text-ink/80"
                 >
-                  <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600" />
+                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center border-2 border-ink bg-mint">
+                    <Check className="h-3 w-3 text-ink" strokeWidth={3.5} />
+                  </span>
                   {f}
                 </div>
               ))}
@@ -102,14 +102,17 @@ export default async function ProductPage({
           {/* Specs */}
           <Reveal delay={0.15}>
             <div className="mt-8">
-              <h2 className="text-sm font-semibold text-slate-900">
-                Specifications
-              </h2>
-              <dl className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
-                {product.specs.map((s) => (
-                  <div key={s.label} className="bg-white p-4">
-                    <dt className="text-xs text-slate-500">{s.label}</dt>
-                    <dd className="mt-1 text-sm font-semibold text-slate-900">
+              <h2 className="tag text-ink">Specifications</h2>
+              <dl className="box mt-3 grid grid-cols-2 sm:grid-cols-4">
+                {product.specs.map((s, i) => (
+                  <div
+                    key={s.label}
+                    className={`p-4 ${i > 0 ? "border-l-2 border-ink max-sm:border-l-0 max-sm:[&:nth-child(even)]:border-l-2 max-sm:[&:nth-child(n+3)]:border-t-2" : ""}`}
+                  >
+                    <dt className="font-mono text-[11px] uppercase text-ink/50">
+                      {s.label}
+                    </dt>
+                    <dd className="mt-1 text-sm font-bold text-ink">
                       {s.value}
                     </dd>
                   </div>
@@ -121,14 +124,12 @@ export default async function ProductPage({
           {/* Use cases */}
           <Reveal delay={0.2}>
             <div className="mt-6">
-              <h2 className="text-sm font-semibold text-slate-900">
-                Perfect for
-              </h2>
+              <h2 className="tag text-ink">Perfect for</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {product.useCases.map((u) => (
                   <span
                     key={u}
-                    className="rounded-full border border-slate-200 bg-paper px-3 py-1 text-xs text-slate-600"
+                    className="border-2 border-ink bg-white px-3 py-1 text-xs font-bold text-ink"
                   >
                     {u}
                   </span>
@@ -145,36 +146,37 @@ export default async function ProductPage({
       </div>
 
       {/* After you order */}
-      <div className="mt-20 rounded-3xl border border-slate-200 bg-paper p-8 sm:p-10">
-        <h2 className="font-display text-2xl font-bold text-slate-900">
+      <div className="box mt-20 overflow-hidden">
+        <h2 className="border-b-2 border-ink bg-yolk p-6 font-display text-2xl uppercase text-ink sm:px-8">
           What happens after you order
         </h2>
-        <div className="mt-8 grid gap-8 md:grid-cols-3">
+        <div className="grid md:grid-cols-3">
           {[
             {
               step: "Within 48 hours",
-              title: "We program (and design)",
-              desc: "Standard orders are programmed to your link right away. Custom orders get a digital proof by email — nothing prints until you approve it.",
+              title: "We program it",
+              desc: "Standard orders get programmed to your link right away. Custom orders get a digital proof by email, and nothing prints until you approve it.",
             },
             {
-              step: "1–2 business days",
+              step: "1-2 business days",
               title: "It ships",
-              desc: "Your card leaves our hands programmed, tested, and ready. Tracking lands in your inbox.",
+              desc: "Your card leaves programmed and tested. Tracking lands in your inbox.",
             },
             {
-              step: "Day one at the counter",
+              step: "Day one",
               title: "You start asking",
-              desc: "Put it by the register and use one line: “Would you mind leaving us a quick review? Just tap your phone here.” That's it.",
+              desc: "Put it by the register. One line does it: “Mind leaving us a quick review? Tap your phone here.”",
             },
-          ].map((s) => (
-            <div key={s.title}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                {s.step}
-              </p>
-              <h3 className="mt-2 font-display text-lg font-semibold text-slate-900">
+          ].map((s, i) => (
+            <div
+              key={s.title}
+              className={`p-6 sm:p-8 ${i > 0 ? "border-t-2 border-ink md:border-l-2 md:border-t-0" : ""}`}
+            >
+              <p className="tag text-ink/50">{s.step}</p>
+              <h3 className="mt-2 font-display text-lg uppercase text-ink">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">
+              <p className="mt-2 text-sm leading-relaxed text-ink/70">
                 {s.desc}
               </p>
             </div>
@@ -185,7 +187,7 @@ export default async function ProductPage({
       {/* Related */}
       {suggestions.length > 0 && (
         <div className="mt-20">
-          <h2 className="font-display text-2xl font-bold text-slate-900">
+          <h2 className="font-display text-2xl uppercase text-ink">
             You might also like
           </h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
