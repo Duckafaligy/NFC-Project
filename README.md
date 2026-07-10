@@ -271,6 +271,12 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-10 — Upgrade Next.js to patched 15.5.20 (security)
+- Bumped `next` and `eslint-config-next` from `15.1.6` → `15.5.20` to resolve
+  the deprecation/security warning (CVE-2025-66478) that Vercel flagged during
+  build. Same major line, no code changes needed; `npm run build` passes clean
+  (20 routes, 8 product pages prerendered).
+
 ### 2026-07-10 — Fix Vercel deploy (framework detection)
 - Added `vercel.json` with `"framework": "nextjs"`. Vercel had imported the
   project as a static/"Other" site and failed with *"No Output Directory named
