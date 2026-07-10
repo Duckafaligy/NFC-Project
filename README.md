@@ -271,6 +271,13 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-10 — Fix Vercel deploy (framework detection)
+- Added `vercel.json` with `"framework": "nextjs"`. Vercel had imported the
+  project as a static/"Other" site and failed with *"No Output Directory named
+  'public' found"*. Declaring the framework forces the correct Next.js build.
+- If the error persists after redeploy, also set **Framework Preset → Next.js**
+  in Vercel → Project → Settings → Build & Deployment, then Redeploy.
+
 ### 2026-07-10 — Initial build (base scaffold)
 - Scaffolded Next.js 15 + TypeScript + Tailwind 3.4 project (manual scaffold; the
   folder name `NFC-Project` has capitals which `create-next-app` rejects, so
