@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink-950 text-slate-200 antialiased;
+    background-image:
+      radial-gradient(
+        50% 40% at 50% -5%,
+        rgba(109, 94, 252, 0.18) 0%,
+        rgba(5, 6, 10, 0) 70%
+      ),
+      radial-gradient(
+        40% 30% at 100% 0%,
+        rgba(34, 211, 238, 0.1) 0%,
+        rgba(5, 6, 10, 0) 60%
+      );
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-brand-500/40 text-white;
+  }
+}
+
+@layer components {
+  /* Gradient text used for headline accents. */
+  .text-gradient {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+  }
+
+  /* Frosted glass panel. */
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+  }
+
+  /* Subtle grid dot texture overlay. */
+  .grid-texture {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+  }
+
+  /* Animated gradient border wrapper. */
+  .border-shine {
+    position: relative;
+    background:
+      linear-gradient(theme("colors.ink.900"), theme("colors.ink.900"))
+        padding-box,
+      linear-gradient(120deg, #6d5efc, #22d3ee, #6d5efc) border-box;
+    background-size: 100% 100%, 200% 100%;
+    border: 1px solid transparent;
+    animation: shimmer 6s linear infinite;
+  }
+}
+
+/* Custom scrollbar for a polished feel. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0b12;
+}
+::-webkit-scrollbar-thumb {
+  background: #272b42;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f5e;
+}
