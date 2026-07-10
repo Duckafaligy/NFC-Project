@@ -13,11 +13,11 @@ export default function ProductsPage() {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <Reveal>
         <div className="max-w-2xl">
-          <p className="tag text-ink/50">The lineup</p>
-          <h1 className="mt-3 font-display text-4xl uppercase leading-[0.95] text-ink sm:text-5xl">
+          <p className="eyebrow">The lineup</p>
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-stone-900 sm:text-5xl">
             Pick the card for your counter
           </h1>
-          <p className="mt-4 text-lg text-ink/70">
+          <p className="mt-4 text-lg text-stone-600">
             Every product ships programmed to your link and can carry your own
             design. Pack discounts apply automatically from 3 units up.
           </p>

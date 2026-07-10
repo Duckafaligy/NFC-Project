@@ -67,7 +67,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215 (504 bytes)" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#FFC700", "#FF90E8"],
+    accent: ["#F97316", "#FBBF24"],
     popular: true,
   },
   {
@@ -97,7 +97,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#FF90E8", "#FFC700"],
+    accent: ["#F472B6", "#FB923C"],
     popular: true,
   },
   {
@@ -127,7 +127,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#FF90E8", "#69B9FF"],
+    accent: ["#EC4899", "#8B5CF6"],
   },
   {
     id: "business-card",
@@ -156,7 +156,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#69B9FF", "#3ECF8E"],
+    accent: ["#3B82F6", "#22D3EE"],
     popular: true,
   },
   {
@@ -186,7 +186,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG213" },
       { label: "Range", value: "Up to 3 cm" },
     ],
-    accent: ["#3ECF8E", "#FFC700"],
+    accent: ["#10B981", "#84CC16"],
   },
   {
     id: "wifi-tag",
@@ -215,7 +215,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG213" },
       { label: "Range", value: "Up to 3 cm" },
     ],
-    accent: ["#69B9FF", "#FF90E8"],
+    accent: ["#0EA5E9", "#6366F1"],
   },
   {
     id: "keychain-tag",
@@ -244,7 +244,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG215" },
       { label: "Range", value: "Up to 3 cm" },
     ],
-    accent: ["#FFC700", "#69B9FF"],
+    accent: ["#F59E0B", "#F97316"],
   },
   {
     id: "allinone-card",
@@ -273,7 +273,7 @@ export const products: Product[] = [
       { label: "Chip", value: "NTAG216 (888 bytes)" },
       { label: "Range", value: "Up to 4 cm" },
     ],
-    accent: ["#3ECF8E", "#FF90E8"],
+    accent: ["#14B8A6", "#3B82F6"],
     popular: true,
   },
 ];

@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useState,
   type ReactNode,
 } from "react";
 import { lineTotal } from "@/lib/pricing";
@@ -83,6 +84,10 @@ interface CartContextValue {
   removeItem: (key: string) => void;
   setQuantity: (key: string, quantity: number) => void;
   clear: () => void;
+  /** Slide-out mini cart. */
+  drawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -98,6 +103,7 @@ export function buildCartKey(
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { items: [] });
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Hydrate from localStorage on mount.
   useEffect(() => {
@@ -146,8 +152,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setQuantity: (key, quantity) =>
         dispatch({ type: "SET_QTY", key, quantity }),
       clear: () => dispatch({ type: "CLEAR" }),
+      drawerOpen,
+      openDrawer: () => setDrawerOpen(true),
+      closeDrawer: () => setDrawerOpen(false),
     };
-  }, [state.items]);
+  }, [state.items, drawerOpen]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

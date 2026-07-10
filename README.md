@@ -154,33 +154,33 @@ src/
 
 ## Design system
 
-**Minimal neubrutalism with bento grids.** Grounded in the documented
-neobrutalism pattern language (NN/g, neubrutalism.com): thick black outlines,
-hard offset shadows with zero blur, flat bold color blocks, chunky type, and
-generous whitespace to keep it minimal rather than chaotic.
+**Warm, welcoming, conversion-first.** Soft bento layouts on a cream page,
+white rounded cards, one friendly orange accent, pastel tint tiles.
 
-- **Surfaces:** warm `cream` (`#FAF6EE`) page background; white boxes.
-- **The box:** every card/button/input is `border-2 border-ink` +
-  `shadow-brutal` (hard `4px 4px 0` offset, no blur). Utility classes `.box`
-  and `.box-hover` (lifts on hover, presses flat on click) in `globals.css`.
-- **Ink:** true near-black `#111111` for borders and text.
-- **Accents (flat, no gradients):** `yolk` yellow `#FFC700` (primary/CTA),
-  `bubble` pink `#FF90E8`, `mint` green `#3ECF8E`, `sky` blue `#69B9FF`.
-  Used as whole-tile background colors in bento grids.
-- **Corners:** sharp. No border radius anywhere.
-- **Type:** `Archivo Black` for display (uppercase headlines), `Space Grotesk`
-  for body, `Space Mono` for labels/prices/eyebrows (`.tag` utility).
-- **Bento grids:** the hero is a 12-column bento (main tile + photo tile +
-  four colored stat tiles); industries section is a mixed-size photo bento.
-- **Brutalist furniture:** scrolling `Marquee` strip, black announcement bar,
-  black footer, comparison table with a highlighted yellow column.
-- **Motion:** `Reveal` fade-up on scroll; marquee scroll; translate-on-hover
-  with shadow growth on interactive boxes.
-- **Imagery:** real photos in `public/images/` inside bordered boxes;
-  `ProductVisual` renders a flat-color card with black border + hard shadow.
+- **Surfaces:** `cream` (#FDFBF7) page; white cards via the `.card` utility
+  (rounded-2xl, stone-200 border, `shadow-soft`); `.card-hover` lifts gently.
+- **Text:** stone-900 headings, stone-600 body, stone-400/500 secondary.
+- **Accent:** orange-500/600 for CTAs, eyebrows (`.eyebrow`), highlights.
+  Pastel tiles use orange-100 / sky-100 / emerald-100 / violet-100.
+- **Buttons:** rounded-full; primary = orange fill, secondary = white bordered.
+- **Type:** Plus Jakarta Sans for display, Inter for body (sentence case).
+- **Bento:** hero is a 12-column bento (main card + photo + 4 pastel stat
+  tiles); industries is a mixed-size photo bento.
+- **Dark anchors:** announcement bar and final CTA only (stone-900).
+- **Imagery:** real photos in `public/images/`; `ProductVisual` renders a
+  gradient card on a pastel panel.
 
-All theme tokens live in `tailwind.config.ts`. Change them once and it
-propagates everywhere.
+**E-commerce conversion checklist built in:**
+- Slide-out **cart drawer** (`CartDrawer`) opens on add-to-cart, with a
+  **free-shipping progress bar** ("Add $X more for free shipping")
+- Free-shipping progress repeated in the checkout order summary
+- **Estimated delivery date** on product pages ("Order today, arrives ...")
+- **Payment method badges** (checkout + footer)
+- **Newsletter signup with 10% first-order incentive** (footer; needs email
+  service wiring + a WELCOME10 promo code in Stripe; checkout already has
+  `allow_promotion_codes: true`)
+- Benefits strip (shipping / guarantee / no fees / support), trust rows,
+  guarantee banner, FAQ, comparison table, volume pack discounts
 
 **Copy rules:** no em dashes, no AI-flavored filler. Short sentences, concrete
 counter-moment language. Keep this voice when adding content.
@@ -297,6 +297,19 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-10 — Redesign #3: warm & welcoming + conversion essentials (replaces brutalism)
+- Softened the brutalist theme at the owner's request: rounded cards, soft
+  shadows, cream background, friendly orange accent, pastel bento tiles,
+  Plus Jakarta Sans + Inter, sentence-case copy. Marquee removed.
+- **Added standard e-commerce conversion features:** slide-out cart drawer
+  with free-shipping progress bar (opens on add-to-cart), delivery date
+  estimate on product pages, payment method badges, newsletter block with
+  10% first-order incentive, benefits strip, `allow_promotion_codes` enabled
+  in Stripe checkout.
+- Product accent colors warmed; drawer state added to CartContext.
+- Verified with clean build and headless-Chromium screenshots (hero, product
+  page, open cart drawer).
 
 ### 2026-07-10 — Redesign #2: minimal neubrutalism + bento grids (replaces light premium)
 - Full re-theme at the owner's request, grounded in researched neobrutalism

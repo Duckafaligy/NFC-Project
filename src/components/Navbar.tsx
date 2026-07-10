@@ -17,18 +17,18 @@ const links = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const { itemCount } = useCart();
+  const { itemCount, openDrawer } = useCart();
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-ink bg-cream">
+    <header className="sticky top-0 z-50 border-b border-stone-200 bg-cream/90 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-lg uppercase tracking-tight text-ink"
+          className="flex items-center gap-2 font-display text-lg font-extrabold text-stone-900"
         >
-          <span className="flex h-9 w-9 items-center justify-center border-2 border-ink bg-yolk shadow-brutal-sm">
-            <Nfc className="h-5 w-5 text-ink" strokeWidth={2.5} />
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500 shadow-soft">
+            <Nfc className="h-5 w-5 text-white" strokeWidth={2.5} />
           </span>
           {site.name}
         </Link>
@@ -41,10 +41,10 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 className={cn(
-                  "border-2 px-4 py-1.5 text-sm font-bold transition-colors",
+                  "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   active
-                    ? "border-ink bg-white shadow-brutal-sm"
-                    : "border-transparent text-ink/70 hover:border-ink hover:bg-white hover:text-ink",
+                    ? "bg-white text-stone-900 shadow-soft"
+                    : "text-stone-500 hover:bg-white hover:text-stone-900",
                 )}
               >
                 {l.label}
@@ -54,20 +54,20 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link
-            href="/checkout"
-            className="relative flex h-10 w-10 items-center justify-center border-2 border-ink bg-white shadow-brutal-sm transition-all hover:-translate-y-0.5 hover:shadow-brutal"
-            aria-label="Cart"
+          <button
+            onClick={openDrawer}
+            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 shadow-soft transition-all hover:shadow-lift"
+            aria-label="Open cart"
           >
-            <ShoppingBag className="h-5 w-5 text-ink" />
+            <ShoppingBag className="h-5 w-5" />
             {itemCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center border-2 border-ink bg-bubble px-0.5 font-mono text-[11px] font-bold text-ink">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-[11px] font-bold text-white">
                 {itemCount}
               </span>
             )}
-          </Link>
+          </button>
           <button
-            className="flex h-10 w-10 items-center justify-center border-2 border-ink bg-white shadow-brutal-sm md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 md:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >
@@ -77,13 +77,13 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t-2 border-ink bg-cream px-4 py-3 md:hidden">
+        <div className="border-t border-stone-200 bg-cream px-4 py-3 md:hidden">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block border-2 border-transparent px-4 py-3 text-sm font-bold text-ink hover:border-ink hover:bg-white"
+              className="block rounded-xl px-4 py-3 text-sm font-semibold text-stone-700 hover:bg-white"
             >
               {l.label}
             </Link>

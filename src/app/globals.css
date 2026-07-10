@@ -12,40 +12,42 @@
   }
 
   body {
-    @apply bg-cream text-ink antialiased;
+    @apply bg-cream text-stone-600 antialiased;
   }
 
   ::selection {
-    @apply bg-yolk text-ink;
+    @apply bg-orange-200 text-stone-900;
   }
 }
 
 @layer components {
-  /* The core neubrutalist unit: white box, 2px black border, hard shadow. */
-  .box {
-    @apply border-2 border-ink bg-white shadow-brutal;
+  /* Standard card: white, rounded, subtle border, soft shadow. */
+  .card {
+    @apply rounded-2xl border border-stone-200 bg-white shadow-soft;
   }
 
-  /* Interactive version: lifts on hover, presses flat on click. */
-  .box-hover {
-    @apply transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-x-1 active:translate-y-1 active:shadow-none;
+  /* Interactive card: gentle lift on hover. */
+  .card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift;
   }
 
-  /* Mono uppercase label used for eyebrows, tags, and prices. */
-  .tag {
-    @apply font-mono text-xs font-bold uppercase tracking-widest;
+  /* Small colored eyebrow label. */
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-wider text-orange-600;
   }
 }
 
-/* Square scrollbar, in keeping with the theme. */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #faf6ee;
-  border-left: 2px solid #111111;
+  background: #fdfbf7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #111111;
+  background: #d6d3d1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
 }

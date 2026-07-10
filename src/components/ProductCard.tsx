@@ -8,30 +8,35 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="box box-hover group relative flex flex-col overflow-hidden"
+      className="card card-hover group relative flex flex-col overflow-hidden"
     >
       {product.popular && (
-        <span className="absolute left-3 top-3 z-10 border-2 border-ink bg-bubble px-2 py-0.5 font-mono text-[11px] font-bold uppercase text-ink">
+        <span className="absolute left-3 top-3 z-10 rounded-full bg-orange-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-soft">
           Best seller
         </span>
       )}
-      <div className="border-b-2 border-ink">
+      <div className="p-3 pb-0">
         <ProductVisual name={product.name} accent={product.accent} />
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <p className="tag text-ink/50">{product.category}</p>
-        <h3 className="mt-1 font-display text-lg uppercase leading-tight text-ink">
+        <p className="eyebrow">{product.category}</p>
+        <h3 className="mt-1 font-display text-lg font-bold text-stone-900">
           {product.name}
         </h3>
-        <p className="mt-2 flex-1 text-sm text-ink/70">{product.summary}</p>
+        <p className="mt-1.5 flex-1 text-sm text-stone-500">
+          {product.summary}
+        </p>
 
         <div className="mt-4 flex items-center justify-between">
-          <p className="font-mono text-lg font-bold text-ink">
-            {formatPrice(product.basePrice)}
-          </p>
-          <span className="flex h-10 w-10 items-center justify-center border-2 border-ink bg-white transition-colors group-hover:bg-yolk">
-            <ArrowUpRight className="h-5 w-5 text-ink" />
+          <div>
+            <span className="text-xs text-stone-400">from</span>
+            <p className="font-display text-xl font-extrabold text-stone-900">
+              {formatPrice(product.basePrice)}
+            </p>
+          </div>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-600 transition-colors group-hover:bg-orange-500 group-hover:text-white">
+            <ArrowUpRight className="h-5 w-5" />
           </span>
         </div>
       </div>

@@ -44,22 +44,22 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="tag flex items-center gap-1.5 text-ink/50">
+      <nav className="flex items-center gap-1.5 text-sm text-stone-400">
         <Link
           href="/products"
-          className="inline-flex items-center gap-1 hover:text-ink"
+          className="inline-flex items-center gap-1 hover:text-stone-900"
         >
           <ArrowLeft className="h-4 w-4" /> Products
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-ink">{product.name}</span>
+        <span className="font-semibold text-stone-700">{product.name}</span>
       </nav>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         {/* Visual + copy */}
         <div>
           <Reveal>
-            <div className="box group overflow-hidden">
+            <div className="card overflow-hidden p-3">
               <ProductVisual
                 name={product.name}
                 accent={product.accent}
@@ -71,14 +71,14 @@ export default async function ProductPage({
 
           <Reveal delay={0.05}>
             <div className="mt-6">
-              <p className="tag text-ink/50">{product.category}</p>
-              <h1 className="mt-2 font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
+              <p className="eyebrow">{product.category}</p>
+              <h1 className="mt-1 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
                 {product.name}
               </h1>
-              <p className="mt-2 text-lg font-bold text-ink">
+              <p className="mt-2 text-lg font-semibold text-stone-700">
                 {product.tagline}
               </p>
-              <p className="mt-4 text-ink/80">{product.description}</p>
+              <p className="mt-4 text-stone-600">{product.description}</p>
             </div>
           </Reveal>
 
@@ -88,10 +88,10 @@ export default async function ProductPage({
               {product.features.map((f) => (
                 <div
                   key={f}
-                  className="flex items-start gap-2 text-sm font-medium text-ink/80"
+                  className="flex items-start gap-2 text-sm text-stone-600"
                 >
-                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center border-2 border-ink bg-mint">
-                    <Check className="h-3 w-3 text-ink" strokeWidth={3.5} />
+                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                    <Check className="h-3 w-3 text-emerald-700" strokeWidth={3} />
                   </span>
                   {f}
                 </div>
@@ -102,17 +102,14 @@ export default async function ProductPage({
           {/* Specs */}
           <Reveal delay={0.15}>
             <div className="mt-8">
-              <h2 className="tag text-ink">Specifications</h2>
-              <dl className="box mt-3 grid grid-cols-2 sm:grid-cols-4">
-                {product.specs.map((s, i) => (
-                  <div
-                    key={s.label}
-                    className={`p-4 ${i > 0 ? "border-l-2 border-ink max-sm:border-l-0 max-sm:[&:nth-child(even)]:border-l-2 max-sm:[&:nth-child(n+3)]:border-t-2" : ""}`}
-                  >
-                    <dt className="font-mono text-[11px] uppercase text-ink/50">
-                      {s.label}
-                    </dt>
-                    <dd className="mt-1 text-sm font-bold text-ink">
+              <h2 className="text-sm font-bold text-stone-900">
+                Specifications
+              </h2>
+              <dl className="card mt-3 grid grid-cols-2 gap-px overflow-hidden bg-stone-100 p-0 sm:grid-cols-4">
+                {product.specs.map((s) => (
+                  <div key={s.label} className="bg-white p-4">
+                    <dt className="text-xs text-stone-400">{s.label}</dt>
+                    <dd className="mt-1 text-sm font-semibold text-stone-900">
                       {s.value}
                     </dd>
                   </div>
@@ -124,12 +121,12 @@ export default async function ProductPage({
           {/* Use cases */}
           <Reveal delay={0.2}>
             <div className="mt-6">
-              <h2 className="tag text-ink">Perfect for</h2>
+              <h2 className="text-sm font-bold text-stone-900">Perfect for</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {product.useCases.map((u) => (
                   <span
                     key={u}
-                    className="border-2 border-ink bg-white px-3 py-1 text-xs font-bold text-ink"
+                    className="rounded-full border border-stone-200 bg-white px-3 py-1 text-xs font-semibold text-stone-600"
                   >
                     {u}
                   </span>
@@ -146,11 +143,12 @@ export default async function ProductPage({
       </div>
 
       {/* After you order */}
-      <div className="box mt-20 overflow-hidden">
-        <h2 className="border-b-2 border-ink bg-yolk p-6 font-display text-2xl uppercase text-ink sm:px-8">
-          What happens after you order
+      <div className="card mt-20 p-8 sm:p-10">
+        <p className="eyebrow">What happens next</p>
+        <h2 className="mt-2 font-display text-2xl font-extrabold text-stone-900">
+          After you order
         </h2>
-        <div className="grid md:grid-cols-3">
+        <div className="mt-8 grid gap-8 md:grid-cols-3">
           {[
             {
               step: "Within 48 hours",
@@ -167,16 +165,15 @@ export default async function ProductPage({
               title: "You start asking",
               desc: "Put it by the register. One line does it: “Mind leaving us a quick review? Tap your phone here.”",
             },
-          ].map((s, i) => (
-            <div
-              key={s.title}
-              className={`p-6 sm:p-8 ${i > 0 ? "border-t-2 border-ink md:border-l-2 md:border-t-0" : ""}`}
-            >
-              <p className="tag text-ink/50">{s.step}</p>
-              <h3 className="mt-2 font-display text-lg uppercase text-ink">
+          ].map((s) => (
+            <div key={s.title}>
+              <p className="text-xs font-bold uppercase tracking-wider text-orange-600">
+                {s.step}
+              </p>
+              <h3 className="mt-2 font-display text-lg font-bold text-stone-900">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink/70">
+              <p className="mt-2 text-sm leading-relaxed text-stone-500">
                 {s.desc}
               </p>
             </div>
@@ -187,7 +184,7 @@ export default async function ProductPage({
       {/* Related */}
       {suggestions.length > 0 && (
         <div className="mt-20">
-          <h2 className="font-display text-2xl uppercase text-ink">
+          <h2 className="font-display text-2xl font-extrabold text-stone-900">
             You might also like
           </h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

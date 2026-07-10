@@ -80,7 +80,7 @@ export default function TermsPage() {
       <LegalSection heading="8. Contact">
         <p>
           Questions about these Terms? Email us at{" "}
-          <a href={`mailto:${site.email}`} className="font-bold text-ink underline">
+          <a href={`mailto:${site.email}`} className="font-semibold text-orange-700 underline">
             {site.email}
           </a>
           .

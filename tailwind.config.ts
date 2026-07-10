@@ -1,10 +1,9 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Neubrutalist minimal theme.
- * Cream background, true-black 2px borders, hard offset shadows (no blur),
- * flat accent blocks (yellow / pink / green / blue), sharp corners.
- * Display: Archivo Black. Body: Space Grotesk. Labels: Space Mono.
+ * Warm, welcoming e-commerce theme.
+ * Cream background, white rounded cards with soft shadows, warm orange
+ * accent, pastel tint tiles for bento sections. Friendly sentence-case type.
  */
 const config: Config = {
   content: [
@@ -15,31 +14,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#FAF6EE",
-        ink: "#111111",
-        yolk: "#FFC700",
-        bubble: "#FF90E8",
-        mint: "#3ECF8E",
-        sky: "#69B9FF",
+        cream: "#FDFBF7",
+        ink: "#1C1917",
       },
       fontFamily: {
-        display: ["var(--font-archivo)", "system-ui", "sans-serif"],
-        sans: ["var(--font-grotesk)", "system-ui", "sans-serif"],
-        mono: ["var(--font-space-mono)", "ui-monospace", "monospace"],
+        display: ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        brutal: "4px 4px 0 0 #111111",
-        "brutal-lg": "8px 8px 0 0 #111111",
-        "brutal-sm": "2px 2px 0 0 #111111",
+        soft: "0 1px 3px rgb(28 25 23 / 0.04), 0 4px 14px rgb(28 25 23 / 0.06)",
+        lift: "0 2px 6px rgb(28 25 23 / 0.05), 0 12px 32px rgb(28 25 23 / 0.10)",
       },
       keyframes: {
-        marquee: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
         },
       },
       animation: {
-        marquee: "marquee 28s linear infinite",
+        float: "float 6s ease-in-out infinite",
       },
     },
   },

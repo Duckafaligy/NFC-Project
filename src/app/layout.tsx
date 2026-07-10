@@ -1,29 +1,22 @@
 import type { Metadata } from "next";
-import { Archivo_Black, Space_Grotesk, Space_Mono } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
+import { CartDrawer } from "@/components/CartDrawer";
 import { site } from "@/lib/site";
 
-const archivo = Archivo_Black({
-  weight: "400",
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-archivo",
+  variable: "--font-inter",
   display: "swap",
 });
 
-const grotesk = Space_Grotesk({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-grotesk",
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-space-mono",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -47,16 +40,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${archivo.variable} ${grotesk.variable} ${spaceMono.variable}`}
-    >
+    <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <body className="min-h-screen font-sans">
         <CartProvider>
           <AnnouncementBar />
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <CartDrawer />
         </CartProvider>
       </body>
     </html>

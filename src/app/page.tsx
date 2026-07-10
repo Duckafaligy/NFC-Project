@@ -7,17 +7,26 @@ import {
   BadgeCheck,
   RefreshCw,
   Layers,
+  Truck,
+  MessageCircleHeart,
   X,
   Check,
   Minus,
+  Star,
 } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
-import { Marquee } from "@/components/Marquee";
 import { Testimonials } from "@/components/Testimonials";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
+
+const benefits = [
+  { icon: Truck, title: "Free shipping over $50", desc: "Standard orders ship in 1-2 days" },
+  { icon: ShieldCheck, title: "30-day money back", desc: "Full refund, no restocking fee" },
+  { icon: RefreshCw, title: "No subscriptions", desc: "Buy once, own it, reprogram free" },
+  { icon: MessageCircleHeart, title: "Real support", desc: "We reply within one business day" },
+];
 
 const industries = [
   { img: "/images/barbershop.jpg", name: "Barbershops", line: "Card at the register. Tap while they check the cut.", big: true },
@@ -74,43 +83,46 @@ export default function HomePage() {
         <div className="grid gap-4 lg:grid-cols-12">
           {/* Main tile */}
           <Reveal className="lg:col-span-7">
-            <div className="box flex h-full flex-col justify-center p-8 sm:p-12">
-              <p className="tag text-ink/50">
+            <div className="card flex h-full flex-col justify-center p-8 sm:p-12">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">
+                <Star className="h-3.5 w-3.5 fill-orange-500 text-orange-500" />
                 NFC review cards for local business
-              </p>
-              <h1 className="mt-4 font-display text-4xl uppercase leading-[0.95] tracking-tight text-ink sm:text-6xl">
-                More Google reviews.
-                <br />
-                <span className="bg-yolk px-2">One tap</span> at the counter.
+              </span>
+              <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-stone-900 sm:text-5xl lg:text-6xl">
+                More Google reviews, one friendly tap away
               </h1>
-              <p className="mt-6 max-w-lg text-lg text-ink/80">
+              <p className="mt-5 max-w-lg text-lg text-stone-600">
                 Put a TapLink card next to your register. A customer taps their
                 phone, your review page opens, and they post before the receipt
-                finishes printing. No app. No QR code.
+                finishes printing. No app, no QR code.
               </p>
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <ButtonLink href="/products/google-review-card" size="lg">
                   Get the review card <ArrowRight className="h-5 w-5" />
                 </ButtonLink>
                 <ButtonLink href="/products" size="lg" variant="secondary">
-                  All products
+                  Browse all products
                 </ButtonLink>
               </div>
+              <p className="mt-6 flex items-center gap-2 text-sm text-stone-500">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                {site.guaranteeDays}-day money-back guarantee on every order
+              </p>
             </div>
           </Reveal>
 
           {/* Photo tile */}
           <Reveal delay={0.05} className="lg:col-span-5">
-            <div className="box relative h-64 overflow-hidden lg:h-full">
+            <div className="card relative h-64 overflow-hidden p-0 lg:h-full">
               <Image
                 src="/images/counter-pay.jpg"
                 alt="A customer tapping their phone at a shop counter"
                 fill
                 priority
-                className="object-cover"
+                className="rounded-2xl object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"
               />
-              <span className="absolute bottom-3 left-3 border-2 border-ink bg-white px-2 py-1 font-mono text-xs font-bold uppercase text-ink">
+              <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-stone-800 shadow-soft">
                 The tap, mid-checkout
               </span>
             </div>
@@ -118,40 +130,44 @@ export default function HomePage() {
 
           {/* Stat tiles */}
           <Reveal delay={0.1} className="lg:col-span-3">
-            <div className="box h-full bg-yolk p-6">
-              <p className="font-display text-4xl text-ink">98%</p>
-              <p className="mt-2 text-sm font-medium text-ink">
+            <div className="h-full rounded-2xl bg-orange-100 p-6">
+              <p className="font-display text-4xl font-extrabold text-orange-700">
+                98%
+              </p>
+              <p className="mt-2 text-sm text-stone-700">
                 of people read reviews before picking a local business
                 (BrightLocal survey)
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.14} className="lg:col-span-3">
-            <div className="box h-full p-6">
-              <Smartphone className="h-6 w-6 text-ink" />
-              <p className="mt-2 font-display text-xl uppercase text-ink">
-                No app
+            <div className="card h-full p-6">
+              <Smartphone className="h-6 w-6 text-orange-600" />
+              <p className="mt-2 font-display text-xl font-extrabold text-stone-900">
+                No app needed
               </p>
-              <p className="mt-1 text-sm text-ink/70">
+              <p className="mt-1 text-sm text-stone-500">
                 Works on iPhone and Android out of the box
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.18} className="lg:col-span-3">
-            <div className="box h-full bg-bubble p-6">
-              <p className="font-display text-4xl text-ink">$0</p>
-              <p className="mt-2 text-sm font-medium text-ink">
+            <div className="h-full rounded-2xl bg-sky-100 p-6">
+              <p className="font-display text-4xl font-extrabold text-sky-700">
+                $0
+              </p>
+              <p className="mt-2 text-sm text-stone-700">
                 per month. Buy the card once and you own it.
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.22} className="lg:col-span-3">
-            <div className="box h-full bg-mint p-6">
-              <ShieldCheck className="h-6 w-6 text-ink" />
-              <p className="mt-2 font-display text-xl uppercase text-ink">
+            <div className="h-full rounded-2xl bg-emerald-100 p-6">
+              <ShieldCheck className="h-6 w-6 text-emerald-700" />
+              <p className="mt-2 font-display text-xl font-extrabold text-stone-900">
                 {site.guaranteeDays}-day returns
               </p>
-              <p className="mt-1 text-sm font-medium text-ink">
+              <p className="mt-1 text-sm text-stone-700">
                 Full refund if it doesn&apos;t earn its spot
               </p>
             </div>
@@ -159,50 +175,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== MARQUEE ===== */}
-      <Marquee />
+      {/* ===== BENEFITS STRIP ===== */}
+      <section className="border-y border-stone-200 bg-white">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4 lg:px-8">
+          {benefits.map((b) => (
+            <div key={b.title} className="flex items-start gap-3">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100">
+                <b.icon className="h-5 w-5 text-orange-600" />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-stone-900">{b.title}</p>
+                <p className="text-xs text-stone-500">{b.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* ===== HOW IT GOES AT THE COUNTER ===== */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <h2 className="font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
-            How it goes at the counter
-          </h2>
-          <p className="mt-3 max-w-xl text-ink/70">
-            The best moment to ask for a review is right after you hand back the
-            card reader. Three steps, twenty seconds.
-          </p>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Twenty seconds, start to finish</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              How it goes at the counter
+            </h2>
+            <p className="mt-3 text-stone-500">
+              The best moment to ask for a review is right after you hand back
+              the card reader.
+            </p>
+          </div>
         </Reveal>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
             {
-              n: "01",
+              n: "1",
               title: "The handoff",
               desc: "You finish the cut, pour the coffee, close the ticket. The customer is happy and their phone is already in their hand.",
-              bg: "bg-white",
             },
             {
-              n: "02",
+              n: "2",
               title: "The tap",
               desc: "You ask once: “Mind leaving us a quick review? Just tap your phone here.” They hold it to the card and your review page opens.",
-              bg: "bg-sky",
             },
             {
-              n: "03",
+              n: "3",
               title: "The post",
               desc: "Five stars, two lines, posted while the receipt prints. Not forgotten on the drive home.",
-              bg: "bg-white",
             },
           ].map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <div className={`box h-full p-7 ${s.bg}`}>
-                <span className="inline-block border-2 border-ink bg-white px-2 py-1 font-mono text-sm font-bold text-ink">
+              <div className="card h-full p-7">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 font-display text-lg font-extrabold text-white">
                   {s.n}
                 </span>
-                <h3 className="mt-4 font-display text-xl uppercase text-ink">
+                <h3 className="mt-4 font-display text-xl font-bold text-stone-900">
                   {s.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink/80">
+                <p className="mt-2 text-sm leading-relaxed text-stone-500">
                   {s.desc}
                 </p>
               </div>
@@ -216,10 +246,11 @@ export default function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <Reveal>
             <div>
-              <h2 className="font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
+              <p className="eyebrow">Shop</p>
+              <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
                 Best sellers
               </h2>
-              <p className="mt-3 max-w-xl text-ink/70">
+              <p className="mt-3 max-w-xl text-stone-500">
                 Buy 3 and save 10%. Buy 5, save 15%. Buy 10, save 20%. Most
                 shops take three: counter, door, spare.
               </p>
@@ -228,9 +259,9 @@ export default function HomePage() {
           <Reveal>
             <Link
               href="/products"
-              className="border-b-2 border-ink font-bold text-ink hover:bg-yolk"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-orange-600 hover:text-orange-700"
             >
-              View all products →
+              View all products <ArrowRight className="h-4 w-4" />
             </Link>
           </Reveal>
         </div>
@@ -246,47 +277,56 @@ export default function HomePage() {
       {/* ===== NFC VS QR VS ASKING ===== */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <h2 className="font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
-            &ldquo;Why not just print a QR code?&rdquo;
-          </h2>
-          <p className="mt-3 max-w-xl text-ink/70">
-            We get this question at every door. Here is how the three options
-            stack up.
-          </p>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Honest comparison</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              &ldquo;Why not just print a QR code?&rdquo;
+            </h2>
+            <p className="mt-3 text-stone-500">
+              We get this question at every door. Here is how the three options
+              stack up.
+            </p>
+          </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="box mt-10 overflow-x-auto">
+          <div className="card mt-10 overflow-x-auto p-0">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
-                <tr className="border-b-2 border-ink bg-cream">
+                <tr className="border-b border-stone-200">
                   <th className="p-4"> </th>
-                  <th className="bg-yolk p-4 font-display text-base uppercase text-ink">
+                  <th className="rounded-t-xl bg-orange-50 p-4 font-display text-base font-extrabold text-orange-700">
                     TapLink NFC
                   </th>
-                  <th className="tag p-4 text-ink/60">Paper QR code</th>
-                  <th className="tag p-4 text-ink/60">Just asking</th>
+                  <th className="p-4 font-semibold text-stone-500">
+                    Paper QR code
+                  </th>
+                  <th className="p-4 font-semibold text-stone-500">
+                    Just asking
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {comparison.map((row) => (
+                {comparison.map((row, ri) => (
                   <tr
                     key={row.label}
-                    className="border-b-2 border-ink last:border-0"
+                    className="border-b border-stone-100 last:border-0"
                   >
-                    <td className="p-4 font-bold text-ink">{row.label}</td>
+                    <td className="p-4 font-semibold text-stone-900">
+                      {row.label}
+                    </td>
                     {[row.nfc, row.qr, row.asking].map((cell, i) => (
                       <td
                         key={i}
-                        className={`p-4 text-ink/70 ${i === 0 ? "bg-yolk/30" : ""}`}
+                        className={`p-4 text-stone-500 ${i === 0 ? "bg-orange-50" : ""} ${i === 0 && ri === comparison.length - 1 ? "rounded-b-xl" : ""}`}
                       >
                         {cell === true ? (
-                          <Check className="h-5 w-5 text-ink" strokeWidth={3} />
+                          <Check className="h-5 w-5 text-emerald-600" />
                         ) : cell === false ? (
-                          <X className="h-5 w-5 text-ink/40" strokeWidth={3} />
+                          <X className="h-5 w-5 text-stone-300" />
                         ) : cell === "—" ? (
-                          <Minus className="h-5 w-5 text-ink/30" />
+                          <Minus className="h-5 w-5 text-stone-300" />
                         ) : (
-                          <span className="font-mono text-xs">{cell}</span>
+                          <span className="text-xs">{cell}</span>
                         )}
                       </td>
                     ))}
@@ -297,7 +337,7 @@ export default function HomePage() {
           </div>
         </Reveal>
         <Reveal delay={0.15}>
-          <p className="mt-4 font-mono text-xs text-ink/50">
+          <p className="mt-4 text-center text-xs text-stone-400">
             Want both? We print a QR code on the back of your card as a
             fallback, free.
           </p>
@@ -307,13 +347,16 @@ export default function HomePage() {
       {/* ===== INDUSTRIES BENTO ===== */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <h2 className="font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
-            Built for places with counters
-          </h2>
-          <p className="mt-3 max-w-xl text-ink/70">
-            Anywhere customers stand with a phone in hand, the card earns its
-            keep.
-          </p>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Who it&apos;s for</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              Built for places with counters
+            </h2>
+            <p className="mt-3 text-stone-500">
+              Anywhere customers stand with a phone in hand, the card earns its
+              keep.
+            </p>
+          </div>
         </Reveal>
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {industries.map((biz, i) => (
@@ -323,22 +366,21 @@ export default function HomePage() {
               className={biz.big ? "sm:col-span-2 sm:row-span-2" : ""}
             >
               <div
-                className={`box group relative overflow-hidden ${biz.big ? "h-full min-h-[16rem] sm:min-h-[33rem]" : "h-64"}`}
+                className={`group relative overflow-hidden rounded-2xl shadow-soft ${biz.big ? "h-full min-h-[16rem] sm:min-h-[33rem]" : "h-64"}`}
               >
                 <Image
                   src={biz.img}
                   alt={biz.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
-                <div className="absolute bottom-3 left-3 right-3">
-                  <span className="inline-block border-2 border-ink bg-white px-2 py-1 font-display text-sm uppercase text-ink">
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/70 via-stone-900/10 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="font-display text-lg font-extrabold text-white">
                     {biz.name}
-                  </span>
-                  <p className="mt-2 inline-block w-fit border-2 border-ink bg-yolk px-2 py-1 text-xs font-bold text-ink">
-                    {biz.line}
-                  </p>
+                  </h3>
+                  <p className="mt-0.5 text-sm text-white/85">{biz.line}</p>
                 </div>
               </div>
             </Reveal>
@@ -346,16 +388,16 @@ export default function HomePage() {
           <Reveal delay={0.25}>
             <Link
               href="/contact"
-              className="box box-hover flex h-64 flex-col items-start justify-between bg-sky p-6"
+              className="card card-hover flex h-64 flex-col items-center justify-center gap-3 p-6 text-center"
             >
-              <span className="font-display text-xl uppercase text-ink">
+              <span className="font-display text-lg font-extrabold text-stone-900">
                 Your business
               </span>
-              <p className="text-sm font-medium text-ink/80">
+              <p className="text-sm text-stone-500">
                 Trades, gyms, dentists, real estate. If your customers can hold
                 a phone, this works.
               </p>
-              <span className="border-b-2 border-ink font-bold text-ink">
+              <span className="text-sm font-bold text-orange-600">
                 Talk to us →
               </span>
             </Link>
@@ -366,43 +408,37 @@ export default function HomePage() {
       {/* ===== CUSTOM DESIGN ===== */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="box grid items-stretch overflow-hidden bg-ink lg:grid-cols-2">
-            <div className="p-8 text-white sm:p-12">
-              <p className="tag text-yolk">Custom design</p>
-              <h2 className="mt-4 font-display text-3xl uppercase leading-tight sm:text-4xl">
+          <div className="card grid items-stretch overflow-hidden p-0 lg:grid-cols-2">
+            <div className="p-8 sm:p-12">
+              <p className="eyebrow">Custom design</p>
+              <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
                 Your logo on the card
               </h2>
-              <p className="mt-4 max-w-md text-white/80">
+              <p className="mt-4 max-w-md text-stone-600">
                 Upload your artwork, or give us your business name and colors
                 and we design it for you. You get a digital proof within 48
                 hours. Nothing prints until you approve it.
               </p>
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <ButtonLink href="/products">Start customizing</ButtonLink>
-                <ButtonLink
-                  href="/contact"
-                  variant="secondary"
-                  className="border-white bg-transparent text-white shadow-none hover:bg-white/10"
-                >
-                  Bulk orders
+                <ButtonLink href="/contact" variant="secondary">
+                  Ask about bulk orders
                 </ButtonLink>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-px border-t-2 border-ink bg-ink lg:border-l-2 lg:border-t-0">
+            <div className="grid grid-cols-2 gap-4 bg-stone-50 p-6 sm:p-8">
               {[
-                { icon: BadgeCheck, title: "Proof first", desc: "You approve the design before we print.", bg: "bg-yolk" },
-                { icon: RefreshCw, title: "Reprogram", desc: "New link, same card, any time.", bg: "bg-white" },
-                { icon: ShieldCheck, title: "Replace free", desc: "If a card stops scanning, we send a new one.", bg: "bg-bubble" },
-                { icon: Layers, title: "Bulk pricing", desc: "Up to 20% off on packs of 10.", bg: "bg-mint" },
+                { icon: BadgeCheck, title: "Proof first", desc: "You approve the design before we print." },
+                { icon: RefreshCw, title: "Reprogram free", desc: "New link, same card, any time." },
+                { icon: ShieldCheck, title: "Replace free", desc: "If a card stops scanning, we send a new one." },
+                { icon: Layers, title: "Bulk pricing", desc: "Up to 20% off on packs of 10." },
               ].map((p) => (
-                <div key={p.title} className={`${p.bg} p-6`}>
-                  <p.icon className="h-6 w-6 text-ink" />
-                  <h4 className="mt-3 font-display text-sm uppercase text-ink">
+                <div key={p.title} className="card p-5">
+                  <p.icon className="h-6 w-6 text-orange-600" />
+                  <h4 className="mt-3 text-sm font-bold text-stone-900">
                     {p.title}
                   </h4>
-                  <p className="mt-1 text-xs font-medium text-ink/80">
-                    {p.desc}
-                  </p>
+                  <p className="mt-1 text-xs text-stone-500">{p.desc}</p>
                 </div>
               ))}
             </div>
@@ -416,17 +452,23 @@ export default function HomePage() {
       {/* ===== GUARANTEE ===== */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="box flex flex-col items-start gap-6 bg-yolk p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
-            <div>
-              <h2 className="font-display text-2xl uppercase leading-tight text-ink sm:text-3xl">
-                {site.guaranteeDays} days. Full refund.
-              </h2>
-              <p className="mt-2 max-w-xl font-medium text-ink/80">
-                If the card doesn&apos;t earn its spot on your counter, send it
-                back. If it ever stops scanning, we replace it free.
-              </p>
+          <div className="flex flex-col items-start gap-6 rounded-3xl bg-emerald-100 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+            <div className="flex items-start gap-4">
+              <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-soft">
+                <ShieldCheck className="h-6 w-6 text-emerald-600" />
+              </span>
+              <div>
+                <h2 className="font-display text-2xl font-extrabold text-stone-900">
+                  Try it for {site.guaranteeDays} days, on us
+                </h2>
+                <p className="mt-1 max-w-xl text-stone-700">
+                  If the card doesn&apos;t earn its spot on your counter, send
+                  it back for a full refund. If it ever stops scanning, we
+                  replace it free.
+                </p>
+              </div>
             </div>
-            <ButtonLink href="/products" size="lg" variant="secondary">
+            <ButtonLink href="/products" size="lg" className="flex-shrink-0">
               Pick your card <ArrowRight className="h-5 w-5" />
             </ButtonLink>
           </div>
@@ -436,21 +478,24 @@ export default function HomePage() {
       {/* ===== FAQ ===== */}
       <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <h2 className="font-display text-3xl uppercase leading-tight text-ink sm:text-4xl">
-            Questions everyone asks
-          </h2>
+          <div className="text-center">
+            <p className="eyebrow">Good to know</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              Questions everyone asks
+            </h2>
+          </div>
         </Reveal>
         <div className="mt-10 space-y-4">
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
-              <details className="box group p-5 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex cursor-pointer items-center justify-between font-bold text-ink">
+              <details className="card group p-5 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between font-bold text-stone-900">
                   {f.q}
-                  <span className="ml-4 font-mono text-xl transition-transform group-open:rotate-45">
+                  <span className="ml-4 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-3 border-t-2 border-ink pt-3 text-sm leading-relaxed text-ink/70">
+                <p className="mt-3 text-sm leading-relaxed text-stone-500">
                   {f.a}
                 </p>
               </details>
@@ -462,11 +507,11 @@ export default function HomePage() {
       {/* ===== FINAL CTA ===== */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="box bg-ink p-10 text-center sm:p-16">
-            <h2 className="mx-auto max-w-3xl font-display text-3xl uppercase leading-tight text-white sm:text-5xl">
-              Put a card on your counter
+          <div className="rounded-3xl bg-stone-900 p-10 text-center sm:p-16">
+            <h2 className="mx-auto max-w-2xl font-display text-3xl font-extrabold text-white sm:text-4xl">
+              Put a card on your counter this week
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-white/70">
+            <p className="mx-auto mt-3 max-w-xl text-stone-300">
               Cards from {`$${products[0].basePrice}`}, programmed to your link
               before we ship. At your door in days.
             </p>

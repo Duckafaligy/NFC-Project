@@ -142,6 +142,9 @@ export async function POST(request: Request) {
         },
       ],
       metadata,
+      // Lets customers enter promo codes (e.g. a WELCOME10 code created in
+      // the Stripe dashboard for the newsletter signup offer).
+      allow_promotion_codes: true,
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout`,
     });
