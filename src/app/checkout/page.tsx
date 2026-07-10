@@ -80,13 +80,13 @@ export default function CheckoutPage() {
   if (payState === "demo-placed") {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-neutral-100 text-neutral-900">
           <CheckCircle2 className="h-9 w-9" />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-extrabold text-stone-900">
+        <h1 className="mt-6 font-display text-3xl font-extrabold text-neutral-900">
           Test order placed
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-stone-600">
+        <p className="mx-auto mt-3 max-w-md text-neutral-600">
           Payments aren&apos;t switched on yet, so no card was charged. This
           confirms the checkout flow works end to end. Once the Stripe key is
           added, this same button opens a real payment page.
@@ -104,13 +104,13 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-stone-100 text-stone-400">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-neutral-100 text-neutral-400">
           <ShoppingBag className="h-8 w-8" />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-extrabold text-stone-900">
+        <h1 className="mt-6 font-display text-3xl font-extrabold text-neutral-900">
           Your cart is empty
         </h1>
-        <p className="mt-3 text-stone-500">Add a card or tag to get started.</p>
+        <p className="mt-3 text-neutral-500">Add a card or tag to get started.</p>
         <div className="mt-8 flex justify-center">
           <ButtonLink href="/products">Browse products</ButtonLink>
         </div>
@@ -120,7 +120,7 @@ export default function CheckoutPage() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+      <h1 className="font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
         Checkout
       </h1>
 
@@ -133,11 +133,11 @@ export default function CheckoutPage() {
             const hasDiscount = tierDiscount(item.quantity) > 0;
             return (
               <div key={item.key} className="card flex gap-4 p-4">
-                <div className="w-28 flex-shrink-0 overflow-hidden rounded-xl">
+                <div className="w-28 flex-shrink-0 overflow-hidden rounded-md">
                   <ProductVisual
                     name={item.name}
                     accent={product?.accent ?? ["#F97316", "#FBBF24"]}
-                    className="aspect-square rounded-xl"
+                    className="aspect-square rounded-md"
                   />
                 </div>
                 <div className="flex flex-1 flex-col">
@@ -145,11 +145,11 @@ export default function CheckoutPage() {
                     <div>
                       <Link
                         href={`/products/${item.slug}`}
-                        className="font-bold text-stone-900 hover:text-orange-700"
+                        className="font-bold text-neutral-900 hover:text-neutral-900"
                       >
                         {item.name}
                       </Link>
-                      <p className="mt-0.5 text-xs text-stone-500">
+                      <p className="mt-0.5 text-xs text-neutral-500">
                         {item.designType === "custom"
                           ? item.customMethod === "upload"
                             ? "Custom / your artwork"
@@ -158,20 +158,20 @@ export default function CheckoutPage() {
                         {" · "}
                         {formatPrice(discounted)} each
                         {hasDiscount && (
-                          <span className="ml-1 font-bold text-emerald-600">
+                          <span className="ml-1 font-bold text-neutral-900">
                             (pack discount)
                           </span>
                         )}
                       </p>
                       {item.note && (
-                        <p className="mt-1 max-w-sm text-xs text-stone-400">
+                        <p className="mt-1 max-w-sm text-xs text-neutral-400">
                           “{item.note}”
                         </p>
                       )}
                     </div>
                     <button
                       onClick={() => removeItem(item.key)}
-                      className="text-stone-400 hover:text-red-500"
+                      className="text-neutral-400 hover:text-red-500"
                       aria-label="Remove item"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -179,26 +179,26 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="mt-auto flex items-center justify-between pt-3">
-                    <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white p-1">
+                    <div className="flex items-center gap-2 rounded-md border border-neutral-200 bg-white p-1">
                       <button
                         onClick={() => setQuantity(item.key, item.quantity - 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-stone-600 hover:bg-stone-100"
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
                         aria-label="Decrease"
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
-                      <span className="w-5 text-center text-sm font-bold text-stone-900">
+                      <span className="w-5 text-center text-sm font-bold text-neutral-900">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => setQuantity(item.key, item.quantity + 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-stone-600 hover:bg-stone-100"
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
                         aria-label="Increase"
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                    <span className="font-bold text-stone-900">
+                    <span className="font-bold text-neutral-900">
                       {formatPrice(lineTotal(item.unitPrice, item.quantity))}
                     </span>
                   </div>
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
             );
           })}
 
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-neutral-400">
             3+ of a product saves 10% · 5+ saves 15% · 10+ saves 20%. Applied
             automatically.
           </p>
@@ -216,48 +216,48 @@ export default function CheckoutPage() {
         {/* Order summary */}
         <div className="lg:sticky lg:top-24 lg:h-fit">
           <div className="card p-6">
-            <h2 className="font-display text-lg font-extrabold text-stone-900">
+            <h2 className="font-display text-lg font-extrabold text-neutral-900">
               Order summary
             </h2>
 
             {/* Free shipping progress */}
-            <div className="mt-4 rounded-xl bg-orange-50 p-3">
+            <div className="mt-4 rounded-md bg-neutral-50 p-3">
               {remaining > 0 ? (
-                <p className="flex items-center gap-1.5 text-xs text-stone-700">
-                  <Truck className="h-4 w-4 text-orange-600" />
+                <p className="flex items-center gap-1.5 text-xs text-neutral-700">
+                  <Truck className="h-4 w-4 text-neutral-900" />
                   Add <strong>{formatPrice(remaining)}</strong> more for free
                   shipping
                 </p>
               ) : (
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                <p className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900">
                   <Truck className="h-4 w-4" /> Free shipping unlocked!
                 </p>
               )}
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white">
+              <div className="mt-2 h-2 overflow-hidden rounded-md bg-white">
                 <div
-                  className="h-full rounded-full bg-orange-500 transition-all duration-500"
+                  className="h-full rounded-md bg-orange-600 transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
 
             <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex justify-between text-stone-600">
+              <div className="flex justify-between text-neutral-600">
                 <dt>Subtotal</dt>
                 <dd>{formatPrice(subtotal)}</dd>
               </div>
-              <div className="flex justify-between text-stone-600">
+              <div className="flex justify-between text-neutral-600">
                 <dt>Shipping</dt>
                 <dd>{shipping === 0 ? "Free" : formatPrice(shipping)}</dd>
               </div>
-              <div className="flex justify-between border-t border-stone-200 pt-3 text-base font-extrabold text-stone-900">
+              <div className="flex justify-between border-t border-neutral-200 pt-3 text-base font-extrabold text-neutral-900">
                 <dt>Total</dt>
                 <dd>{formatPrice(total)}</dd>
               </div>
             </dl>
 
             {payState === "error" && (
-              <div className="mt-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
                 <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
                 {errorMsg}
               </div>
@@ -273,17 +273,17 @@ export default function CheckoutPage() {
               {payState === "loading" ? "Opening checkout..." : "Pay securely"}
             </Button>
 
-            <p className="mt-3 text-center text-xs text-stone-400">
+            <p className="mt-3 text-center text-xs text-neutral-400">
               Payment and shipping details are collected on Stripe&apos;s
               encrypted checkout. Promo codes can be entered there too.
             </p>
 
-            <div className="mt-4 border-t border-stone-200 pt-4">
+            <div className="mt-4 border-t border-neutral-200 pt-4">
               <PaymentBadges />
             </div>
 
-            <div className="mt-4 flex items-center justify-center gap-2 text-xs font-semibold text-stone-600">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            <div className="mt-4 flex items-center justify-center gap-2 text-xs font-semibold text-neutral-600">
+              <ShieldCheck className="h-4 w-4 text-neutral-900" />
               {site.guaranteeDays}-day money-back guarantee on every order
             </div>
           </div>

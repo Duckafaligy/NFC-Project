@@ -28,7 +28,7 @@ import { site } from "@/lib/site";
 import { Button } from "./Button";
 
 const inputFocus =
-  "focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200";
+  "focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200";
 
 export function ProductConfigurator({ product }: { product: Product }) {
   const router = useRouter();
@@ -96,47 +96,47 @@ export function ProductConfigurator({ product }: { product: Product }) {
       {/* Price */}
       <div className="flex items-end justify-between">
         <div>
-          <span className="text-sm text-stone-400">Price</span>
-          <p className="font-display text-3xl font-extrabold text-stone-900">
+          <span className="text-sm text-neutral-400">Price</span>
+          <p className="font-display text-3xl font-extrabold text-neutral-900">
             {formatPrice(unitPrice)}
           </p>
         </div>
-        <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600">
+        <span className="rounded-md bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-600">
           {product.formFactor}
         </span>
       </div>
 
       {/* Design type choice */}
       <div className="mt-6">
-        <p className="text-sm font-bold text-stone-900">Choose your design</p>
+        <p className="text-sm font-bold text-neutral-900">Choose your design</p>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <button
             onClick={() => setDesignType("standard")}
             className={cn(
-              "rounded-xl border-2 p-4 text-left transition-all",
+              "rounded-md border-2 p-4 text-left transition-all",
               designType === "standard"
-                ? "border-orange-500 bg-orange-50"
-                : "border-stone-200 bg-white hover:border-stone-300",
+                ? "border-neutral-500 bg-neutral-50"
+                : "border-neutral-200 bg-white hover:border-neutral-300",
             )}
           >
-            <Sparkles className="h-5 w-5 text-orange-600" />
-            <p className="mt-2 font-bold text-stone-900">Standard</p>
-            <p className="mt-0.5 text-xs text-stone-500">
+            <Sparkles className="h-5 w-5 text-neutral-900" />
+            <p className="mt-2 font-bold text-neutral-900">Standard</p>
+            <p className="mt-0.5 text-xs text-neutral-500">
               Clean, ready-made design
             </p>
           </button>
           <button
             onClick={() => setDesignType("custom")}
             className={cn(
-              "rounded-xl border-2 p-4 text-left transition-all",
+              "rounded-md border-2 p-4 text-left transition-all",
               designType === "custom"
-                ? "border-orange-500 bg-orange-50"
-                : "border-stone-200 bg-white hover:border-stone-300",
+                ? "border-neutral-500 bg-neutral-50"
+                : "border-neutral-200 bg-white hover:border-neutral-300",
             )}
           >
-            <PenTool className="h-5 w-5 text-orange-600" />
-            <p className="mt-2 font-bold text-stone-900">Custom</p>
-            <p className="mt-0.5 text-xs text-stone-500">
+            <PenTool className="h-5 w-5 text-neutral-900" />
+            <p className="mt-2 font-bold text-neutral-900">Custom</p>
+            <p className="mt-0.5 text-xs text-neutral-500">
               +{formatPrice(product.customUpcharge)} · your brand
             </p>
           </button>
@@ -145,26 +145,26 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
       {/* Custom sub-options */}
       {designType === "custom" && (
-        <div className="mt-4 space-y-4 rounded-xl bg-stone-50 p-4">
-          <p className="text-sm font-bold text-stone-900">
+        <div className="mt-4 space-y-4 rounded-md bg-neutral-50 p-4">
+          <p className="text-sm font-bold text-neutral-900">
             How should we handle the design?
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={() => setCustomMethod("upload")}
               className={cn(
-                "flex items-start gap-3 rounded-xl border-2 p-3 text-left transition-all",
+                "flex items-start gap-3 rounded-md border-2 p-3 text-left transition-all",
                 customMethod === "upload"
-                  ? "border-orange-500 bg-white"
-                  : "border-stone-200 bg-white/70 hover:border-stone-300",
+                  ? "border-neutral-500 bg-white"
+                  : "border-neutral-200 bg-white/70 hover:border-neutral-300",
               )}
             >
-              <Upload className="mt-0.5 h-5 w-5 text-orange-600" />
+              <Upload className="mt-0.5 h-5 w-5 text-neutral-900" />
               <div>
-                <p className="text-sm font-bold text-stone-900">
+                <p className="text-sm font-bold text-neutral-900">
                   Upload my design
                 </p>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-neutral-500">
                   I have artwork ready to go
                 </p>
               </div>
@@ -172,18 +172,18 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <button
               onClick={() => setCustomMethod("we-design")}
               className={cn(
-                "flex items-start gap-3 rounded-xl border-2 p-3 text-left transition-all",
+                "flex items-start gap-3 rounded-md border-2 p-3 text-left transition-all",
                 customMethod === "we-design"
-                  ? "border-orange-500 bg-white"
-                  : "border-stone-200 bg-white/70 hover:border-stone-300",
+                  ? "border-neutral-500 bg-white"
+                  : "border-neutral-200 bg-white/70 hover:border-neutral-300",
               )}
             >
-              <PenTool className="mt-0.5 h-5 w-5 text-orange-600" />
+              <PenTool className="mt-0.5 h-5 w-5 text-neutral-900" />
               <div>
-                <p className="text-sm font-bold text-stone-900">
+                <p className="text-sm font-bold text-neutral-900">
                   Design it for me
                 </p>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-neutral-500">
                   We design it around your brand
                 </p>
               </div>
@@ -201,11 +201,11 @@ export function ProductConfigurator({ product }: { product: Product }) {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-stone-300 bg-white px-4 py-4 text-sm font-semibold text-stone-600 transition-colors hover:border-orange-400 hover:text-stone-900"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-neutral-300 bg-white px-4 py-4 text-sm font-semibold text-neutral-600 transition-colors hover:border-neutral-400 hover:text-neutral-900"
               >
                 {fileName ? (
                   <>
-                    <FileCheck2 className="h-4 w-4 text-emerald-600" />
+                    <FileCheck2 className="h-4 w-4 text-neutral-900" />
                     {fileName}
                   </>
                 ) : (
@@ -215,14 +215,14 @@ export function ProductConfigurator({ product }: { product: Product }) {
                   </>
                 )}
               </button>
-              <p className="mt-2 text-xs text-stone-400">
+              <p className="mt-2 text-xs text-neutral-400">
                 We confirm your artwork by email before printing.
               </p>
             </div>
           )}
 
           <div>
-            <label className="text-sm font-semibold text-stone-700">
+            <label className="text-sm font-semibold text-neutral-700">
               {customMethod === "we-design"
                 ? "Tell us about your brand and what you want"
                 : "Notes for our team (optional)"}
@@ -236,7 +236,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
                   ? "Business name, colors, the link the card should open..."
                   : "Anything we should know..."
               }
-              className={`mt-2 w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 ${inputFocus}`}
+              className={`mt-2 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 ${inputFocus}`}
             />
           </div>
         </div>
@@ -245,21 +245,21 @@ export function ProductConfigurator({ product }: { product: Product }) {
       {/* Quantity + pack pricing */}
       <div className="mt-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-stone-900">How many?</span>
-          <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white p-1">
+          <span className="text-sm font-bold text-neutral-900">How many?</span>
+          <div className="flex items-center gap-2 rounded-md border border-neutral-200 bg-white p-1">
             <button
               onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-stone-600 hover:bg-stone-100"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
               aria-label="Decrease quantity"
             >
               <Minus className="h-4 w-4" />
             </button>
-            <span className="w-6 text-center font-bold text-stone-900">
+            <span className="w-6 text-center font-bold text-neutral-900">
               {qty}
             </span>
             <button
               onClick={() => setQty((q) => q + 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-stone-600 hover:bg-stone-100"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
               aria-label="Increase quantity"
             >
               <Plus className="h-4 w-4" />
@@ -278,45 +278,45 @@ export function ProductConfigurator({ product }: { product: Product }) {
               key={pack.qty}
               onClick={() => setQty(pack.qty)}
               className={cn(
-                "rounded-xl border-2 px-2 py-2.5 text-center transition-all",
+                "rounded-md border-2 px-2 py-2.5 text-center transition-all",
                 qty === pack.qty
-                  ? "border-orange-500 bg-orange-50"
-                  : "border-stone-200 bg-white hover:border-stone-300",
+                  ? "border-neutral-500 bg-neutral-50"
+                  : "border-neutral-200 bg-white hover:border-neutral-300",
               )}
             >
-              <span className="block text-xs font-bold text-stone-900">
+              <span className="block text-xs font-bold text-neutral-900">
                 {pack.label}
               </span>
               {pack.badge && (
-                <span className="mt-0.5 block text-[10px] font-bold text-emerald-600">
+                <span className="mt-0.5 block text-[10px] font-bold text-orange-600">
                   {pack.badge}
                 </span>
               )}
             </button>
           ))}
         </div>
-        <p className="mt-2 text-xs text-stone-400">
+        <p className="mt-2 text-xs text-neutral-400">
           Most shops take 3: counter, door, spare.
         </p>
       </div>
 
       {/* Total + actions */}
-      <div className="mt-6 space-y-1.5 border-t border-stone-200 pt-4">
+      <div className="mt-6 space-y-1.5 border-t border-neutral-200 pt-4">
         {tierDiscount(qty) > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-stone-500">
+            <span className="text-neutral-500">
               {formatPrice(unitPriceFor(unitPrice, qty))} each × {qty}
             </span>
-            <span className="font-bold text-emerald-600">
+            <span className="font-bold text-orange-600">
               You save {formatPrice(unitPrice * qty - lineTotal(unitPrice, qty))}
             </span>
           </div>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-stone-500">Subtotal</span>
-          <span className="font-display text-xl font-extrabold text-stone-900">
+          <span className="text-sm text-neutral-500">Subtotal</span>
+          <span className="font-display text-xl font-extrabold text-neutral-900">
             {tierDiscount(qty) > 0 && (
-              <span className="mr-2 text-sm font-normal text-stone-400 line-through">
+              <span className="mr-2 text-sm font-normal text-neutral-400 line-through">
                 {formatPrice(unitPrice * qty)}
               </span>
             )}
@@ -336,35 +336,35 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
       {/* Delivery estimate */}
       {eta && designType === "standard" && (
-        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
+        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-800">
           <CalendarCheck className="h-4 w-4" />
           Order today, estimated arrival {eta}
         </p>
       )}
       {designType === "custom" && (
-        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-800">
+        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-800">
           <Check className="h-4 w-4" />
           Design proof by email within 48 hours, ships after your approval
         </p>
       )}
 
       {/* Trust row */}
-      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-stone-200 pt-4 text-center">
+      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-neutral-200 pt-4 text-center">
         <div>
-          <ShieldCheck className="mx-auto h-4 w-4 text-emerald-600" />
-          <p className="mt-1 text-[11px] leading-tight text-stone-500">
+          <ShieldCheck className="mx-auto h-4 w-4 text-neutral-900" />
+          <p className="mt-1 text-[11px] leading-tight text-neutral-500">
             {site.guaranteeDays}-day money back
           </p>
         </div>
         <div>
-          <Truck className="mx-auto h-4 w-4 text-orange-500" />
-          <p className="mt-1 text-[11px] leading-tight text-stone-500">
+          <Truck className="mx-auto h-4 w-4 text-neutral-500" />
+          <p className="mt-1 text-[11px] leading-tight text-neutral-500">
             Ships in {site.shipping.handlingDays}
           </p>
         </div>
         <div>
-          <RefreshCw className="mx-auto h-4 w-4 text-sky-600" />
-          <p className="mt-1 text-[11px] leading-tight text-stone-500">
+          <RefreshCw className="mx-auto h-4 w-4 text-neutral-900" />
+          <p className="mt-1 text-[11px] leading-tight text-neutral-500">
             Free replacement if it stops scanning
           </p>
         </div>

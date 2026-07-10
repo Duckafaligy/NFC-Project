@@ -21,13 +21,13 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200 bg-cream/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-neutral-200 bg-cream/90 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-lg font-extrabold text-stone-900"
+          className="flex items-center gap-2 font-display text-lg font-extrabold text-neutral-900"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500 shadow-soft">
+          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-600">
             <Nfc className="h-5 w-5 text-white" strokeWidth={2.5} />
           </span>
           {site.name}
@@ -41,10 +41,10 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                  "rounded-md px-4 py-2 text-sm font-semibold transition-colors",
                   active
-                    ? "bg-white text-stone-900 shadow-soft"
-                    : "text-stone-500 hover:bg-white hover:text-stone-900",
+                    ? "bg-white text-neutral-900 shadow-soft"
+                    : "text-neutral-500 hover:bg-white hover:text-neutral-900",
                 )}
               >
                 {l.label}
@@ -56,18 +56,18 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <button
             onClick={openDrawer}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 shadow-soft transition-all hover:shadow-lift"
+            className="relative flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-700 shadow-soft transition-all hover:shadow-lift"
             aria-label="Open cart"
           >
             <ShoppingBag className="h-5 w-5" />
             {itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-[11px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-md bg-orange-600 px-1 text-[11px] font-bold text-white">
                 {itemCount}
               </span>
             )}
           </button>
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-700 md:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >
@@ -77,13 +77,13 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-stone-200 bg-cream px-4 py-3 md:hidden">
+        <div className="border-t border-neutral-200 bg-cream px-4 py-3 md:hidden">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block rounded-xl px-4 py-3 text-sm font-semibold text-stone-700 hover:bg-white"
+              className="block rounded-md px-4 py-3 text-sm font-semibold text-neutral-700 hover:bg-white"
             >
               {l.label}
             </Link>

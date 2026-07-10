@@ -10,8 +10,9 @@ interface ProductVisualProps {
 }
 
 /**
- * A CSS-rendered "product photo": a colored NFC card on a soft pastel panel.
- * Swap for real product photography later without touching layouts.
+ * A CSS-rendered "product photo": a black NFC card on a light neutral panel,
+ * with a single small accent chip for product differentiation. Swap for real
+ * product photography later without touching layouts.
  */
 export function ProductVisual({
   name,
@@ -19,31 +20,33 @@ export function ProductVisual({
   className,
   featured = false,
 }: ProductVisualProps) {
-  const [from, to] = accent;
+  const [from] = accent;
   return (
     <div
       className={cn(
-        "relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl",
+        "relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-md bg-neutral-100",
         className,
       )}
-      style={{ background: `${from}1a` }}
     >
       <div
         className={cn(
-          "relative aspect-[1.6/1] w-3/5 rotate-[-5deg] rounded-2xl shadow-lift",
+          "relative aspect-[1.6/1] w-3/5 rotate-[-4deg] rounded-md bg-neutral-900 shadow-lift",
           featured && "w-2/3 animate-float",
         )}
-        style={{
-          background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)`,
-        }}
       >
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/25 via-transparent to-transparent" />
-        <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90">
-          <Nfc className="h-4 w-4 text-stone-800" strokeWidth={2.5} />
+        {/* Subtle sheen */}
+        <div className="absolute inset-0 rounded-md bg-gradient-to-tr from-white/10 via-transparent to-transparent" />
+        {/* Accent chip: the one spot of color */}
+        <div
+          className="absolute left-3 top-3 h-3 w-3 rounded-sm"
+          style={{ background: from }}
+        />
+        <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md bg-white/15">
+          <Nfc className="h-4 w-4 text-white" strokeWidth={2.5} />
         </div>
         <div className="absolute bottom-3 left-3 right-3">
-          <div className="h-1.5 w-10 rounded-full bg-white/80" />
-          <p className="mt-2 truncate text-[10px] font-bold uppercase tracking-widest text-white">
+          <div className="h-1.5 w-10 rounded-sm bg-white/70" />
+          <p className="mt-2 truncate text-[10px] font-bold uppercase tracking-widest text-white/90">
             {name}
           </p>
         </div>

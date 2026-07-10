@@ -7,7 +7,7 @@ export function PaymentBadges() {
       {methods.map((m) => (
         <span
           key={m}
-          className="rounded-md border border-stone-200 bg-white px-2 py-1 text-[10px] font-bold text-stone-600"
+          className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-[10px] font-bold text-neutral-600"
         >
           {m}
         </span>

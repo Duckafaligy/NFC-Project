@@ -84,14 +84,14 @@ export default function HomePage() {
           {/* Main tile */}
           <Reveal className="lg:col-span-7">
             <div className="card flex h-full flex-col justify-center p-8 sm:p-12">
-              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">
-                <Star className="h-3.5 w-3.5 fill-orange-500 text-orange-500" />
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-neutral-100 px-3 py-1 text-xs font-bold text-neutral-900">
+                <Star className="h-3.5 w-3.5 fill-neutral-500 text-neutral-500" />
                 NFC review cards for local business
               </span>
-              <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-stone-900 sm:text-5xl lg:text-6xl">
+              <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
                 More Google reviews, one friendly tap away
               </h1>
-              <p className="mt-5 max-w-lg text-lg text-stone-600">
+              <p className="mt-5 max-w-lg text-lg text-neutral-600">
                 Put a TapLink card next to your register. A customer taps their
                 phone, your review page opens, and they post before the receipt
                 finishes printing. No app, no QR code.
@@ -104,8 +104,8 @@ export default function HomePage() {
                   Browse all products
                 </ButtonLink>
               </div>
-              <p className="mt-6 flex items-center gap-2 text-sm text-stone-500">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <p className="mt-6 flex items-center gap-2 text-sm text-neutral-500">
+                <ShieldCheck className="h-4 w-4 text-neutral-900" />
                 {site.guaranteeDays}-day money-back guarantee on every order
               </p>
             </div>
@@ -119,10 +119,10 @@ export default function HomePage() {
                 alt="A customer tapping their phone at a shop counter"
                 fill
                 priority
-                className="rounded-2xl object-cover"
+                className="rounded-md object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"
               />
-              <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-stone-800 shadow-soft">
+              <span className="absolute bottom-3 left-3 rounded-md bg-white/95 px-3 py-1.5 text-xs font-bold text-neutral-800 shadow-soft">
                 The tap, mid-checkout
               </span>
             </div>
@@ -130,11 +130,11 @@ export default function HomePage() {
 
           {/* Stat tiles */}
           <Reveal delay={0.1} className="lg:col-span-3">
-            <div className="h-full rounded-2xl bg-orange-100 p-6">
-              <p className="font-display text-4xl font-extrabold text-orange-700">
+            <div className="h-full rounded-md bg-neutral-900 p-6">
+              <p className="font-display text-4xl font-extrabold text-white">
                 98%
               </p>
-              <p className="mt-2 text-sm text-stone-700">
+              <p className="mt-2 text-sm text-neutral-300">
                 of people read reviews before picking a local business
                 (BrightLocal survey)
               </p>
@@ -142,32 +142,32 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={0.14} className="lg:col-span-3">
             <div className="card h-full p-6">
-              <Smartphone className="h-6 w-6 text-orange-600" />
-              <p className="mt-2 font-display text-xl font-extrabold text-stone-900">
+              <Smartphone className="h-6 w-6 text-neutral-900" />
+              <p className="mt-2 font-display text-xl font-extrabold text-neutral-900">
                 No app needed
               </p>
-              <p className="mt-1 text-sm text-stone-500">
+              <p className="mt-1 text-sm text-neutral-500">
                 Works on iPhone and Android out of the box
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.18} className="lg:col-span-3">
-            <div className="h-full rounded-2xl bg-sky-100 p-6">
-              <p className="font-display text-4xl font-extrabold text-sky-700">
+            <div className="h-full rounded-md bg-neutral-100 p-6">
+              <p className="font-display text-4xl font-extrabold text-orange-600">
                 $0
               </p>
-              <p className="mt-2 text-sm text-stone-700">
+              <p className="mt-2 text-sm text-neutral-700">
                 per month. Buy the card once and you own it.
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.22} className="lg:col-span-3">
-            <div className="h-full rounded-2xl bg-emerald-100 p-6">
-              <ShieldCheck className="h-6 w-6 text-emerald-700" />
-              <p className="mt-2 font-display text-xl font-extrabold text-stone-900">
+            <div className="h-full rounded-md bg-neutral-100 p-6">
+              <ShieldCheck className="h-6 w-6 text-neutral-900" />
+              <p className="mt-2 font-display text-xl font-extrabold text-neutral-900">
                 {site.guaranteeDays}-day returns
               </p>
-              <p className="mt-1 text-sm text-stone-700">
+              <p className="mt-1 text-sm text-neutral-700">
                 Full refund if it doesn&apos;t earn its spot
               </p>
             </div>
@@ -176,16 +176,16 @@ export default function HomePage() {
       </section>
 
       {/* ===== BENEFITS STRIP ===== */}
-      <section className="border-y border-stone-200 bg-white">
+      <section className="border-y border-neutral-200 bg-white">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4 lg:px-8">
           {benefits.map((b) => (
             <div key={b.title} className="flex items-start gap-3">
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100">
-                <b.icon className="h-5 w-5 text-orange-600" />
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-neutral-100">
+                <b.icon className="h-5 w-5 text-neutral-900" />
               </span>
               <div>
-                <p className="text-sm font-bold text-stone-900">{b.title}</p>
-                <p className="text-xs text-stone-500">{b.desc}</p>
+                <p className="text-sm font-bold text-neutral-900">{b.title}</p>
+                <p className="text-xs text-neutral-500">{b.desc}</p>
               </div>
             </div>
           ))}
@@ -197,10 +197,10 @@ export default function HomePage() {
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow">Twenty seconds, start to finish</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
               How it goes at the counter
             </h2>
-            <p className="mt-3 text-stone-500">
+            <p className="mt-3 text-neutral-500">
               The best moment to ask for a review is right after you hand back
               the card reader.
             </p>
@@ -226,13 +226,13 @@ export default function HomePage() {
           ].map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
               <div className="card h-full p-7">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 font-display text-lg font-extrabold text-white">
+                <span className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-900 font-display text-lg font-extrabold text-white">
                   {s.n}
                 </span>
-                <h3 className="mt-4 font-display text-xl font-bold text-stone-900">
+                <h3 className="mt-4 font-display text-xl font-bold text-neutral-900">
                   {s.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-stone-500">
+                <p className="mt-2 text-sm leading-relaxed text-neutral-500">
                   {s.desc}
                 </p>
               </div>
@@ -247,10 +247,10 @@ export default function HomePage() {
           <Reveal>
             <div>
               <p className="eyebrow">Shop</p>
-              <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
                 Best sellers
               </h2>
-              <p className="mt-3 max-w-xl text-stone-500">
+              <p className="mt-3 max-w-xl text-neutral-500">
                 Buy 3 and save 10%. Buy 5, save 15%. Buy 10, save 20%. Most
                 shops take three: counter, door, spare.
               </p>
@@ -259,7 +259,7 @@ export default function HomePage() {
           <Reveal>
             <Link
               href="/products"
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-orange-600 hover:text-orange-700"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-neutral-900 hover:text-neutral-900"
             >
               View all products <ArrowRight className="h-4 w-4" />
             </Link>
@@ -279,10 +279,10 @@ export default function HomePage() {
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow">Honest comparison</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
               &ldquo;Why not just print a QR code?&rdquo;
             </h2>
-            <p className="mt-3 text-stone-500">
+            <p className="mt-3 text-neutral-500">
               We get this question at every door. Here is how the three options
               stack up.
             </p>
@@ -292,15 +292,15 @@ export default function HomePage() {
           <div className="card mt-10 overflow-x-auto p-0">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
-                <tr className="border-b border-stone-200">
+                <tr className="border-b border-neutral-200">
                   <th className="p-4"> </th>
-                  <th className="rounded-t-xl bg-orange-50 p-4 font-display text-base font-extrabold text-orange-700">
+                  <th className="rounded-t-xl bg-neutral-50 p-4 font-display text-base font-extrabold text-neutral-900">
                     TapLink NFC
                   </th>
-                  <th className="p-4 font-semibold text-stone-500">
+                  <th className="p-4 font-semibold text-neutral-500">
                     Paper QR code
                   </th>
-                  <th className="p-4 font-semibold text-stone-500">
+                  <th className="p-4 font-semibold text-neutral-500">
                     Just asking
                   </th>
                 </tr>
@@ -309,22 +309,22 @@ export default function HomePage() {
                 {comparison.map((row, ri) => (
                   <tr
                     key={row.label}
-                    className="border-b border-stone-100 last:border-0"
+                    className="border-b border-neutral-100 last:border-0"
                   >
-                    <td className="p-4 font-semibold text-stone-900">
+                    <td className="p-4 font-semibold text-neutral-900">
                       {row.label}
                     </td>
                     {[row.nfc, row.qr, row.asking].map((cell, i) => (
                       <td
                         key={i}
-                        className={`p-4 text-stone-500 ${i === 0 ? "bg-orange-50" : ""} ${i === 0 && ri === comparison.length - 1 ? "rounded-b-xl" : ""}`}
+                        className={`p-4 text-neutral-500 ${i === 0 ? "bg-neutral-50" : ""} ${i === 0 && ri === comparison.length - 1 ? "rounded-b-xl" : ""}`}
                       >
                         {cell === true ? (
-                          <Check className="h-5 w-5 text-emerald-600" />
+                          <Check className="h-5 w-5 text-neutral-900" />
                         ) : cell === false ? (
-                          <X className="h-5 w-5 text-stone-300" />
+                          <X className="h-5 w-5 text-neutral-300" />
                         ) : cell === "—" ? (
-                          <Minus className="h-5 w-5 text-stone-300" />
+                          <Minus className="h-5 w-5 text-neutral-300" />
                         ) : (
                           <span className="text-xs">{cell}</span>
                         )}
@@ -337,7 +337,7 @@ export default function HomePage() {
           </div>
         </Reveal>
         <Reveal delay={0.15}>
-          <p className="mt-4 text-center text-xs text-stone-400">
+          <p className="mt-4 text-center text-xs text-neutral-400">
             Want both? We print a QR code on the back of your card as a
             fallback, free.
           </p>
@@ -349,10 +349,10 @@ export default function HomePage() {
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow">Who it&apos;s for</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
               Built for places with counters
             </h2>
-            <p className="mt-3 text-stone-500">
+            <p className="mt-3 text-neutral-500">
               Anywhere customers stand with a phone in hand, the card earns its
               keep.
             </p>
@@ -366,7 +366,7 @@ export default function HomePage() {
               className={biz.big ? "sm:col-span-2 sm:row-span-2" : ""}
             >
               <div
-                className={`group relative overflow-hidden rounded-2xl shadow-soft ${biz.big ? "h-full min-h-[16rem] sm:min-h-[33rem]" : "h-64"}`}
+                className={`group relative overflow-hidden rounded-md shadow-soft ${biz.big ? "h-full min-h-[16rem] sm:min-h-[33rem]" : "h-64"}`}
               >
                 <Image
                   src={biz.img}
@@ -375,7 +375,7 @@ export default function HomePage() {
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/70 via-stone-900/10 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/70 via-neutral-900/10 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="font-display text-lg font-extrabold text-white">
                     {biz.name}
@@ -390,14 +390,14 @@ export default function HomePage() {
               href="/contact"
               className="card card-hover flex h-64 flex-col items-center justify-center gap-3 p-6 text-center"
             >
-              <span className="font-display text-lg font-extrabold text-stone-900">
+              <span className="font-display text-lg font-extrabold text-neutral-900">
                 Your business
               </span>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-neutral-500">
                 Trades, gyms, dentists, real estate. If your customers can hold
                 a phone, this works.
               </p>
-              <span className="text-sm font-bold text-orange-600">
+              <span className="text-sm font-bold text-neutral-900">
                 Talk to us →
               </span>
             </Link>
@@ -411,10 +411,10 @@ export default function HomePage() {
           <div className="card grid items-stretch overflow-hidden p-0 lg:grid-cols-2">
             <div className="p-8 sm:p-12">
               <p className="eyebrow">Custom design</p>
-              <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
                 Your logo on the card
               </h2>
-              <p className="mt-4 max-w-md text-stone-600">
+              <p className="mt-4 max-w-md text-neutral-600">
                 Upload your artwork, or give us your business name and colors
                 and we design it for you. You get a digital proof within 48
                 hours. Nothing prints until you approve it.
@@ -426,7 +426,7 @@ export default function HomePage() {
                 </ButtonLink>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 bg-stone-50 p-6 sm:p-8">
+            <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-6 sm:p-8">
               {[
                 { icon: BadgeCheck, title: "Proof first", desc: "You approve the design before we print." },
                 { icon: RefreshCw, title: "Reprogram free", desc: "New link, same card, any time." },
@@ -434,11 +434,11 @@ export default function HomePage() {
                 { icon: Layers, title: "Bulk pricing", desc: "Up to 20% off on packs of 10." },
               ].map((p) => (
                 <div key={p.title} className="card p-5">
-                  <p.icon className="h-6 w-6 text-orange-600" />
-                  <h4 className="mt-3 text-sm font-bold text-stone-900">
+                  <p.icon className="h-6 w-6 text-neutral-900" />
+                  <h4 className="mt-3 text-sm font-bold text-neutral-900">
                     {p.title}
                   </h4>
-                  <p className="mt-1 text-xs text-stone-500">{p.desc}</p>
+                  <p className="mt-1 text-xs text-neutral-500">{p.desc}</p>
                 </div>
               ))}
             </div>
@@ -452,16 +452,16 @@ export default function HomePage() {
       {/* ===== GUARANTEE ===== */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="flex flex-col items-start gap-6 rounded-3xl bg-emerald-100 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+          <div className="flex flex-col items-start gap-6 rounded-lg bg-neutral-100 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="flex items-start gap-4">
-              <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-soft">
-                <ShieldCheck className="h-6 w-6 text-emerald-600" />
+              <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-white shadow-soft">
+                <ShieldCheck className="h-6 w-6 text-neutral-900" />
               </span>
               <div>
-                <h2 className="font-display text-2xl font-extrabold text-stone-900">
+                <h2 className="font-display text-2xl font-extrabold text-neutral-900">
                   Try it for {site.guaranteeDays} days, on us
                 </h2>
-                <p className="mt-1 max-w-xl text-stone-700">
+                <p className="mt-1 max-w-xl text-neutral-700">
                   If the card doesn&apos;t earn its spot on your counter, send
                   it back for a full refund. If it ever stops scanning, we
                   replace it free.
@@ -480,7 +480,7 @@ export default function HomePage() {
         <Reveal>
           <div className="text-center">
             <p className="eyebrow">Good to know</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
               Questions everyone asks
             </h2>
           </div>
@@ -489,13 +489,13 @@ export default function HomePage() {
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
               <details className="card group p-5 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex cursor-pointer items-center justify-between font-bold text-stone-900">
+                <summary className="flex cursor-pointer items-center justify-between font-bold text-neutral-900">
                   {f.q}
-                  <span className="ml-4 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 transition-transform group-open:rotate-45">
+                  <span className="ml-4 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-900 transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-3 text-sm leading-relaxed text-stone-500">
+                <p className="mt-3 text-sm leading-relaxed text-neutral-500">
                   {f.a}
                 </p>
               </details>
@@ -507,11 +507,11 @@ export default function HomePage() {
       {/* ===== FINAL CTA ===== */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="rounded-3xl bg-stone-900 p-10 text-center sm:p-16">
+          <div className="rounded-lg bg-neutral-900 p-10 text-center sm:p-16">
             <h2 className="mx-auto max-w-2xl font-display text-3xl font-extrabold text-white sm:text-4xl">
               Put a card on your counter this week
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-stone-300">
+            <p className="mx-auto mt-3 max-w-xl text-neutral-300">
               Cards from {`$${products[0].basePrice}`}, programmed to your link
               before we ship. At your door in days.
             </p>

@@ -14,10 +14,10 @@ export default function ProductsPage() {
       <Reveal>
         <div className="max-w-2xl">
           <p className="eyebrow">The lineup</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-stone-900 sm:text-5xl">
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
             Pick the card for your counter
           </h1>
-          <p className="mt-4 text-lg text-stone-600">
+          <p className="mt-4 text-lg text-neutral-600">
             Every product ships programmed to your link and can carry your own
             design. Pack discounts apply automatically from 3 units up.
           </p>

@@ -154,33 +154,36 @@ src/
 
 ## Design system
 
-**Warm, welcoming, conversion-first.** Soft bento layouts on a cream page,
-white rounded cards, one friendly orange accent, pastel tint tiles.
+**Monochrome minimal.** White and black do the work; one orange accent pops
+in a handful of deliberate places. Corners are tight (rounded-md max).
 
-- **Surfaces:** `cream` (#FDFBF7) page; white cards via the `.card` utility
-  (rounded-2xl, stone-200 border, `shadow-soft`); `.card-hover` lifts gently.
-- **Text:** stone-900 headings, stone-600 body, stone-400/500 secondary.
-- **Accent:** orange-500/600 for CTAs, eyebrows (`.eyebrow`), highlights.
-  Pastel tiles use orange-100 / sky-100 / emerald-100 / violet-100.
-- **Buttons:** rounded-full; primary = orange fill, secondary = white bordered.
-- **Type:** Plus Jakarta Sans for display, Inter for body (sentence case).
-- **Bento:** hero is a 12-column bento (main card + photo + 4 pastel stat
-  tiles); industries is a mixed-size photo bento.
-- **Dark anchors:** announcement bar and final CTA only (stone-900).
-- **Imagery:** real photos in `public/images/`; `ProductVisual` renders a
-  gradient card on a pastel panel.
+- **Surfaces:** pure white page; white cards via `.card` (rounded-md,
+  neutral-200 hairline border, faint `shadow-soft`); `.card-hover` darkens
+  the border. neutral-100 panels and one black (neutral-900) hero stat tile
+  for contrast.
+- **Text:** neutral-900 headings, neutral-600 body, neutral-400 secondary.
+- **The only color (orange-600), used exactly here:** logo mark, cart count
+  badge, Best seller badge, free-shipping progress bars, pack-savings
+  amounts, and the $0 hero stat. Add new orange uses sparingly or not at all.
+- **Buttons:** rounded-md; primary = black fill, secondary = white with
+  neutral border that darkens on hover.
+- **Radius scale:** rounded-md for cards/buttons/inputs, rounded-sm for tiny
+  chips. No pills, no rounded-2xl/3xl.
+- **Type:** Plus Jakarta Sans display, Inter body, sentence case.
+- **Product visuals:** black card on a neutral-100 panel with a single small
+  accent-color chip per product (`accent[0]` in products.ts).
+- Bento hero, industries photo bento, cart drawer, comparison table, and all
+  conversion features carry over from the previous iteration unchanged.
 
 **E-commerce conversion checklist built in:**
-- Slide-out **cart drawer** (`CartDrawer`) opens on add-to-cart, with a
-  **free-shipping progress bar** ("Add $X more for free shipping")
-- Free-shipping progress repeated in the checkout order summary
-- **Estimated delivery date** on product pages ("Order today, arrives ...")
-- **Payment method badges** (checkout + footer)
-- **Newsletter signup with 10% first-order incentive** (footer; needs email
-  service wiring + a WELCOME10 promo code in Stripe; checkout already has
-  `allow_promotion_codes: true`)
-- Benefits strip (shipping / guarantee / no fees / support), trust rows,
-  guarantee banner, FAQ, comparison table, volume pack discounts
+- Slide-out cart drawer with free-shipping progress bar (opens on add-to-cart)
+- Free-shipping progress repeated in checkout order summary
+- Estimated delivery date on product pages
+- Payment method badges (checkout + footer)
+- Newsletter signup with 10% first-order incentive (needs email service +
+  a WELCOME10 promo code in Stripe; checkout has allow_promotion_codes on)
+- Benefits strip, trust rows, guarantee banner, FAQ, comparison table,
+  volume pack discounts
 
 **Copy rules:** no em dashes, no AI-flavored filler. Short sentences, concrete
 counter-moment language. Keep this voice when adding content.
@@ -297,6 +300,18 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-10 — Redesign #4: monochrome minimal (replaces warm orange)
+- Re-skinned to white/black monotone at the owner's request: pure white page,
+  neutral text scale, hairline borders, tight radii (rounded-md max, no
+  pills), black primary buttons.
+- Orange-600 kept as the single pop color in six deliberate spots (logo, cart
+  badge, Best seller badge, shipping progress bars, savings, $0 hero stat).
+- Product visuals now render a black card with one small per-product accent
+  chip instead of colored gradients. One hero stat tile inverted to black.
+- All layout, features, and copy unchanged from Redesign #3.
+- Verified with clean build and headless-Chromium screenshots (hero, product
+  page, cart drawer).
 
 ### 2026-07-10 — Redesign #3: warm & welcoming + conversion essentials (replaces brutalism)
 - Softened the brutalist theme at the owner's request: rounded cards, soft

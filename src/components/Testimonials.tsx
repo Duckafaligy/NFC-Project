@@ -35,7 +35,7 @@ export function Testimonials() {
       <Reveal>
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">Happy counters</p>
-          <h2 className="mt-2 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+          <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
             From businesses like yours
           </h2>
         </div>
@@ -48,16 +48,16 @@ export function Testimonials() {
                 {[...Array(5)].map((_, s) => (
                   <Star
                     key={s}
-                    className="h-4 w-4 fill-amber-400 text-amber-400"
+                    className="h-4 w-4 fill-neutral-900 text-neutral-900"
                   />
                 ))}
               </div>
-              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-stone-600">
+              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-neutral-600">
                 “{t.quote}”
               </blockquote>
-              <figcaption className="mt-5 border-t border-stone-100 pt-4">
-                <p className="text-sm font-bold text-stone-900">{t.name}</p>
-                <p className="text-xs text-stone-400">{t.detail}</p>
+              <figcaption className="mt-5 border-t border-neutral-100 pt-4">
+                <p className="text-sm font-bold text-neutral-900">{t.name}</p>
+                <p className="text-xs text-neutral-400">{t.detail}</p>
               </figcaption>
             </figure>
           </Reveal>

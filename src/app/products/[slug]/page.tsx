@@ -44,15 +44,15 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-stone-400">
+      <nav className="flex items-center gap-1.5 text-sm text-neutral-400">
         <Link
           href="/products"
-          className="inline-flex items-center gap-1 hover:text-stone-900"
+          className="inline-flex items-center gap-1 hover:text-neutral-900"
         >
           <ArrowLeft className="h-4 w-4" /> Products
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="font-semibold text-stone-700">{product.name}</span>
+        <span className="font-semibold text-neutral-700">{product.name}</span>
       </nav>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
@@ -72,13 +72,13 @@ export default async function ProductPage({
           <Reveal delay={0.05}>
             <div className="mt-6">
               <p className="eyebrow">{product.category}</p>
-              <h1 className="mt-1 font-display text-3xl font-extrabold text-stone-900 sm:text-4xl">
+              <h1 className="mt-1 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
                 {product.name}
               </h1>
-              <p className="mt-2 text-lg font-semibold text-stone-700">
+              <p className="mt-2 text-lg font-semibold text-neutral-700">
                 {product.tagline}
               </p>
-              <p className="mt-4 text-stone-600">{product.description}</p>
+              <p className="mt-4 text-neutral-600">{product.description}</p>
             </div>
           </Reveal>
 
@@ -88,10 +88,10 @@ export default async function ProductPage({
               {product.features.map((f) => (
                 <div
                   key={f}
-                  className="flex items-start gap-2 text-sm text-stone-600"
+                  className="flex items-start gap-2 text-sm text-neutral-600"
                 >
-                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100">
-                    <Check className="h-3 w-3 text-emerald-700" strokeWidth={3} />
+                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-md bg-neutral-100">
+                    <Check className="h-3 w-3 text-neutral-900" strokeWidth={3} />
                   </span>
                   {f}
                 </div>
@@ -102,14 +102,14 @@ export default async function ProductPage({
           {/* Specs */}
           <Reveal delay={0.15}>
             <div className="mt-8">
-              <h2 className="text-sm font-bold text-stone-900">
+              <h2 className="text-sm font-bold text-neutral-900">
                 Specifications
               </h2>
-              <dl className="card mt-3 grid grid-cols-2 gap-px overflow-hidden bg-stone-100 p-0 sm:grid-cols-4">
+              <dl className="card mt-3 grid grid-cols-2 gap-px overflow-hidden bg-neutral-100 p-0 sm:grid-cols-4">
                 {product.specs.map((s) => (
                   <div key={s.label} className="bg-white p-4">
-                    <dt className="text-xs text-stone-400">{s.label}</dt>
-                    <dd className="mt-1 text-sm font-semibold text-stone-900">
+                    <dt className="text-xs text-neutral-400">{s.label}</dt>
+                    <dd className="mt-1 text-sm font-semibold text-neutral-900">
                       {s.value}
                     </dd>
                   </div>
@@ -121,12 +121,12 @@ export default async function ProductPage({
           {/* Use cases */}
           <Reveal delay={0.2}>
             <div className="mt-6">
-              <h2 className="text-sm font-bold text-stone-900">Perfect for</h2>
+              <h2 className="text-sm font-bold text-neutral-900">Perfect for</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {product.useCases.map((u) => (
                   <span
                     key={u}
-                    className="rounded-full border border-stone-200 bg-white px-3 py-1 text-xs font-semibold text-stone-600"
+                    className="rounded-md border border-neutral-200 bg-white px-3 py-1 text-xs font-semibold text-neutral-600"
                   >
                     {u}
                   </span>
@@ -145,7 +145,7 @@ export default async function ProductPage({
       {/* After you order */}
       <div className="card mt-20 p-8 sm:p-10">
         <p className="eyebrow">What happens next</p>
-        <h2 className="mt-2 font-display text-2xl font-extrabold text-stone-900">
+        <h2 className="mt-2 font-display text-2xl font-extrabold text-neutral-900">
           After you order
         </h2>
         <div className="mt-8 grid gap-8 md:grid-cols-3">
@@ -167,13 +167,13 @@ export default async function ProductPage({
             },
           ].map((s) => (
             <div key={s.title}>
-              <p className="text-xs font-bold uppercase tracking-wider text-orange-600">
+              <p className="text-xs font-bold uppercase tracking-wider text-neutral-900">
                 {s.step}
               </p>
-              <h3 className="mt-2 font-display text-lg font-bold text-stone-900">
+              <h3 className="mt-2 font-display text-lg font-bold text-neutral-900">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-stone-500">
+              <p className="mt-2 text-sm leading-relaxed text-neutral-500">
                 {s.desc}
               </p>
             </div>
@@ -184,7 +184,7 @@ export default async function ProductPage({
       {/* Related */}
       {suggestions.length > 0 && (
         <div className="mt-20">
-          <h2 className="font-display text-2xl font-extrabold text-stone-900">
+          <h2 className="font-display text-2xl font-extrabold text-neutral-900">
             You might also like
           </h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

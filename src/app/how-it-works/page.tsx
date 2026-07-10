@@ -15,29 +15,29 @@ const steps = [
     icon: Nfc,
     title: "Every product has a smart NFC chip",
     desc: "Inside each card, tag, or stand is a chip we program with the link of your choice: your Google review page, Instagram, menu, WiFi, or a full link hub.",
-    bg: "bg-orange-100",
-    iconColor: "text-orange-600",
+    bg: "bg-neutral-100",
+    iconColor: "text-neutral-900",
   },
   {
     icon: MousePointerClick,
     title: "Your customer taps their phone",
     desc: "They hold their phone near the card. No app, no QR scanning, no typing. Modern iPhones and Androids read NFC automatically.",
-    bg: "bg-sky-100",
-    iconColor: "text-sky-600",
+    bg: "bg-neutral-100",
+    iconColor: "text-neutral-900",
   },
   {
     icon: Smartphone,
     title: "The link opens instantly",
     desc: "Your destination pops up on their screen, ready to leave a review, follow you, join your WiFi, or browse your menu.",
-    bg: "bg-emerald-100",
-    iconColor: "text-emerald-600",
+    bg: "bg-neutral-100",
+    iconColor: "text-neutral-900",
   },
   {
     icon: RefreshCw,
     title: "Change the link any time",
     desc: "New promo, new platform, new menu. Your card is reprogrammable, so it grows with your business.",
-    bg: "bg-violet-100",
-    iconColor: "text-violet-600",
+    bg: "bg-neutral-100",
+    iconColor: "text-neutral-900",
   },
 ];
 
@@ -70,10 +70,10 @@ export default function HowItWorksPage() {
       <Reveal>
         <div className="max-w-2xl">
           <p className="eyebrow">The tech, minus the jargon</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-stone-900 sm:text-5xl">
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
             How tap-to-connect works
           </h1>
-          <p className="mt-4 text-lg text-stone-600">
+          <p className="mt-4 text-lg text-neutral-600">
             NFC turns a physical tap into a digital action. Start to finish,
             here is the whole thing.
           </p>
@@ -83,14 +83,14 @@ export default function HowItWorksPage() {
       <div className="mt-14 grid gap-6 sm:grid-cols-2">
         {steps.map((s, i) => (
           <Reveal key={s.title} delay={i * 0.06}>
-            <div className={`h-full rounded-2xl p-6 ${s.bg}`}>
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-soft">
+            <div className={`h-full rounded-md p-6 ${s.bg}`}>
+              <span className="flex h-12 w-12 items-center justify-center rounded-md bg-white shadow-soft">
                 <s.icon className={`h-6 w-6 ${s.iconColor}`} />
               </span>
-              <h3 className="mt-4 font-display text-lg font-bold text-stone-900">
+              <h3 className="mt-4 font-display text-lg font-bold text-neutral-900">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm text-stone-700">{s.desc}</p>
+              <p className="mt-2 text-sm text-neutral-700">{s.desc}</p>
             </div>
           </Reveal>
         ))}
@@ -99,7 +99,7 @@ export default function HowItWorksPage() {
       {/* FAQ */}
       <div className="mt-20">
         <Reveal>
-          <h2 className="font-display text-3xl font-extrabold text-stone-900">
+          <h2 className="font-display text-3xl font-extrabold text-neutral-900">
             Frequently asked
           </h2>
         </Reveal>
@@ -107,13 +107,13 @@ export default function HowItWorksPage() {
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
               <details className="card group p-5 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex cursor-pointer items-center justify-between font-bold text-stone-900">
+                <summary className="flex cursor-pointer items-center justify-between font-bold text-neutral-900">
                   {f.q}
-                  <span className="ml-4 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 transition-transform group-open:rotate-45">
+                  <span className="ml-4 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-900 transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-3 text-sm text-stone-500">{f.a}</p>
+                <p className="mt-3 text-sm text-neutral-500">{f.a}</p>
               </details>
             </Reveal>
           ))}
@@ -122,11 +122,11 @@ export default function HowItWorksPage() {
 
       {/* CTA */}
       <Reveal>
-        <div className="mt-16 flex flex-col items-center gap-4 rounded-3xl bg-orange-100 p-10 text-center">
-          <h2 className="font-display text-2xl font-extrabold text-stone-900">
+        <div className="mt-16 flex flex-col items-center gap-4 rounded-lg bg-neutral-100 p-10 text-center">
+          <h2 className="font-display text-2xl font-extrabold text-neutral-900">
             Ready to start tapping?
           </h2>
-          <p className="max-w-md text-stone-700">
+          <p className="max-w-md text-neutral-700">
             Pick a product and we program it before it ships. You put it on the
             counter and start asking.
           </p>

@@ -40,20 +40,20 @@ export function Footer() {
         <Newsletter />
       </div>
 
-      <div className="mt-16 border-t border-stone-200 bg-white">
+      <div className="mt-16 border-t border-neutral-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
               <Link
                 href="/"
-                className="flex items-center gap-2 font-display text-lg font-extrabold text-stone-900"
+                className="flex items-center gap-2 font-display text-lg font-extrabold text-neutral-900"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500">
+                <span className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-600">
                   <Nfc className="h-5 w-5 text-white" strokeWidth={2.5} />
                 </span>
                 {site.name}
               </Link>
-              <p className="mt-4 max-w-xs text-sm text-stone-500">
+              <p className="mt-4 max-w-xs text-sm text-neutral-500">
                 {site.tagline}
               </p>
               <div className="mt-5 flex gap-3">
@@ -61,7 +61,7 @@ export function Footer() {
                   href={site.social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-500 transition-colors hover:border-stone-400 hover:text-stone-900"
+                  className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 text-neutral-500 transition-colors hover:border-neutral-400 hover:text-neutral-900"
                   aria-label="Instagram"
                 >
                   <Instagram className="h-4 w-4" />
@@ -70,7 +70,7 @@ export function Footer() {
                   href={site.social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-500 transition-colors hover:border-stone-400 hover:text-stone-900"
+                  className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 text-neutral-500 transition-colors hover:border-neutral-400 hover:text-neutral-900"
                   aria-label="Facebook"
                 >
                   <Facebook className="h-4 w-4" />
@@ -80,7 +80,7 @@ export function Footer() {
 
             {columns.map((col) => (
               <div key={col.title}>
-                <h4 className="text-sm font-bold text-stone-900">
+                <h4 className="text-sm font-bold text-neutral-900">
                   {col.title}
                 </h4>
                 <ul className="mt-4 space-y-2.5">
@@ -88,7 +88,7 @@ export function Footer() {
                     <li key={l.href}>
                       <Link
                         href={l.href}
-                        className="text-sm text-stone-500 transition-colors hover:text-stone-900"
+                        className="text-sm text-neutral-500 transition-colors hover:text-neutral-900"
                       >
                         {l.label}
                       </Link>
@@ -99,8 +99,8 @@ export function Footer() {
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-stone-200 pt-6 sm:flex-row">
-            <p className="text-sm text-stone-400">
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-neutral-200 pt-6 sm:flex-row">
+            <p className="text-sm text-neutral-400">
               © {new Date().getFullYear()} {site.name}. All rights reserved.
             </p>
             <PaymentBadges />

@@ -14,7 +14,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#FDFBF7",
+        cream: "#FFFFFF",
         ink: "#1C1917",
       },
       fontFamily: {

@@ -12,28 +12,28 @@
   }
 
   body {
-    @apply bg-cream text-stone-600 antialiased;
+    @apply bg-white text-neutral-600 antialiased;
   }
 
   ::selection {
-    @apply bg-orange-200 text-stone-900;
+    @apply bg-neutral-900 text-white;
   }
 }
 
 @layer components {
-  /* Standard card: white, rounded, subtle border, soft shadow. */
+  /* Standard card: white, small radius, hairline border, faint shadow. */
   .card {
-    @apply rounded-2xl border border-stone-200 bg-white shadow-soft;
+    @apply rounded-md border border-neutral-200 bg-white shadow-soft;
   }
 
-  /* Interactive card: gentle lift on hover. */
+  /* Interactive card: border darkens and shadow deepens on hover. */
   .card-hover {
-    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift;
+    @apply transition-all duration-200 hover:border-neutral-400 hover:shadow-lift;
   }
 
-  /* Small colored eyebrow label. */
+  /* Small uppercase eyebrow label. */
   .eyebrow {
-    @apply text-xs font-bold uppercase tracking-wider text-orange-600;
+    @apply text-xs font-bold uppercase tracking-wider text-neutral-400;
   }
 }
 
@@ -42,12 +42,12 @@
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #fdfbf7;
+  background: #ffffff;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d6d3d1;
-  border-radius: 8px;
+  background: #d4d4d4;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a29e;
+  background: #737373;
 }
