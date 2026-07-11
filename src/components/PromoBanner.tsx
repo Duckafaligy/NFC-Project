@@ -3,79 +3,88 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  BadgePercent,
+  Infinity as InfinityIcon,
+  ShieldCheck,
+  Timer,
+  TrendingUp,
+  Truck,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { site } from "@/lib/site";
 import { formatPrice } from "@/lib/utils";
 import { preorderActive, discountRate } from "@/lib/pricing";
 
+interface Item {
+  href: string;
+  icon: LucideIcon;
+  color: string;
+  label: string;
+}
+
 /**
- * The one rotating banner, below the hero. Replaces the old pair (a static
- * topbar above the navbar + a separate marquee ticker) with a single band:
- * messages crossfade on a timer, a gradient progress bar tracks the timing,
- * arrows/dots let visitors flip through, and it pauses on hover.
+ * The one rotating banner, below the hero. Shows a set of offers spread
+ * across the full band (1 on phones, 2 on tablets, 3 on desktop), each with
+ * a semantic icon, and rotates to the next set on a timer. Pauses on hover;
+ * the gradient progress line tracks the timing.
  */
 export function PromoBanner() {
-  const messages = [
+  const items: Item[] = [
     ...(preorderActive()
       ? [
           {
             href: "/products",
-            dot: "bg-violet-500",
-            node: (
-              <>
-                <span className="mr-1.5 rounded-sm bg-violet-600 px-1.5 py-0.5 font-bold text-white">
-                  Pre-order open
-                </span>
-                {Math.round(discountRate() * 100)}% off everything, no code
-                needed
-              </>
-            ),
+            icon: BadgePercent,
+            color: "text-violet-400",
+            label: `Pre-order open: ${Math.round(discountRate() * 100)}% off everything, no code needed`,
           },
         ]
       : []),
     {
       href: "/products/google-review-card",
-      dot: "bg-emerald-500",
-      node: <>312 reviews in 6 months at 2 yeses a day</>,
+      icon: TrendingUp,
+      color: "text-emerald-400",
+      label: "312 reviews in 6 months at 2 yeses a day",
     },
     {
       href: "/products",
-      dot: "bg-blue-500",
-      node: (
-        <>Free shipping on orders over {formatPrice(site.shipping.freeThreshold)}</>
-      ),
+      icon: Truck,
+      color: "text-blue-400",
+      label: `Free shipping on orders over ${formatPrice(site.shipping.freeThreshold)}`,
     },
     {
       href: "/#how-it-works",
-      dot: "bg-amber-400",
-      node: <>Tap to review in about 20 seconds</>,
+      icon: Timer,
+      color: "text-amber-400",
+      label: "Tap to review in about 20 seconds",
     },
     {
       href: "/legal/returns",
-      dot: "bg-emerald-500",
-      node: <>{site.guaranteeDays}-day money-back guarantee</>,
+      icon: ShieldCheck,
+      color: "text-emerald-400",
+      label: `${site.guaranteeDays}-day money-back guarantee`,
     },
     {
       href: "/products",
-      dot: "bg-violet-500",
-      node: <>No subscriptions. Buy the card once, own it forever</>,
+      icon: InfinityIcon,
+      color: "text-violet-400",
+      label: "No subscriptions. Buy the card once, own it forever",
     },
   ];
 
-  const [index, setIndex] = useState(0);
+  // Rotate through the items three at a time.
+  const groups: Item[][] = [];
+  for (let i = 0; i < items.length; i += 3) groups.push(items.slice(i, i + 3));
+
+  const [page, setPage] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (paused) return;
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % messages.length),
-      5000,
-    );
+    const id = setInterval(() => setPage((p) => (p + 1) % groups.length), 5000);
     return () => clearInterval(id);
-  }, [paused, messages.length]);
-
-  const step = (dir: 1 | -1) =>
-    setIndex((i) => (i + dir + messages.length) % messages.length);
+  }, [paused, groups.length]);
 
   return (
     <div
@@ -83,66 +92,49 @@ export function PromoBanner() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* Timing indicator: refills for each set, freezes on hover */}
       <div
-        key={index}
+        key={page}
         className="absolute bottom-0 left-0 h-[2px] animate-progressbar bg-gradient-to-r from-violet-500 via-emerald-500 to-blue-500"
         style={paused ? { animationPlayState: "paused" } : undefined}
         aria-hidden
       />
-      <div className="mx-auto flex h-12 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <button
-          onClick={() => step(-1)}
-          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-sm text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
-          aria-label="Previous announcement"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-
-        <div className="relative h-6 flex-1 overflow-hidden" aria-live="polite">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={index}
-              initial={{ y: 14, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -14, opacity: 0 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="absolute inset-0 flex items-center justify-center"
-            >
-              <Link
-                href={messages[index].href}
-                className="flex items-center gap-2 text-center text-xs font-semibold text-neutral-200 transition-colors hover:text-white sm:text-sm"
-              >
-                <span
-                  className={`h-1.5 w-1.5 flex-shrink-0 rounded-sm ${messages[index].dot}`}
-                  aria-hidden
-                />
-                {messages[index].node}
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <div className="flex flex-shrink-0 items-center gap-2">
-          <div className="hidden gap-1 sm:flex" aria-hidden>
-            {messages.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setIndex(i)}
-                className={`h-1.5 w-1.5 rounded-sm transition-colors ${
-                  i === index ? "bg-white" : "bg-white/25 hover:bg-white/60"
-                }`}
-                aria-label={`Message ${i + 1}`}
-              />
-            ))}
-          </div>
-          <button
-            onClick={() => step(1)}
-            className="flex h-7 w-7 items-center justify-center rounded-sm text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
-            aria-label="Next announcement"
+      <div className="mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page}
+            initial={{ y: 14, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -14, opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="flex h-full items-center"
+            aria-live="polite"
           >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
+            {groups[page].map((item, i) => (
+              <div
+                key={item.label}
+                className={`flex-1 justify-center ${
+                  i === 0
+                    ? "flex"
+                    : i === 1
+                      ? "hidden sm:flex"
+                      : "hidden lg:flex"
+                }`}
+              >
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-2 text-center text-xs font-semibold text-neutral-200 transition-colors hover:text-white lg:text-sm"
+                >
+                  <item.icon
+                    className={`h-4 w-4 flex-shrink-0 ${item.color}`}
+                    aria-hidden
+                  />
+                  {item.label}
+                </Link>
+              </div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

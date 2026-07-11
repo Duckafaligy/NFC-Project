@@ -310,9 +310,12 @@ Newest first. **Add an entry for every meaningful change.**
 - **Consolidated to a single rotating banner.** The static topbar above the
   navbar (`AnnouncementBar`) and the separate marquee ticker below the hero
   (`Ticker`) were two competing elements; both are deleted and replaced by
-  one `PromoBanner` below the hero. It crossfades between messages with
-  framer-motion (nicer than the old CSS keyframe roll-up), keeps the
-  gradient progress bar, prev/next arrows, dot navigation, and pause-on-hover.
+  one `PromoBanner` below the hero. It shows the offers spread evenly across
+  the full band (3 on desktop, 2 on tablet, 1 on phones), each with a
+  semantic lucide icon instead of a color-dot square (BadgePercent, Truck,
+  ShieldCheck, Timer, TrendingUp, Infinity), and rotates to the next set
+  every 5 seconds with a framer-motion crossfade. Gradient progress line
+  tracks the timing; rotation pauses on hover.
 - **Fixed the growth chart tooltip.** Hovering months 4-6 used to overlap the
   permanent "312" / "54" end-value labels, cluttering the chart. The end
   labels now hide while a tooltip is active, and the tooltip keeps a fixed
