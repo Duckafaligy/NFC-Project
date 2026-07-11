@@ -1,18 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 
 /**
  * Cumulative reviews over six months: a card on the counter (2 yeses a day,
  * 26 open days a month) vs asking when someone remembers (2 a week).
  * Illustrative arithmetic, labelled as such on the page.
  *
- * Colors validated (dataviz six checks, light surface):
- * emerald #059669 + blue #2563EB.
+ * Lives on the dark results band. Series colors validated for the dark
+ * surface (dataviz six checks): emerald #059669 + blue #3B82F6.
  */
 const MONTHS = ["M1", "M2", "M3", "M4", "M5", "M6"];
 const WITH_CARD = [52, 104, 156, 208, 260, 312]; // 2/day x 26 days, cumulative
 const ASKING = [9, 18, 27, 36, 45, 54]; // ~2/week, cumulative
+
+const GREEN = "#059669";
+const BLUE = "#3B82F6";
 
 const W = 560;
 const H = 280;
@@ -30,6 +34,8 @@ const toPath = (data: number[]) =>
 
 export function GrowthChart() {
   const [hover, setHover] = useState<number | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   function handleMove(e: React.MouseEvent<SVGSVGElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -41,24 +47,27 @@ export function GrowthChart() {
   }
 
   return (
-    <div className="card flex h-full flex-col p-6">
+    <div
+      ref={ref}
+      className="flex h-full flex-col rounded-md border border-white/10 bg-white/[0.04] p-6"
+    >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="font-display text-lg font-extrabold text-neutral-900">
+        <h3 className="font-display text-lg font-extrabold text-white">
           Reviews after six months
         </h3>
-        <p className="text-xs text-neutral-400">
+        <p className="text-xs text-neutral-500">
           Illustrative math · 26 open days a month
         </p>
       </div>
 
       {/* Legend */}
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs font-semibold text-neutral-700">
+      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs font-semibold text-neutral-300">
         <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-[#059669]" />
+          <span className="h-2.5 w-2.5 rounded-sm" style={{ background: GREEN }} />
           Card on the counter (2 yeses/day)
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-[#2563EB]" />
+          <span className="h-2.5 w-2.5 rounded-sm" style={{ background: BLUE }} />
           Just asking (2/week)
         </span>
       </div>
@@ -80,14 +89,14 @@ export function GrowthChart() {
                 x2={W - PAD.right}
                 y1={y(t)}
                 y2={y(t)}
-                stroke="#e5e5e5"
+                stroke="#27272a"
                 strokeWidth="1"
               />
               <text
                 x={PAD.left - 8}
                 y={y(t) + 4}
                 textAnchor="end"
-                className="fill-neutral-400 text-[11px]"
+                className="fill-neutral-500 text-[11px]"
               >
                 {t}
               </text>
@@ -100,7 +109,7 @@ export function GrowthChart() {
               x={x(i)}
               y={H - 8}
               textAnchor="middle"
-              className="fill-neutral-400 text-[11px]"
+              className="fill-neutral-500 text-[11px]"
             >
               {m}
             </text>
@@ -113,52 +122,74 @@ export function GrowthChart() {
               x2={x(hover)}
               y1={PAD.top}
               y2={H - PAD.bottom}
-              stroke="#d4d4d4"
+              stroke="#52525b"
               strokeWidth="1"
               strokeDasharray="3 3"
             />
           )}
 
-          {/* Series */}
-          <path d={toPath(ASKING)} fill="none" stroke="#2563EB" strokeWidth="2" />
-          <path d={toPath(WITH_CARD)} fill="none" stroke="#059669" strokeWidth="2" />
+          {/* Series: draw themselves in when scrolled into view */}
+          <motion.path
+            d={toPath(ASKING)}
+            fill="none"
+            stroke={BLUE}
+            strokeWidth="2"
+            initial={{ pathLength: 0 }}
+            animate={inView ? { pathLength: 1 } : {}}
+            transition={{ duration: 1.1, ease: "easeOut" }}
+          />
+          <motion.path
+            d={toPath(WITH_CARD)}
+            fill="none"
+            stroke={GREEN}
+            strokeWidth="2"
+            initial={{ pathLength: 0 }}
+            animate={inView ? { pathLength: 1 } : {}}
+            transition={{ duration: 1.4, ease: "easeOut", delay: 0.15 }}
+          />
 
           {/* Markers on hover */}
           {hover !== null && (
             <>
-              <circle cx={x(hover)} cy={y(WITH_CARD[hover])} r="5" fill="#059669" stroke="#fff" strokeWidth="2" />
-              <circle cx={x(hover)} cy={y(ASKING[hover])} r="5" fill="#2563EB" stroke="#fff" strokeWidth="2" />
+              <circle cx={x(hover)} cy={y(WITH_CARD[hover])} r="5" fill={GREEN} stroke="#0a0a0a" strokeWidth="2" />
+              <circle cx={x(hover)} cy={y(ASKING[hover])} r="5" fill={BLUE} stroke="#0a0a0a" strokeWidth="2" />
             </>
           )}
 
-          {/* Direct end labels (text in ink, colored chip carries identity) */}
-          <circle cx={x(5) - 1} cy={y(WITH_CARD[5])} r="3.5" fill="#059669" />
-          <text x={x(5) - 10} y={y(WITH_CARD[5]) - 9} textAnchor="end" className="fill-neutral-900 text-[12px] font-bold">
-            312
-          </text>
-          <circle cx={x(5) - 1} cy={y(ASKING[5])} r="3.5" fill="#2563EB" />
-          <text x={x(5) - 10} y={y(ASKING[5]) - 9} textAnchor="end" className="fill-neutral-900 text-[12px] font-bold">
-            54
-          </text>
+          {/* Direct end labels (fade in after the draw) */}
+          <motion.g
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 1.5, duration: 0.4 }}
+          >
+            <circle cx={x(5) - 1} cy={y(WITH_CARD[5])} r="3.5" fill={GREEN} />
+            <text x={x(5) - 10} y={y(WITH_CARD[5]) - 9} textAnchor="end" className="fill-white text-[12px] font-bold">
+              312
+            </text>
+            <circle cx={x(5) - 1} cy={y(ASKING[5])} r="3.5" fill={BLUE} />
+            <text x={x(5) - 10} y={y(ASKING[5]) - 9} textAnchor="end" className="fill-white text-[12px] font-bold">
+              54
+            </text>
+          </motion.g>
         </svg>
 
         {/* Tooltip */}
         {hover !== null && (
           <div
-            className="pointer-events-none absolute top-2 z-10 rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs shadow-lift"
+            className="pointer-events-none absolute top-2 z-10 rounded-md border border-white/15 bg-neutral-900 px-3 py-2 text-xs shadow-lift"
             style={{
               left: `${(x(hover) / W) * 100}%`,
               transform: `translateX(${hover > 3 ? "-108%" : "8%"})`,
             }}
           >
-            <p className="font-bold text-neutral-900">Month {hover + 1}</p>
-            <p className="mt-1 flex items-center gap-1.5 text-neutral-700">
-              <span className="h-2 w-2 rounded-sm bg-[#059669]" />
-              Card: <strong>{WITH_CARD[hover]}</strong>
+            <p className="font-bold text-white">Month {hover + 1}</p>
+            <p className="mt-1 flex items-center gap-1.5 text-neutral-300">
+              <span className="h-2 w-2 rounded-sm" style={{ background: GREEN }} />
+              Card: <strong className="text-white">{WITH_CARD[hover]}</strong>
             </p>
-            <p className="mt-0.5 flex items-center gap-1.5 text-neutral-700">
-              <span className="h-2 w-2 rounded-sm bg-[#2563EB]" />
-              Asking: <strong>{ASKING[hover]}</strong>
+            <p className="mt-0.5 flex items-center gap-1.5 text-neutral-300">
+              <span className="h-2 w-2 rounded-sm" style={{ background: BLUE }} />
+              Asking: <strong className="text-white">{ASKING[hover]}</strong>
             </p>
           </div>
         )}

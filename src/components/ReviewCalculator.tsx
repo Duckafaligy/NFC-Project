@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 /**
- * Interactive projection: the visitor sets their own traffic and yes-rate,
- * we do the arithmetic in front of them. No claims, just their numbers.
+ * Interactive projection on the dark results band: the visitor sets their
+ * own traffic and yes-rate, we do the arithmetic in front of them.
  */
 export function ReviewCalculator() {
   const [customers, setCustomers] = useState(40);
@@ -14,21 +14,21 @@ export function ReviewCalculator() {
   const perSixMonths = perMonth * 6;
 
   return (
-    <div className="card flex h-full flex-col p-6">
-      <h3 className="font-display text-lg font-extrabold text-neutral-900">
+    <div className="flex h-full flex-col rounded-md border border-white/10 bg-white/[0.04] p-6">
+      <h3 className="font-display text-lg font-extrabold text-white">
         Your counter, your math
       </h3>
-      <p className="mt-1 text-xs text-neutral-400">
+      <p className="mt-1 text-xs text-neutral-500">
         Drag the sliders. 26 open days a month assumed.
       </p>
 
       <div className="mt-6 space-y-6">
         <label className="block">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm font-semibold text-neutral-700">
+            <span className="text-sm font-semibold text-neutral-300">
               Customers per day
             </span>
-            <span className="font-display text-xl font-extrabold text-neutral-900">
+            <span className="font-display text-xl font-extrabold text-white">
               {customers}
             </span>
           </div>
@@ -39,16 +39,16 @@ export function ReviewCalculator() {
             step={5}
             value={customers}
             onChange={(e) => setCustomers(Number(e.target.value))}
-            className="mt-2 w-full accent-neutral-900"
+            className="mt-2 w-full accent-emerald-500"
           />
         </label>
 
         <label className="block">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm font-semibold text-neutral-700">
+            <span className="text-sm font-semibold text-neutral-300">
               Tap the card when asked
             </span>
-            <span className="font-display text-xl font-extrabold text-neutral-900">
+            <span className="font-display text-xl font-extrabold text-white">
               {yesRate}%
             </span>
           </div>
@@ -59,23 +59,23 @@ export function ReviewCalculator() {
             step={5}
             value={yesRate}
             onChange={(e) => setYesRate(Number(e.target.value))}
-            className="mt-2 w-full accent-neutral-900"
+            className="mt-2 w-full accent-emerald-500"
           />
         </label>
       </div>
 
       <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
-        <div className="rounded-md bg-neutral-900 p-4">
-          <p className="font-display text-3xl font-extrabold text-white">
+        <div className="rounded-md bg-white p-4">
+          <p className="font-display text-3xl font-extrabold text-neutral-900">
             {perMonth}
           </p>
-          <p className="mt-1 text-xs text-neutral-300">new reviews a month</p>
+          <p className="mt-1 text-xs text-neutral-500">new reviews a month</p>
         </div>
-        <div className="rounded-md bg-emerald-100 p-4">
-          <p className="font-display text-3xl font-extrabold text-emerald-700">
+        <div className="rounded-md bg-emerald-600 p-4">
+          <p className="font-display text-3xl font-extrabold text-white">
             {perSixMonths.toLocaleString()}
           </p>
-          <p className="mt-1 text-xs text-neutral-700">in six months</p>
+          <p className="mt-1 text-xs text-emerald-100">in six months</p>
         </div>
       </div>
     </div>

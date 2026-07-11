@@ -7,8 +7,6 @@ import {
   BadgeCheck,
   RefreshCw,
   Layers,
-  Truck,
-  MessageCircleHeart,
   MousePointerClick,
   Nfc,
   X,
@@ -24,15 +22,10 @@ import { ContactSection } from "@/components/ContactSection";
 import { GrowthChart } from "@/components/GrowthChart";
 import { ReviewCalculator } from "@/components/ReviewCalculator";
 import { CountUp } from "@/components/CountUp";
+import { Ticker } from "@/components/Ticker";
+import { SectionHeader } from "@/components/SectionHeader";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
-
-const benefits = [
-  { icon: Truck, title: "Free shipping over $50", desc: "Standard orders ship in 1-2 days", color: "text-blue-600" },
-  { icon: ShieldCheck, title: "30-day money back", desc: "Full refund, no restocking fee", color: "text-emerald-600" },
-  { icon: RefreshCw, title: "No subscriptions", desc: "Buy once, own it, reprogram free", color: "text-violet-600" },
-  { icon: MessageCircleHeart, title: "Real support", desc: "We reply within one business day", color: "text-amber-500" },
-];
 
 const industries = [
   { img: "/images/barbershop.jpg", name: "Barbershops", line: "Card at the register. Tap while they check the cut.", big: true },
@@ -185,21 +178,150 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== BENEFITS STRIP ===== */}
-      <section className="border-y border-neutral-200 bg-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {benefits.map((b) => (
-            <div key={b.title} className="flex items-start gap-3">
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-neutral-100">
-                <b.icon className={`h-5 w-5 ${b.color}`} />
-              </span>
-              <div>
-                <p className="text-sm font-bold text-neutral-900">{b.title}</p>
-                <p className="text-xs text-neutral-500">{b.desc}</p>
-              </div>
+      {/* ===== TICKER ===== */}
+      <Ticker />
+
+      {/* ===== RESULTS: CHART + CALCULATOR + COUNTERS ===== */}
+      <section className="bg-neutral-950 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionHeader
+            n="01"
+            dark
+            eyebrow="The numbers"
+            title="What one tap adds up to"
+          />
+        </Reveal>
+
+        <div className="mt-10 grid gap-4 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <GrowthChart />
+          </Reveal>
+          <Reveal delay={0.08} className="lg:col-span-5">
+            <ReviewCalculator />
+          </Reveal>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <Reveal delay={0.1}>
+            <div className="h-full rounded-md border border-white/10 bg-white/[0.04] p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-emerald-500">
+                <CountUp value={312} />
+              </p>
+              <p className="mt-1 text-xs text-neutral-400">
+                reviews in 6 months at 2 yeses a day
+              </p>
             </div>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <div className="h-full rounded-md border border-white/10 bg-white/[0.04] p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-blue-400">
+                <CountUp value={20} suffix=" sec" />
+              </p>
+              <p className="mt-1 text-xs text-neutral-400">
+                from tap to posted review
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.18}>
+            <div className="h-full rounded-md border border-white/10 bg-white/[0.04] p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-white">
+                <CountUp value={98} suffix="%" />
+              </p>
+              <p className="mt-1 text-xs text-neutral-400">
+                read reviews before choosing (BrightLocal)
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.22}>
+            <div className="h-full rounded-md border border-white/10 bg-white/[0.04] p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-violet-400">
+                <CountUp value={0} prefix="$" />
+              </p>
+              <p className="mt-1 text-xs text-neutral-400">
+                monthly fees, forever
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+      </section>
+
+      {/* ===== BEST SELLERS ===== */}
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <Reveal>
+            <SectionHeader
+              n="02"
+              align="left"
+              eyebrow="Shop"
+              title="Best sellers"
+              sub="Every product is $34.99, or $42.99 with your own branding. Pre-order now and 20% comes off your whole cart at checkout."
+            />
+          </Reveal>
+          <Reveal>
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-neutral-900 hover:text-neutral-900"
+            >
+              View all products <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Reveal>
+        </div>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {featured.map((p, i) => (
+            <Reveal key={p.id} delay={i * 0.05}>
+              <ProductCard product={p} />
+            </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* ===== HOW IT GOES AT THE COUNTER ===== */}
+      <section className="bg-neutral-50 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionHeader
+            n="03"
+            eyebrow="Twenty seconds, start to finish"
+            title="How it goes at the counter"
+            sub="The best moment to ask for a review is right after you hand back the card reader."
+          />
+        </Reveal>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              n: "1",
+              title: "The handoff",
+              desc: "You finish the cut, pour the coffee, close the ticket. The customer is happy and their phone is already in their hand.",
+            },
+            {
+              n: "2",
+              title: "The tap",
+              desc: "You ask once: “Mind leaving us a quick review? Just tap your phone here.” They hold it to the card and your review page opens.",
+            },
+            {
+              n: "3",
+              title: "The post",
+              desc: "Five stars, two lines, posted while the receipt prints. Not forgotten on the drive home.",
+            },
+          ].map((s, i) => (
+            <Reveal key={s.n} delay={i * 0.08}>
+              <div className="card h-full p-7">
+                <span className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-900 font-display text-lg font-extrabold text-white">
+                  {s.n}
+                </span>
+                <h3 className="mt-4 font-display text-xl font-bold text-neutral-900">
+                  {s.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+                  {s.desc}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
       </section>
 
       {/* ===== HOW THE TECH WORKS ===== */}
@@ -208,12 +330,11 @@ export default function HomePage() {
         className="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8"
       >
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">The tech, minus the jargon</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-              How tap-to-connect works
-            </h2>
-          </div>
+          <SectionHeader
+            n="04"
+            eyebrow="The tech, minus the jargon"
+            title="How tap-to-connect works"
+          />
         </Reveal>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -257,165 +378,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== RESULTS: CHART + CALCULATOR + COUNTERS ===== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">The numbers</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-              What one tap adds up to
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="mt-10 grid gap-4 lg:grid-cols-12">
-          <Reveal className="lg:col-span-7">
-            <GrowthChart />
-          </Reveal>
-          <Reveal delay={0.08} className="lg:col-span-5">
-            <ReviewCalculator />
-          </Reveal>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <Reveal delay={0.1}>
-            <div className="card h-full p-6 text-center">
-              <p className="font-display text-4xl font-extrabold text-emerald-600">
-                <CountUp value={312} />
-              </p>
-              <p className="mt-1 text-xs text-neutral-500">
-                reviews in 6 months at 2 yeses a day
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={0.14}>
-            <div className="card h-full p-6 text-center">
-              <p className="font-display text-4xl font-extrabold text-blue-600">
-                <CountUp value={20} suffix=" sec" />
-              </p>
-              <p className="mt-1 text-xs text-neutral-500">
-                from tap to posted review
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={0.18}>
-            <div className="card h-full p-6 text-center">
-              <p className="font-display text-4xl font-extrabold text-neutral-900">
-                <CountUp value={98} suffix="%" />
-              </p>
-              <p className="mt-1 text-xs text-neutral-500">
-                read reviews before choosing (BrightLocal)
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={0.22}>
-            <div className="card h-full p-6 text-center">
-              <p className="font-display text-4xl font-extrabold text-violet-600">
-                <CountUp value={0} prefix="$" />
-              </p>
-              <p className="mt-1 text-xs text-neutral-500">
-                monthly fees, forever
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ===== HOW IT GOES AT THE COUNTER ===== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">Twenty seconds, start to finish</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-              How it goes at the counter
-            </h2>
-            <p className="mt-3 text-neutral-500">
-              The best moment to ask for a review is right after you hand back
-              the card reader.
-            </p>
-          </div>
-        </Reveal>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {[
-            {
-              n: "1",
-              title: "The handoff",
-              desc: "You finish the cut, pour the coffee, close the ticket. The customer is happy and their phone is already in their hand.",
-            },
-            {
-              n: "2",
-              title: "The tap",
-              desc: "You ask once: “Mind leaving us a quick review? Just tap your phone here.” They hold it to the card and your review page opens.",
-            },
-            {
-              n: "3",
-              title: "The post",
-              desc: "Five stars, two lines, posted while the receipt prints. Not forgotten on the drive home.",
-            },
-          ].map((s, i) => (
-            <Reveal key={s.n} delay={i * 0.08}>
-              <div className="card h-full p-7">
-                <span className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-900 font-display text-lg font-extrabold text-white">
-                  {s.n}
-                </span>
-                <h3 className="mt-4 font-display text-xl font-bold text-neutral-900">
-                  {s.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-500">
-                  {s.desc}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== BEST SELLERS ===== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <Reveal>
-            <div>
-              <p className="eyebrow">Shop</p>
-              <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-                Best sellers
-              </h2>
-              <p className="mt-3 max-w-xl text-neutral-500">
-                Every product is $34.99, or $42.99 with your own branding.
-                Pre-order now and 20% comes off your whole cart at checkout.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-neutral-900 hover:text-neutral-900"
-            >
-              View all products <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Reveal>
-        </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.05}>
-              <ProductCard product={p} />
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
       {/* ===== NFC VS QR VS ASKING ===== */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">Honest comparison</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-              &ldquo;Why not just print a QR code?&rdquo;
-            </h2>
-            <p className="mt-3 text-neutral-500">
-              We get this question at every door. Here is how the three options
-              stack up.
-            </p>
-          </div>
+          <SectionHeader
+            n="05"
+            eyebrow="Honest comparison"
+            title="&ldquo;Why not just print a QR code?&rdquo;"
+            sub="We get this question at every door. Here is how the three options stack up."
+          />
         </Reveal>
         <Reveal delay={0.1}>
           <div className="card mt-10 overflow-x-auto p-0">
@@ -476,16 +447,12 @@ export default function HomePage() {
       {/* ===== INDUSTRIES BENTO ===== */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">Who it&apos;s for</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-              Built for places with counters
-            </h2>
-            <p className="mt-3 text-neutral-500">
-              Anywhere customers stand with a phone in hand, the card earns its
-              keep.
-            </p>
-          </div>
+          <SectionHeader
+            n="06"
+            eyebrow="Who it&apos;s for"
+            title="Built for places with counters"
+            sub="Anywhere customers stand with a phone in hand, the card earns its keep."
+          />
         </Reveal>
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {industries.map((biz, i) => (
@@ -576,18 +543,15 @@ export default function HomePage() {
       </section>
 
       {/* ===== WHAT TO SAY ===== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="bg-neutral-50 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">Steal these scripts</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
-              What to actually say
-            </h2>
-            <p className="mt-3 text-neutral-500">
-              The card does the technical part. One rehearsed sentence does the
-              rest. These are the asks that work, word for word.
-            </p>
-          </div>
+          <SectionHeader
+            n="07"
+            eyebrow="Steal these scripts"
+            title="What to actually say"
+            sub="The card does the technical part. One rehearsed sentence does the rest. These are the asks that work, word for word."
+          />
         </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
@@ -623,6 +587,7 @@ export default function HomePage() {
             </Reveal>
           ))}
         </div>
+      </div>
       </section>
 
       {/* ===== TESTIMONIALS ===== */}

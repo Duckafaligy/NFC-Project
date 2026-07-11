@@ -306,6 +306,24 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-11 — Immersive results band, hero ticker, numbered section system
+- **Results section is now a full-bleed dark band** (neutral-950): chart and
+  calculator restyled for the dark surface (series colors re-validated for
+  dark: emerald #059669 + blue #3B82F6), lines animate drawing themselves in
+  on scroll (framer-motion pathLength), end labels fade in after the draw.
+- **Ticker below the hero** (`Ticker`): continuously scrolling black band
+  with the key numbers/offers as linked items with semantic color dots;
+  pauses on hover. Replaces the static benefits strip (deleted).
+- **Topbar improved**: a thin progress line refills for each message on the
+  5-second rotation and freezes while hovered.
+- **Numbered section system** (`SectionHeader`): consistent organizer
+  (numbered chip + eyebrow + title + subline) applied across home sections
+  01-07; sections reordered for narrative (numbers > best sellers > counter
+  story > tech > comparison > industries > custom > scripts) and key
+  sections sit on alternating white / neutral-50 / black bands.
+- Verified in-browser after killing a stale prod server that was masking the
+  new build: ticker scroll, topbar progress, dark chart tooltip, draw-in.
+
 ### 2026-07-11 — Interactive topbar + visuals-first results section
 - **Topbar rebuilt** (`AnnouncementBar`, now client): messages roll up every
   4 seconds with a spin animation, pause on hover, and are fully interactive:

@@ -34,10 +34,20 @@ const config: Config = {
           "0%": { transform: "translateY(90%)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
+        progressbar: {
+          "0%": { width: "0%" },
+          "100%": { width: "100%" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
         rollup: "rollup 0.35s ease-out",
+        progressbar: "progressbar 5s linear forwards",
+        marquee: "marquee 32s linear infinite",
       },
     },
   },

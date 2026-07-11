@@ -53,7 +53,7 @@ export function AnnouncementBar() {
     if (paused) return;
     const id = setInterval(
       () => setIndex((i) => (i + 1) % messages.length),
-      4000,
+      5000,
     );
     return () => clearInterval(id);
   }, [paused, messages.length]);
@@ -63,10 +63,17 @@ export function AnnouncementBar() {
 
   return (
     <div
-      className="bg-neutral-900"
+      className="relative bg-neutral-900"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* Timing indicator: refills for each message, freezes on hover */}
+      <div
+        key={index}
+        className="absolute bottom-0 left-0 h-[2px] animate-progressbar bg-white/30"
+        style={paused ? { animationPlayState: "paused" } : undefined}
+        aria-hidden
+      />
       <div className="mx-auto flex h-9 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => step(-1)}
