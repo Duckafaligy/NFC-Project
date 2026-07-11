@@ -359,7 +359,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
         <div>
           <ShieldCheck className="mx-auto h-4 w-4 text-emerald-600" />
           <p className="mt-1 text-[11px] leading-tight text-neutral-500">
-            {site.guaranteeDays}-day money back
+            {site.guaranteeDays}-day free maintenance
           </p>
         </div>
         <div>

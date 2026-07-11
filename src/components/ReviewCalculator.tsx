@@ -44,7 +44,7 @@ export function ReviewCalculator() {
             type="range"
             min={10}
             max={200}
-            step={5}
+            step={1}
             value={customers}
             onChange={(e) => setCustomers(Number(e.target.value))}
             className="slider mt-3"
@@ -65,7 +65,7 @@ export function ReviewCalculator() {
             type="range"
             min={5}
             max={40}
-            step={5}
+            step={1}
             value={yesRate}
             onChange={(e) => setYesRate(Number(e.target.value))}
             className="slider mt-3"

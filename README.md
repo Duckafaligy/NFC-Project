@@ -341,7 +341,16 @@ Newest first. **Add an entry for every meaningful change.**
   instead of hard-clipping at the band edges.
 - **Calculator sliders restyled** (`.slider` in globals.css): custom white
   square thumbs with emerald borders and an emerald fill painted up to the
-  thumb (inline gradient), replacing the default browser range look.
+  thumb (inline gradient), replacing the default browser range look. Steps
+  changed from 5 to 1 on both sliders for finer control.
+- **Policy change: no refunds, 30 days of free maintenance instead.** All
+  "money-back guarantee" / "full refund" copy replaced site-wide (hero,
+  stat tile, promo ticker with a Wrench icon, guarantee banner, checkout
+  trust row, configurator trust row, footer labels). `/legal/returns` is
+  now the Maintenance Policy: all sales final; within 30 days of delivery
+  any problem is corrected free, by shipping the product back or an
+  on-site visit where offered; lifetime free replacement if a card stops
+  scanning stays. Route URL unchanged so existing links keep working.
 - Verified with a clean `npm run build` and headless-Chromium screenshots
   (banner, chart hover at both ends, industries grid, mobile).
 

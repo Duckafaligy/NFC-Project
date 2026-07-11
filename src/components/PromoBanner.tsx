@@ -2,10 +2,10 @@ import Link from "next/link";
 import {
   BadgePercent,
   Infinity as InfinityIcon,
-  ShieldCheck,
   Timer,
   TrendingUp,
   Truck,
+  Wrench,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { site } from "@/lib/site";
@@ -60,9 +60,9 @@ export function PromoBanner() {
     },
     {
       href: "/legal/returns",
-      icon: ShieldCheck,
+      icon: Wrench,
       color: "text-emerald-400",
-      label: `${site.guaranteeDays}-day money-back guarantee`,
+      label: `${site.guaranteeDays} days of free maintenance`,
     },
     {
       href: "/products",

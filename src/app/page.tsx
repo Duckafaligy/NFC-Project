@@ -109,7 +109,7 @@ export default function HomePage() {
               </div>
               <p className="mt-6 flex items-center gap-2 text-sm text-neutral-500">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                {site.guaranteeDays}-day money-back guarantee on every order
+                {site.guaranteeDays} days of free maintenance on every order
               </p>
             </div>
           </Reveal>
@@ -168,10 +168,10 @@ export default function HomePage() {
             <div className="h-full rounded-md bg-neutral-100 p-6">
               <ShieldCheck className="h-6 w-6 text-emerald-600" />
               <p className="mt-2 font-display text-xl font-extrabold text-neutral-900">
-                {site.guaranteeDays}-day returns
+                {site.guaranteeDays}-day free maintenance
               </p>
               <p className="mt-1 text-sm text-neutral-700">
-                Full refund if it doesn&apos;t earn its spot
+                Anything wrong, we correct it free in the first month
               </p>
             </div>
           </Reveal>
@@ -605,12 +605,13 @@ export default function HomePage() {
               </span>
               <div>
                 <h2 className="font-display text-2xl font-extrabold text-neutral-900">
-                  Try it for {site.guaranteeDays} days, on us
+                  First {site.guaranteeDays} days: maintenance is on us
                 </h2>
                 <p className="mt-1 max-w-xl text-neutral-700">
-                  If the card doesn&apos;t earn its spot on your counter, send
-                  it back for a full refund. If it ever stops scanning, we
-                  replace it free.
+                  If anything is off with your card in the first{" "}
+                  {site.guaranteeDays} days, we make it right free. Ship it
+                  back and we correct it, or we come out and fix it where you
+                  are. If it ever stops scanning, we replace it free.
                 </p>
               </div>
             </div>

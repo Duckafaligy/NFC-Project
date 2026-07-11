@@ -24,7 +24,9 @@ export const site = {
     handlingDays: "1-2 business days",
     deliveryDays: "3-7 business days",
   },
-  // Money-back guarantee window (days), surfaced across the store.
+  // Free maintenance window (days), surfaced across the store. No refunds:
+  // within this window we correct any problem free, by return shipping or
+  // an in-person visit.
   guaranteeDays: 30,
   /**
    * Pre-order window. While enabled, the discount applies to the whole cart

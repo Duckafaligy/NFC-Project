@@ -20,7 +20,7 @@ const columns = [
       { href: "/#how-it-works", label: "How it works" },
       { href: "/#contact", label: "Contact" },
       { href: "/legal/shipping", label: "Shipping" },
-      { href: "/legal/returns", label: "Returns" },
+      { href: "/legal/returns", label: "Maintenance" },
     ],
   },
   {
@@ -28,7 +28,7 @@ const columns = [
     links: [
       { href: "/legal/terms", label: "Terms of Service" },
       { href: "/legal/privacy", label: "Privacy Policy" },
-      { href: "/legal/returns", label: "Refund Policy" },
+      { href: "/legal/returns", label: "Maintenance Policy" },
     ],
   },
 ];

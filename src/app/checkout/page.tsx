@@ -300,7 +300,7 @@ export default function CheckoutPage() {
 
             <div className="mt-4 flex items-center justify-center gap-2 text-xs font-semibold text-neutral-600">
               <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              {site.guaranteeDays}-day money-back guarantee on every order
+              {site.guaranteeDays} days of free maintenance on every order
             </div>
           </div>
         </div>
