@@ -9,7 +9,9 @@ import { motion, useInView } from "framer-motion";
  * Illustrative arithmetic, labelled as such on the page.
  *
  * Lives on the dark results band. Series colors validated for the dark
- * surface (dataviz six checks): emerald #059669 + blue #3B82F6.
+ * surface (dataviz six checks): emerald #059669 + blue #3B82F6. Lines draw
+ * themselves in on scroll, sit on soft gradient area fills, and the
+ * crosshair/tooltip follows pointer events so it works on touch too.
  */
 const MONTHS = ["M1", "M2", "M3", "M4", "M5", "M6"];
 const WITH_CARD = [52, 104, 156, 208, 260, 312]; // 2/day x 26 days, cumulative
@@ -19,9 +21,9 @@ const GREEN = "#059669";
 const BLUE = "#3B82F6";
 
 const W = 560;
-const H = 280;
-const PAD = { top: 16, right: 16, bottom: 28, left: 40 };
-const Y_MAX = 350;
+const H = 300;
+const PAD = { top: 20, right: 20, bottom: 32, left: 40 };
+const Y_MAX = 330;
 const Y_TICKS = [0, 100, 200, 300];
 
 const x = (i: number) =>
@@ -31,6 +33,9 @@ const y = (v: number) =>
 
 const toPath = (data: number[]) =>
   data.map((v, i) => `${i === 0 ? "M" : "L"}${x(i)},${y(v)}`).join(" ");
+
+const toArea = (data: number[]) =>
+  `${toPath(data)} L${x(data.length - 1)},${y(0)} L${x(0)},${y(0)} Z`;
 
 export function GrowthChart() {
   const [hover, setHover] = useState<number | null>(null);
@@ -44,7 +49,7 @@ export function GrowthChart() {
     return () => clearTimeout(t);
   }, [inView]);
 
-  function handleMove(e: React.MouseEvent<SVGSVGElement>) {
+  function handleMove(e: React.PointerEvent<SVGSVGElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
     const px = ((e.clientX - rect.left) / rect.width) * W;
     const i = Math.round(
@@ -83,11 +88,24 @@ export function GrowthChart() {
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="w-full"
-          onMouseMove={handleMove}
-          onMouseLeave={() => setHover(null)}
+          style={{ touchAction: "pan-y" }}
+          onPointerMove={handleMove}
+          onPointerDown={handleMove}
+          onPointerLeave={() => setHover(null)}
           role="img"
           aria-label="Line chart comparing cumulative reviews: about 312 with a card on the counter after six months versus about 54 by asking occasionally"
         >
+          <defs>
+            <linearGradient id="areaCard" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={GREEN} stopOpacity="0.3" />
+              <stop offset="100%" stopColor={GREEN} stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="areaAsking" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={BLUE} stopOpacity="0.22" />
+              <stop offset="100%" stopColor={BLUE} stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
           {/* Grid + y labels */}
           {Y_TICKS.map((t) => (
             <g key={t}>
@@ -116,11 +134,29 @@ export function GrowthChart() {
               x={x(i)}
               y={H - 8}
               textAnchor="middle"
-              className="fill-neutral-500 text-[11px]"
+              className={`text-[11px] font-semibold ${
+                hover === i ? "fill-white" : "fill-neutral-500"
+              }`}
             >
               {m}
             </text>
           ))}
+
+          {/* Area fills fade in once the lines have drawn */}
+          <motion.path
+            d={toArea(ASKING)}
+            fill="url(#areaAsking)"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.9, duration: 0.6 }}
+          />
+          <motion.path
+            d={toArea(WITH_CARD)}
+            fill="url(#areaCard)"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 1.1, duration: 0.6 }}
+          />
 
           {/* Crosshair */}
           {hover !== null && (
@@ -140,7 +176,8 @@ export function GrowthChart() {
             d={toPath(ASKING)}
             fill="none"
             stroke={BLUE}
-            strokeWidth="2"
+            strokeWidth="2.5"
+            strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={inView ? { pathLength: 1 } : {}}
             transition={{ duration: 1.1, ease: "easeOut" }}
@@ -149,19 +186,40 @@ export function GrowthChart() {
             d={toPath(WITH_CARD)}
             fill="none"
             stroke={GREEN}
-            strokeWidth="2"
+            strokeWidth="2.5"
+            strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={inView ? { pathLength: 1 } : {}}
             transition={{ duration: 1.4, ease: "easeOut", delay: 0.15 }}
           />
 
-          {/* Markers on hover */}
-          {hover !== null && (
-            <>
-              <circle cx={x(hover)} cy={y(WITH_CARD[hover])} r="5" fill={GREEN} stroke="#0a0a0a" strokeWidth="2" />
-              <circle cx={x(hover)} cy={y(ASKING[hover])} r="5" fill={BLUE} stroke="#0a0a0a" strokeWidth="2" />
-            </>
-          )}
+          {/* Data-point dots, visible after the draw */}
+          <motion.g
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 1.2, duration: 0.4 }}
+          >
+            {MONTHS.map((_, i) => (
+              <g key={i}>
+                <circle
+                  cx={x(i)}
+                  cy={y(WITH_CARD[i])}
+                  r={hover === i ? 5.5 : 3}
+                  fill={GREEN}
+                  stroke="#0a0a0a"
+                  strokeWidth="2"
+                />
+                <circle
+                  cx={x(i)}
+                  cy={y(ASKING[i])}
+                  r={hover === i ? 5.5 : 3}
+                  fill={BLUE}
+                  stroke="#0a0a0a"
+                  strokeWidth="2"
+                />
+              </g>
+            ))}
+          </motion.g>
 
           {/* Direct end labels: fade in after the draw, step aside while a
               tooltip is active so the two never overlap. */}
@@ -171,12 +229,10 @@ export function GrowthChart() {
               transition: "opacity 200ms ease-out",
             }}
           >
-            <circle cx={x(5) - 1} cy={y(WITH_CARD[5])} r="3.5" fill={GREEN} />
-            <text x={x(5) - 10} y={y(WITH_CARD[5]) - 9} textAnchor="end" className="fill-white text-[12px] font-bold">
+            <text x={x(5) - 10} y={y(WITH_CARD[5]) - 9} textAnchor="end" className="fill-white text-[13px] font-bold">
               312
             </text>
-            <circle cx={x(5) - 1} cy={y(ASKING[5])} r="3.5" fill={BLUE} />
-            <text x={x(5) - 10} y={y(ASKING[5]) - 9} textAnchor="end" className="fill-white text-[12px] font-bold">
+            <text x={x(5) - 10} y={y(ASKING[5]) - 9} textAnchor="end" className="fill-white text-[13px] font-bold">
               54
             </text>
           </g>
@@ -202,6 +258,9 @@ export function GrowthChart() {
             <p className="mt-0.5 flex items-center gap-1.5 text-neutral-300">
               <span className="h-2 w-2 rounded-sm" style={{ background: BLUE }} />
               Asking: <strong className="text-white">{ASKING[hover]}</strong>
+            </p>
+            <p className="mt-1 border-t border-white/10 pt-1 text-[11px] text-emerald-400">
+              {Math.round(WITH_CARD[hover] / ASKING[hover])}x more with the card
             </p>
           </div>
         )}

@@ -324,12 +324,18 @@ Newest first. **Add an entry for every meaningful change.**
 - **Fixed the "Who it's for" industries grid.** The trailing "Your business"
   CTA tile used to land alone in a new row at 1/4 grid width, leaving a large
   empty gap beside it. It now spans the full row as a horizontal banner.
-- **Fonts: Playfair Display (display) + Inter (body).** Times New Roman was
-  tried first at the owner's request but didn't land; after researching
-  current recommendations (Typewolf, Kinsta et al. name Playfair + Inter as
-  the go-to premium e-commerce pairing) the site now loads both via
-  `next/font/google`. Playfair carries the serif elegance Times was
-  reaching for; Inter keeps body copy screen-crisp.
+- **Fonts: Archivo (display) + Inter (body).** Times New Roman was tried
+  first at the owner's request but didn't land; Playfair Display next, but
+  the owner read it as cursive. Settled on Archivo, a grotesque designed
+  for print headlines: bold, clean, no decorative strokes, supports the
+  800/900 weights used across headings. Inter stays for body copy. Both
+  load via `next/font/google`.
+- **Growth chart rebuilt** (`GrowthChart`): gradient area fills under both
+  series, always-visible data-point dots (enlarge on hover), hovered month
+  label highlights, tooltip gains a "Nx more with the card" comparison
+  line, Y-scale tightened (330 max) so the lines fill the plot, and the
+  crosshair/tooltip now follows pointer events so it works on touch
+  devices, with `touch-action: pan-y` preserving page scroll.
 - **Ticker polish:** gap widened to gap-28 so about four items are visible
   at desktop width, and gradient edge fades dissolve items in and out
   instead of hard-clipping at the band edges.
