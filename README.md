@@ -343,6 +343,14 @@ Newest first. **Add an entry for every meaningful change.**
   square thumbs with emerald borders and an emerald fill painted up to the
   thumb (inline gradient), replacing the default browser range look. Steps
   changed from 5 to 1 on both sliders for finer control.
+- **Stock bar on product pages** (`StockBar`, under the price in the
+  configurator). Research-backed tiers (specific counts beat vague
+  warnings; escalate only when genuinely low): emerald "In stock — ready
+  to ship" while healthy, amber "Only N left — almost gone" with a pulsing
+  dot at LOW_STOCK (10) or below, gray out-of-stock state. Animated fill
+  shows stock/STOCK_BATCH (50, one print run). Data is a new `stock` field
+  per product in products.ts — **owner must keep these numbers honest and
+  current**; stale scarcity destroys trust and can breach consumer rules.
 - **Policy change: no refunds, 30 days of free maintenance instead.** All
   "money-back guarantee" / "full refund" copy replaced site-wide (hero,
   stat tile, promo ticker with a Wrench icon, guarantee banner, checkout

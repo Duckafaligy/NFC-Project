@@ -37,6 +37,7 @@ import {
 } from "@/lib/pricing";
 import { site } from "@/lib/site";
 import { Button } from "./Button";
+import { StockBar } from "./StockBar";
 
 const inputFocus =
   "focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200";
@@ -130,6 +131,9 @@ export function ProductConfigurator({ product }: { product: Product }) {
           {product.formFactor}
         </span>
       </div>
+
+      {/* Availability */}
+      <StockBar stock={product.stock} />
 
       {/* Design type choice */}
       <div className="mt-6">

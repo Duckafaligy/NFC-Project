@@ -30,6 +30,17 @@ export const CUSTOM_UPCHARGE = 8;
  */
 export const DESIGN_LABOUR_FEE = 4.99;
 
+/**
+ * Stock display (see components/StockBar.tsx). Each product's `stock` is
+ * what's left of the current print run of STOCK_BATCH units. At or below
+ * LOW_STOCK the UI switches to an amber "only N left" urgency state.
+ * KEEP THESE NUMBERS HONEST and update them as orders come in — stale
+ * scarcity ("only 2 left" for weeks) destroys trust and can breach
+ * consumer-protection rules.
+ */
+export const STOCK_BATCH = 50;
+export const LOW_STOCK = 10;
+
 export interface Product {
   id: string;
   slug: string;
@@ -54,6 +65,8 @@ export interface Product {
   box: string[];
   /** Two accent colors (main, secondary) used for the product visual. */
   accent: [string, string];
+  /** Units left in the current print run (out of STOCK_BATCH). */
+  stock: number;
   popular?: boolean;
 }
 
@@ -94,6 +107,7 @@ export const products: Product[] = [
       "Adhesive strip for mounting flat on a counter",
     ],
     accent: ["#F97316", "#FBBF24"],
+    stock: 9,
     popular: true,
   },
   {
@@ -132,6 +146,7 @@ export const products: Product[] = [
       "Microfiber cloth for the acrylic face",
     ],
     accent: ["#F472B6", "#FB923C"],
+    stock: 21,
     popular: true,
   },
   {
@@ -169,6 +184,7 @@ export const products: Product[] = [
       "Quick-start guide with three ways to hand it over naturally",
     ],
     accent: ["#EC4899", "#8B5CF6"],
+    stock: 34,
   },
   {
     id: "business-card",
@@ -205,6 +221,7 @@ export const products: Product[] = [
       "Setup guide for editing your details later",
     ],
     accent: ["#3B82F6", "#22D3EE"],
+    stock: 26,
     popular: true,
   },
   {
@@ -243,6 +260,7 @@ export const products: Product[] = [
       "Placement guide for tables, bars, and host stands",
     ],
     accent: ["#10B981", "#84CC16"],
+    stock: 43,
   },
   {
     id: "wifi-tag",
@@ -280,6 +298,7 @@ export const products: Product[] = [
       "Guide for reprogramming when you rotate passwords",
     ],
     accent: ["#0EA5E9", "#6366F1"],
+    stock: 17,
   },
   {
     id: "keychain-tag",
@@ -316,6 +335,7 @@ export const products: Product[] = [
       "Field guide: the one-line ask that works on job sites",
     ],
     accent: ["#F59E0B", "#F97316"],
+    stock: 7,
   },
   {
     id: "allinone-card",
@@ -353,6 +373,7 @@ export const products: Product[] = [
       "Adhesive strip for mounting flat on a counter",
     ],
     accent: ["#14B8A6", "#3B82F6"],
+    stock: 12,
     popular: true,
   },
 ];
