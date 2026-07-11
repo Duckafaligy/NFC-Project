@@ -73,13 +73,13 @@ export function PromoBanner() {
   ];
 
   return (
-    <div className="group overflow-hidden border-y border-white/5 bg-neutral-950">
+    <div className="group relative overflow-hidden border-y border-white/5 bg-neutral-950">
       <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
         {[0, 1].map((copy) => (
           <div
             key={copy}
             aria-hidden={copy === 1}
-            className="flex items-center gap-16 py-3.5 pr-16"
+            className="flex items-center gap-28 py-4 pr-28"
           >
             {items.map((item) => (
               <Link
@@ -98,6 +98,15 @@ export function PromoBanner() {
           </div>
         ))}
       </div>
+      {/* Edge fades so items dissolve in and out instead of hard-clipping */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-neutral-950 to-transparent"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-neutral-950 to-transparent"
+      />
     </div>
   );
 }

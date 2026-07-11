@@ -35,6 +35,38 @@
   .eyebrow {
     @apply text-xs font-bold uppercase tracking-wider text-neutral-400;
   }
+
+  /* Range slider on the dark results band. The emerald fill up to the thumb
+     is painted by an inline background gradient set in the component. */
+  .slider {
+    @apply h-1.5 w-full cursor-pointer appearance-none rounded-sm;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 4px;
+    background: #ffffff;
+    border: 2px solid #10b981;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    transition: transform 0.15s ease;
+  }
+  .slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+  .slider::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 4px;
+    background: #ffffff;
+    border: 2px solid #10b981;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    transition: transform 0.15s ease;
+  }
+  .slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
+  }
 }
 
 ::-webkit-scrollbar {

@@ -6,6 +6,14 @@ import { useState } from "react";
  * Interactive projection on the dark results band: the visitor sets their
  * own traffic and yes-rate, we do the arithmetic in front of them.
  */
+/** Emerald fill up to the thumb, faint track after it. */
+function fill(value: number, min: number, max: number) {
+  const pct = ((value - min) / (max - min)) * 100;
+  return {
+    background: `linear-gradient(to right, #10b981 ${pct}%, rgba(255,255,255,0.12) ${pct}%)`,
+  };
+}
+
 export function ReviewCalculator() {
   const [customers, setCustomers] = useState(40);
   const [yesRate, setYesRate] = useState(15);
@@ -39,7 +47,8 @@ export function ReviewCalculator() {
             step={5}
             value={customers}
             onChange={(e) => setCustomers(Number(e.target.value))}
-            className="mt-2 w-full accent-emerald-500"
+            className="slider mt-3"
+            style={fill(customers, 10, 200)}
           />
         </label>
 
@@ -59,7 +68,8 @@ export function ReviewCalculator() {
             step={5}
             value={yesRate}
             onChange={(e) => setYesRate(Number(e.target.value))}
-            className="mt-2 w-full accent-emerald-500"
+            className="slider mt-3"
+            style={fill(yesRate, 5, 40)}
           />
         </label>
       </div>

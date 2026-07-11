@@ -18,8 +18,8 @@ const config: Config = {
         ink: "#1C1917",
       },
       fontFamily: {
-        display: ['"Times New Roman"', "Times", "serif"],
-        sans: ['"Times New Roman"', "Times", "serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       boxShadow: {
         soft: "0 1px 3px rgb(28 25 23 / 0.04), 0 4px 14px rgb(28 25 23 / 0.06)",

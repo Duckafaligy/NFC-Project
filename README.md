@@ -324,9 +324,18 @@ Newest first. **Add an entry for every meaningful change.**
 - **Fixed the "Who it's for" industries grid.** The trailing "Your business"
   CTA tile used to land alone in a new row at 1/4 grid width, leaving a large
   empty gap beside it. It now spans the full row as a horizontal banner.
-- **Fonts switched to Times New Roman** site-wide (both `font-sans` and
-  `font-display` tokens in `tailwind.config.ts`). Removed the Inter and
-  Plus Jakarta Sans Google Font loading from `layout.tsx`.
+- **Fonts: Playfair Display (display) + Inter (body).** Times New Roman was
+  tried first at the owner's request but didn't land; after researching
+  current recommendations (Typewolf, Kinsta et al. name Playfair + Inter as
+  the go-to premium e-commerce pairing) the site now loads both via
+  `next/font/google`. Playfair carries the serif elegance Times was
+  reaching for; Inter keeps body copy screen-crisp.
+- **Ticker polish:** gap widened to gap-28 so about four items are visible
+  at desktop width, and gradient edge fades dissolve items in and out
+  instead of hard-clipping at the band edges.
+- **Calculator sliders restyled** (`.slider` in globals.css): custom white
+  square thumbs with emerald borders and an emerald fill painted up to the
+  thumb (inline gradient), replacing the default browser range look.
 - Verified with a clean `npm run build` and headless-Chromium screenshots
   (banner, chart hover at both ends, industries grid, mobile).
 
