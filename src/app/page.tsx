@@ -21,6 +21,9 @@ import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
 import { ContactSection } from "@/components/ContactSection";
+import { GrowthChart } from "@/components/GrowthChart";
+import { ReviewCalculator } from "@/components/ReviewCalculator";
+import { CountUp } from "@/components/CountUp";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
 
@@ -251,6 +254,70 @@ export default function HomePage() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* ===== RESULTS: CHART + CALCULATOR + COUNTERS ===== */}
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <Reveal>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">The numbers</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+              What one tap adds up to
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="mt-10 grid gap-4 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <GrowthChart />
+          </Reveal>
+          <Reveal delay={0.08} className="lg:col-span-5">
+            <ReviewCalculator />
+          </Reveal>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <Reveal delay={0.1}>
+            <div className="card h-full p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-emerald-600">
+                <CountUp value={312} />
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                reviews in 6 months at 2 yeses a day
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <div className="card h-full p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-blue-600">
+                <CountUp value={20} suffix=" sec" />
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                from tap to posted review
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.18}>
+            <div className="card h-full p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-neutral-900">
+                <CountUp value={98} suffix="%" />
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                read reviews before choosing (BrightLocal)
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.22}>
+            <div className="card h-full p-6 text-center">
+              <p className="font-display text-4xl font-extrabold text-violet-600">
+                <CountUp value={0} prefix="$" />
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                monthly fees, forever
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
 

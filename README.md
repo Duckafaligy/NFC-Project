@@ -306,6 +306,24 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-11 — Interactive topbar + visuals-first results section
+- **Topbar rebuilt** (`AnnouncementBar`, now client): messages roll up every
+  4 seconds with a spin animation, pause on hover, and are fully interactive:
+  prev/next arrows, dot navigation, and each message links somewhere useful.
+- **New "What one tap adds up to" section** on home, visuals over words:
+  - `GrowthChart`: interactive SVG line chart (cumulative reviews over six
+    months, card-on-counter vs just-asking) with crosshair + tooltip on
+    hover, legend, direct end labels, and a screen-reader data table.
+    Series colors validated with the dataviz palette checker
+    (emerald #059669 + blue #2563EB, all checks pass). Data is labelled
+    illustrative arithmetic, not measured results.
+  - `ReviewCalculator`: two sliders (customers/day, yes-rate) computing
+    projected reviews per month and per six months live.
+  - Four `CountUp` stat tiles that animate when scrolled into view
+    (312 / 20 sec / 98% / $0).
+- Verified in-browser: chart hover, slider math, counter animation, topbar
+  rotation and controls.
+
 ### 2026-07-11 — Design labour fee + navigation consolidated to Home/Products
 - **$4.99 design labour fee** when the customer picks Custom > "Design it for
   me" (DESIGN_LABOUR_FEE in products.ts): Standard $34.99, Custom with own
