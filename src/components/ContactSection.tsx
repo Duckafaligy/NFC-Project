@@ -2,30 +2,36 @@
 
 import { useState } from "react";
 import { Mail, Phone, MessageSquare, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/Button";
+import { Button } from "./Button";
 import { site } from "@/lib/site";
 
 const inputStyles =
   "mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200";
 
-export default function ContactPage() {
+/**
+ * Contact block rendered on the home page (id="contact" so nav/footer links
+ * can jump straight to it).
+ * NOTE: the form simulates sending; wire it to an email service later.
+ */
+export function ContactSection() {
   const [sent, setSent] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // No email backend yet. This simulates a successful send.
-    // Wire this to an email service / form endpoint later.
     setSent(true);
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="max-w-2xl">
+    <section
+      id="contact"
+      className="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8"
+    >
+      <div className="mx-auto max-w-2xl text-center">
         <p className="eyebrow">Contact</p>
-        <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+        <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
           Talk to us
-        </h1>
-        <p className="mt-4 text-lg text-neutral-600">
+        </h2>
+        <p className="mt-3 text-neutral-500">
           Products, custom designs, bulk orders. We usually reply within one
           business day.
         </p>
@@ -39,7 +45,7 @@ export default function ContactPage() {
             className="card card-hover flex items-center gap-4 p-5"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-md bg-neutral-100">
-              <Mail className="h-5 w-5 text-neutral-900" />
+              <Mail className="h-5 w-5 text-blue-600" />
             </span>
             <div>
               <p className="text-sm text-neutral-400">Email</p>
@@ -51,7 +57,7 @@ export default function ContactPage() {
             className="card card-hover flex items-center gap-4 p-5"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-md bg-neutral-100">
-              <Phone className="h-5 w-5 text-neutral-900" />
+              <Phone className="h-5 w-5 text-emerald-600" />
             </span>
             <div>
               <p className="text-sm text-neutral-400">Phone</p>
@@ -60,12 +66,12 @@ export default function ContactPage() {
           </a>
           <div className="card flex items-center gap-4 p-5">
             <span className="flex h-11 w-11 items-center justify-center rounded-md bg-neutral-100">
-              <MessageSquare className="h-5 w-5 text-neutral-900" />
+              <MessageSquare className="h-5 w-5 text-violet-600" />
             </span>
             <div>
               <p className="text-sm text-neutral-400">Bulk and custom</p>
               <p className="font-bold text-neutral-900">
-                Ask about volume pricing
+                Ask about volume quotes
               </p>
             </div>
           </div>
@@ -78,9 +84,9 @@ export default function ContactPage() {
               <span className="flex h-14 w-14 items-center justify-center rounded-md bg-emerald-100">
                 <CheckCircle2 className="h-8 w-8 text-emerald-600" />
               </span>
-              <h2 className="mt-4 font-display text-xl font-extrabold text-neutral-900">
+              <h3 className="mt-4 font-display text-xl font-extrabold text-neutral-900">
                 Message sent!
-              </h2>
+              </h3>
               <p className="mt-2 max-w-sm text-sm text-neutral-500">
                 Thanks for reaching out. We&apos;ll get back to you at the email
                 you provided.
@@ -126,6 +132,6 @@ export default function ContactPage() {
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -24,6 +24,11 @@ export type FormFactor = "Card" | "Sticker" | "Keychain" | "Stand" | "Band";
 export const STANDARD_PRICE = 34.99;
 /** Added when the customer chooses a custom design ($42.99 total). */
 export const CUSTOM_UPCHARGE = 8;
+/**
+ * Added on top of the custom price when WE design the card for the customer
+ * ($47.98 total). Covers the design labour.
+ */
+export const DESIGN_LABOUR_FEE = 4.99;
 
 export interface Product {
   id: string;
@@ -351,6 +356,23 @@ export const products: Product[] = [
     popular: true,
   },
 ];
+
+/**
+ * The full (pre-discount) unit price for a configuration. Used by the
+ * configurator UI and the Stripe route so both always agree.
+ */
+export function configuredUnitPrice(
+  product: Product,
+  designType: "standard" | "custom",
+  customMethod?: "upload" | "we-design",
+): number {
+  let price = product.basePrice;
+  if (designType === "custom") {
+    price += product.customUpcharge;
+    if (customMethod === "we-design") price += DESIGN_LABOUR_FEE;
+  }
+  return Math.round(price * 100) / 100;
+}
 
 export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { products } from "@/lib/products";
+import { products, configuredUnitPrice } from "@/lib/products";
 import { site } from "@/lib/site";
 import { unitAmountCents, lineTotal, preorderActive, discountRate } from "@/lib/pricing";
 
@@ -54,14 +54,16 @@ export async function POST(request: Request) {
     }
 
     const isCustom = item.designType === "custom";
-    const baseUnit = isCustom
-      ? product.basePrice + product.customUpcharge
-      : product.basePrice;
+    const baseUnit = configuredUnitPrice(
+      product,
+      item.designType,
+      item.customMethod,
+    );
 
     const designLabel = isCustom
       ? item.customMethod === "upload"
         ? "Custom design: customer artwork"
-        : "Custom design: designed by us"
+        : "Custom design: designed by us (incl. design fee)"
       : "Standard design";
 
     const note = (item.note ?? "").slice(0, 400);
@@ -83,10 +85,11 @@ export async function POST(request: Request) {
 
   const subtotal = items.reduce((sum, item) => {
     const product = products.find((p) => p.id === item.productId)!;
-    const baseUnit =
-      item.designType === "custom"
-        ? product.basePrice + product.customUpcharge
-        : product.basePrice;
+    const baseUnit = configuredUnitPrice(
+      product,
+      item.designType,
+      item.customMethod,
+    );
     return sum + lineTotal(baseUnit, Math.floor(Number(item.quantity)));
   }, 0);
 

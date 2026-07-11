@@ -9,6 +9,8 @@ import {
   Layers,
   Truck,
   MessageCircleHeart,
+  MousePointerClick,
+  Nfc,
   X,
   Check,
   Minus,
@@ -18,6 +20,7 @@ import { ButtonLink } from "@/components/Button";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
+import { ContactSection } from "@/components/ContactSection";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
 
@@ -192,6 +195,61 @@ export default function HomePage() {
                 <p className="text-xs text-neutral-500">{b.desc}</p>
               </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== HOW THE TECH WORKS ===== */}
+      <section
+        id="how-it-works"
+        className="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8"
+      >
+        <Reveal>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">The tech, minus the jargon</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+              How tap-to-connect works
+            </h2>
+          </div>
+        </Reveal>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              icon: Nfc,
+              title: "A chip in every card",
+              desc: "We program it with the link of your choice before it ships: reviews, socials, menu, WiFi, or a hub.",
+              color: "text-blue-600",
+            },
+            {
+              icon: MousePointerClick,
+              title: "The customer taps",
+              desc: "They hold their phone near the card. No app, no scanning, no typing.",
+              color: "text-emerald-600",
+            },
+            {
+              icon: Smartphone,
+              title: "The link opens",
+              desc: "Your page pops up on their screen, ready for the review, follow, or order.",
+              color: "text-amber-500",
+            },
+            {
+              icon: RefreshCw,
+              title: "Change it any time",
+              desc: "The card is reprogrammable, so it grows with your business.",
+              color: "text-violet-600",
+            },
+          ].map((t, i) => (
+            <Reveal key={t.title} delay={i * 0.05}>
+              <div className="h-full rounded-md bg-neutral-100 p-6">
+                <span className="flex h-11 w-11 items-center justify-center rounded-md bg-white shadow-soft">
+                  <t.icon className={`h-5 w-5 ${t.color}`} />
+                </span>
+                <h3 className="mt-4 font-display text-base font-bold text-neutral-900">
+                  {t.title}
+                </h3>
+                <p className="mt-1.5 text-sm text-neutral-600">{t.desc}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -391,7 +449,7 @@ export default function HomePage() {
           ))}
           <Reveal delay={0.25}>
             <Link
-              href="/contact"
+              href="/#contact"
               className="card card-hover flex h-64 flex-col items-center justify-center gap-3 p-6 text-center"
             >
               <span className="font-display text-lg font-extrabold text-neutral-900">
@@ -425,7 +483,7 @@ export default function HomePage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <ButtonLink href="/products">Start customizing</ButtonLink>
-                <ButtonLink href="/contact" variant="secondary">
+                <ButtonLink href="/#contact" variant="secondary">
                   Ask about bulk orders
                 </ButtonLink>
               </div>
@@ -599,6 +657,9 @@ export default function HomePage() {
           </ul>
         </div>
       </section>
+
+      {/* ===== CONTACT ===== */}
+      <ContactSection />
 
       {/* ===== FINAL CTA ===== */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

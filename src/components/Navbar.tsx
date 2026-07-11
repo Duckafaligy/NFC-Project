@@ -11,8 +11,6 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Products" },
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/contact", label: "Contact" },
 ];
 
 export function Navbar() {

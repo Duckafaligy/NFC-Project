@@ -17,7 +17,11 @@ import {
   CalendarCheck,
   Clock,
 } from "lucide-react";
-import type { Product } from "@/lib/products";
+import {
+  configuredUnitPrice,
+  DESIGN_LABOUR_FEE,
+  type Product,
+} from "@/lib/products";
 import {
   useCart,
   type CustomMethod,
@@ -64,11 +68,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
   }, []);
 
   const unitPrice = useMemo(
-    () =>
-      designType === "custom"
-        ? product.basePrice + product.customUpcharge
-        : product.basePrice,
-    [designType, product.basePrice, product.customUpcharge],
+    () => configuredUnitPrice(product, designType, customMethod),
+    [product, designType, customMethod],
   );
 
   const preorder = preorderActive();
@@ -161,7 +162,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <PenTool className="h-5 w-5 text-neutral-900" />
             <p className="mt-2 font-bold text-neutral-900">Custom</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              Your brand ·{" "}
+              Your brand · from{" "}
               {formatPrice(product.basePrice + product.customUpcharge)}
             </p>
           </button>
@@ -190,7 +191,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
                   Upload my design
                 </p>
                 <p className="text-xs text-neutral-500">
-                  I have artwork ready to go
+                  I have artwork ready · no extra fee
                 </p>
               </div>
             </button>
@@ -209,7 +210,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
                   Design it for me
                 </p>
                 <p className="text-xs text-neutral-500">
-                  We design it around your brand
+                  We design it around your brand · +
+                  {formatPrice(DESIGN_LABOUR_FEE)} design fee
                 </p>
               </div>
             </button>

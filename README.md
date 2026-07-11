@@ -143,8 +143,6 @@ src/
 | `/products`               | All products with a category filter                              |
 | `/products/[slug]`        | Individual product: visual, description, features, specs, and the **configurator** |
 | `/checkout`               | Cart items, shipping form, order summary, place-order flow       |
-| `/how-it-works`           | How NFC tapping works + FAQ                                      |
-| `/contact`                | Contact form + email/phone                                       |
 | `/legal/terms`            | Terms of Service                                                 |
 | `/legal/privacy`          | Privacy Policy                                                   |
 | `/legal/shipping`         | Shipping Policy                                                  |
@@ -307,6 +305,21 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-11 — Design labour fee + navigation consolidated to Home/Products
+- **$4.99 design labour fee** when the customer picks Custom > "Design it for
+  me" (DESIGN_LABOUR_FEE in products.ts): Standard $34.99, Custom with own
+  artwork $42.99, Custom designed by us $47.98. One shared helper
+  (`configuredUnitPrice`) drives the configurator UI and the Stripe route so
+  displayed and charged prices always match; the fee is labelled on the
+  option and in Stripe line items.
+- **Navigation trimmed to Home and Products.** The /how-it-works and /contact
+  pages were deleted; their content merged into the landing page as a
+  4-tile "How tap-to-connect works" strip (id="how-it-works") and a full
+  contact section with form (id="contact", new `ContactSection` component).
+  Footer links point at the anchors. Legal pages remain (footer only).
+- Verified: fee math on the live page ($38.38 pre-order from $47.98), old
+  routes 404, anchors scroll correctly.
 
 ### 2026-07-11 — Theme: semantic multi-accent on the monotone base
 - Replaced the orange-only accent rule with a small semantic palette on the
