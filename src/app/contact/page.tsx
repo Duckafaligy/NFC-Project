@@ -75,8 +75,8 @@ export default function ContactPage() {
         <div className="card p-6 sm:p-8">
           {sent ? (
             <div className="flex flex-col items-center py-10 text-center">
-              <span className="flex h-14 w-14 items-center justify-center rounded-md bg-neutral-100">
-                <CheckCircle2 className="h-8 w-8 text-neutral-900" />
+              <span className="flex h-14 w-14 items-center justify-center rounded-md bg-emerald-100">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600" />
               </span>
               <h2 className="mt-4 font-display text-xl font-extrabold text-neutral-900">
                 Message sent!

@@ -16,28 +16,28 @@ const steps = [
     title: "Every product has a smart NFC chip",
     desc: "Inside each card, tag, or stand is a chip we program with the link of your choice: your Google review page, Instagram, menu, WiFi, or a full link hub.",
     bg: "bg-neutral-100",
-    iconColor: "text-neutral-900",
+    iconColor: "text-blue-600",
   },
   {
     icon: MousePointerClick,
     title: "Your customer taps their phone",
     desc: "They hold their phone near the card. No app, no QR scanning, no typing. Modern iPhones and Androids read NFC automatically.",
     bg: "bg-neutral-100",
-    iconColor: "text-neutral-900",
+    iconColor: "text-emerald-600",
   },
   {
     icon: Smartphone,
     title: "The link opens instantly",
     desc: "Your destination pops up on their screen, ready to leave a review, follow you, join your WiFi, or browse your menu.",
     bg: "bg-neutral-100",
-    iconColor: "text-neutral-900",
+    iconColor: "text-amber-500",
   },
   {
     icon: RefreshCw,
     title: "Change the link any time",
     desc: "New promo, new platform, new menu. Your card is reprogrammable, so it grows with your business.",
     bg: "bg-neutral-100",
-    iconColor: "text-neutral-900",
+    iconColor: "text-violet-600",
   },
 ];
 

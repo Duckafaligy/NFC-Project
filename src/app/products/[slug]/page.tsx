@@ -197,7 +197,7 @@ export default async function ProductPage({
             },
           ].map((s) => (
             <div key={s.title}>
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
                 {s.step}
               </p>
               <h3 className="mt-2 font-display text-lg font-bold text-neutral-900">

@@ -22,10 +22,10 @@ import { products } from "@/lib/products";
 import { site } from "@/lib/site";
 
 const benefits = [
-  { icon: Truck, title: "Free shipping over $50", desc: "Standard orders ship in 1-2 days" },
-  { icon: ShieldCheck, title: "30-day money back", desc: "Full refund, no restocking fee" },
-  { icon: RefreshCw, title: "No subscriptions", desc: "Buy once, own it, reprogram free" },
-  { icon: MessageCircleHeart, title: "Real support", desc: "We reply within one business day" },
+  { icon: Truck, title: "Free shipping over $50", desc: "Standard orders ship in 1-2 days", color: "text-blue-600" },
+  { icon: ShieldCheck, title: "30-day money back", desc: "Full refund, no restocking fee", color: "text-emerald-600" },
+  { icon: RefreshCw, title: "No subscriptions", desc: "Buy once, own it, reprogram free", color: "text-violet-600" },
+  { icon: MessageCircleHeart, title: "Real support", desc: "We reply within one business day", color: "text-amber-500" },
 ];
 
 const industries = [
@@ -89,7 +89,7 @@ export default function HomePage() {
           <Reveal className="lg:col-span-7">
             <div className="card flex h-full flex-col justify-center p-8 sm:p-12">
               <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-neutral-100 px-3 py-1 text-xs font-bold text-neutral-900">
-                <Star className="h-3.5 w-3.5 fill-neutral-500 text-neutral-500" />
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 NFC review cards for local business
               </span>
               <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
@@ -109,7 +109,7 @@ export default function HomePage() {
                 </ButtonLink>
               </div>
               <p className="mt-6 flex items-center gap-2 text-sm text-neutral-500">
-                <ShieldCheck className="h-4 w-4 text-neutral-900" />
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
                 {site.guaranteeDays}-day money-back guarantee on every order
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={0.18} className="lg:col-span-3">
             <div className="h-full rounded-md bg-neutral-100 p-6">
-              <p className="font-display text-4xl font-extrabold text-orange-600">
+              <p className="font-display text-4xl font-extrabold text-blue-600">
                 $0
               </p>
               <p className="mt-2 text-sm text-neutral-700">
@@ -167,7 +167,7 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={0.22} className="lg:col-span-3">
             <div className="h-full rounded-md bg-neutral-100 p-6">
-              <ShieldCheck className="h-6 w-6 text-neutral-900" />
+              <ShieldCheck className="h-6 w-6 text-emerald-600" />
               <p className="mt-2 font-display text-xl font-extrabold text-neutral-900">
                 {site.guaranteeDays}-day returns
               </p>
@@ -185,7 +185,7 @@ export default function HomePage() {
           {benefits.map((b) => (
             <div key={b.title} className="flex items-start gap-3">
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-neutral-100">
-                <b.icon className="h-5 w-5 text-neutral-900" />
+                <b.icon className={`h-5 w-5 ${b.color}`} />
               </span>
               <div>
                 <p className="text-sm font-bold text-neutral-900">{b.title}</p>
@@ -509,7 +509,7 @@ export default function HomePage() {
           <div className="flex flex-col items-start gap-6 rounded-lg bg-neutral-100 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="flex items-start gap-4">
               <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-white shadow-soft">
-                <ShieldCheck className="h-6 w-6 text-neutral-900" />
+                <ShieldCheck className="h-6 w-6 text-emerald-600" />
               </span>
               <div>
                 <h2 className="font-display text-2xl font-extrabold text-neutral-900">

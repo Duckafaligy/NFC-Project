@@ -118,7 +118,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
             )}
           </div>
           {preorder && (
-            <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-orange-600 px-2 py-0.5 text-[11px] font-bold text-white">
+            <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-violet-600 px-2 py-0.5 text-[11px] font-bold text-white">
               <Clock className="h-3 w-3" />
               {site.preorder.label}: {Math.round(discountRate() * 100)}% off
               your whole cart
@@ -303,7 +303,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <span className="text-neutral-500">
               {formatPrice(payNow)} each × {qty}
             </span>
-            <span className="font-bold text-orange-600">
+            <span className="font-bold text-emerald-600">
               You save{" "}
               {formatPrice(
                 compareLineTotal(unitPrice, qty) - lineTotal(unitPrice, qty),
@@ -355,13 +355,13 @@ export function ProductConfigurator({ product }: { product: Product }) {
       {/* Trust row */}
       <div className="mt-4 grid grid-cols-3 gap-2 border-t border-neutral-200 pt-4 text-center">
         <div>
-          <ShieldCheck className="mx-auto h-4 w-4 text-neutral-900" />
+          <ShieldCheck className="mx-auto h-4 w-4 text-emerald-600" />
           <p className="mt-1 text-[11px] leading-tight text-neutral-500">
             {site.guaranteeDays}-day money back
           </p>
         </div>
         <div>
-          <Truck className="mx-auto h-4 w-4 text-neutral-900" />
+          <Truck className="mx-auto h-4 w-4 text-blue-600" />
           <p className="mt-1 text-[11px] leading-tight text-neutral-500">
             Free shipping over {formatPrice(site.shipping.freeThreshold)}
           </p>

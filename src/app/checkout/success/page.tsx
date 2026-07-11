@@ -21,7 +21,7 @@ export default function CheckoutSuccessPage() {
 
   return (
     <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-neutral-100 text-neutral-900">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-emerald-100 text-emerald-600">
         <CheckCircle2 className="h-9 w-9" />
       </div>
       <h1 className="mt-6 font-display text-3xl font-extrabold text-neutral-900">

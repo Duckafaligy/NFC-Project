@@ -32,7 +32,7 @@ export function Newsletter() {
           tips on getting more reviews. No spam, unsubscribe anytime.
         </p>
         {sent ? (
-          <p className="mt-6 flex items-center gap-2 font-semibold text-neutral-900">
+          <p className="mt-6 flex items-center gap-2 font-semibold text-emerald-600">
             <CheckCircle2 className="h-5 w-5" /> You&apos;re in! Check your
             inbox for the code.
           </p>

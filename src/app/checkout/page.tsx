@@ -80,7 +80,7 @@ export default function CheckoutPage() {
   if (payState === "demo-placed") {
     return (
       <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-neutral-100 text-neutral-900">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-emerald-100 text-emerald-600">
           <CheckCircle2 className="h-9 w-9" />
         </div>
         <h1 className="mt-6 font-display text-3xl font-extrabold text-neutral-900">
@@ -158,7 +158,7 @@ export default function CheckoutPage() {
                         {" · "}
                         {formatPrice(discounted)} each
                         {hasDiscount && (
-                          <span className="ml-1 font-bold text-orange-600">
+                          <span className="ml-1 font-bold text-violet-600">
                             (pre-order price)
                           </span>
                         )}
@@ -224,7 +224,7 @@ export default function CheckoutPage() {
             <div className="mt-4 rounded-md bg-neutral-50 p-3">
               {remaining > 0 ? (
                 <p className="flex items-center gap-1.5 text-xs text-neutral-700">
-                  <Truck className="h-4 w-4 text-neutral-900" />
+                  <Truck className="h-4 w-4 text-blue-600" />
                   Add <strong>{formatPrice(remaining)}</strong> more for free
                   shipping
                 </p>
@@ -235,7 +235,7 @@ export default function CheckoutPage() {
               )}
               <div className="mt-2 h-2 overflow-hidden rounded-md bg-white">
                 <div
-                  className="h-full rounded-md bg-orange-600 transition-all duration-500"
+                  className="h-full rounded-md bg-emerald-500 transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -250,7 +250,7 @@ export default function CheckoutPage() {
                       {formatPrice(compareSubtotal)}
                     </dd>
                   </div>
-                  <div className="flex justify-between font-semibold text-orange-600">
+                  <div className="flex justify-between font-semibold text-emerald-600">
                     <dt>
                       Pre-order discount ({Math.round(discountRate() * 100)}%)
                     </dt>
@@ -299,7 +299,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mt-4 flex items-center justify-center gap-2 text-xs font-semibold text-neutral-600">
-              <ShieldCheck className="h-4 w-4 text-neutral-900" />
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
               {site.guaranteeDays}-day money-back guarantee on every order
             </div>
           </div>

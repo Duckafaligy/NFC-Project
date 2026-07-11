@@ -63,7 +63,7 @@ export function CartDrawer() {
         <div className="border-b border-neutral-200 bg-neutral-50 px-5 py-3">
           {remaining > 0 ? (
             <p className="flex items-center gap-1.5 text-sm text-neutral-700">
-              <Truck className="h-4 w-4 text-neutral-900" />
+              <Truck className="h-4 w-4 text-blue-600" />
               Add <strong>{formatPrice(remaining)}</strong> more for free
               shipping
             </p>
@@ -74,7 +74,7 @@ export function CartDrawer() {
           )}
           <div className="mt-2 h-2 overflow-hidden rounded-md bg-white">
             <div
-              className="h-full rounded-md bg-orange-600 transition-all duration-500"
+              className="h-full rounded-md bg-emerald-500 transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -169,7 +169,7 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="border-t border-neutral-200 px-5 py-4">
             {preorderActive() && compareSubtotal > subtotal && (
-              <div className="flex items-center justify-between text-xs font-semibold text-orange-600">
+              <div className="flex items-center justify-between text-xs font-semibold text-emerald-600">
                 <span>Pre-order discount</span>
                 <span>-{formatPrice(compareSubtotal - subtotal)}</span>
               </div>

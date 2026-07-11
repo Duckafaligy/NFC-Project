@@ -162,9 +162,16 @@ in a handful of deliberate places. Corners are tight (rounded-md max).
   the border. neutral-100 panels and one black (neutral-900) hero stat tile
   for contrast.
 - **Text:** neutral-900 headings, neutral-600 body, neutral-400 secondary.
-- **The only color (orange-600), used exactly here:** logo mark, cart count
-  badge, Best seller badge, free-shipping progress bars, pack-savings
-  amounts, and the $0 hero stat. Add new orange uses sparingly or not at all.
+- **Accent colors are semantic and small** (the base stays monotone):
+  - **orange-600**: logo mark, Best seller badge (brand identity)
+  - **blue-600**: cart count badge, shipping/truck icons, $0 hero stat,
+    step labels (info)
+  - **emerald-500/600**: free-shipping progress bars, discount amounts,
+    guarantee shields, success states (money/positive)
+  - **violet-600**: everything pre-order (announcement chip, price chip,
+    "(pre-order price)" labels)
+  - **amber-400/500**: review stars, support icon (highlight)
+  Follow these meanings when adding UI; never introduce a sixth color.
 - **Buttons:** rounded-md; primary = black fill, secondary = white with
   neutral border that darkens on hover.
 - **Radius scale:** rounded-md for cards/buttons/inputs, rounded-sm for tiny
@@ -300,6 +307,15 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-11 — Theme: semantic multi-accent on the monotone base
+- Replaced the orange-only accent rule with a small semantic palette on the
+  same white/black monotone base: orange = brand (logo, Best seller),
+  blue = info (cart badge, shipping icons, $0 stat, step labels),
+  emerald = money/positive (progress bars, discounts, guarantees, success),
+  violet = pre-order identity (all pre-order chips and labels),
+  amber = stars/highlight. Color meanings documented in Design system.
+- No layout or copy changes. Build clean; verified with screenshots.
 
 ### 2026-07-11 — Pricing overhaul: flat $34.99/$42.99 + pre-order 20%, richer content
 - **New pricing model:** every product is $34.99 standard, $42.99 custom
