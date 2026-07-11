@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
 /**
@@ -34,8 +34,15 @@ const toPath = (data: number[]) =>
 
 export function GrowthChart() {
   const [hover, setHover] = useState<number | null>(null);
+  const [labelsRevealed, setLabelsRevealed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+
+  useEffect(() => {
+    if (!inView) return;
+    const t = setTimeout(() => setLabelsRevealed(true), 1500);
+    return () => clearTimeout(t);
+  }, [inView]);
 
   function handleMove(e: React.MouseEvent<SVGSVGElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -156,11 +163,13 @@ export function GrowthChart() {
             </>
           )}
 
-          {/* Direct end labels (fade in after the draw) */}
-          <motion.g
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 1.5, duration: 0.4 }}
+          {/* Direct end labels: fade in after the draw, step aside while a
+              tooltip is active so the two never overlap. */}
+          <g
+            style={{
+              opacity: labelsRevealed && hover === null ? 1 : 0,
+              transition: "opacity 200ms ease-out",
+            }}
           >
             <circle cx={x(5) - 1} cy={y(WITH_CARD[5])} r="3.5" fill={GREEN} />
             <text x={x(5) - 10} y={y(WITH_CARD[5]) - 9} textAnchor="end" className="fill-white text-[12px] font-bold">
@@ -170,7 +179,7 @@ export function GrowthChart() {
             <text x={x(5) - 10} y={y(ASKING[5]) - 9} textAnchor="end" className="fill-white text-[12px] font-bold">
               54
             </text>
-          </motion.g>
+          </g>
         </svg>
 
         {/* Tooltip */}
@@ -179,7 +188,10 @@ export function GrowthChart() {
             className="pointer-events-none absolute top-2 z-10 rounded-md border border-white/15 bg-neutral-900 px-3 py-2 text-xs shadow-lift"
             style={{
               left: `${(x(hover) / W) * 100}%`,
-              transform: `translateX(${hover > 3 ? "-108%" : "8%"})`,
+              transform:
+                hover >= (MONTHS.length - 1) / 2
+                  ? "translateX(calc(-100% - 12px))"
+                  : "translateX(12px)",
             }}
           >
             <p className="font-bold text-white">Month {hover + 1}</p>

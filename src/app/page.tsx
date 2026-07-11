@@ -22,7 +22,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { GrowthChart } from "@/components/GrowthChart";
 import { ReviewCalculator } from "@/components/ReviewCalculator";
 import { CountUp } from "@/components/CountUp";
-import { Ticker } from "@/components/Ticker";
+import { PromoBanner } from "@/components/PromoBanner";
 import { SectionHeader } from "@/components/SectionHeader";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
@@ -178,8 +178,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== TICKER ===== */}
-      <Ticker />
+      {/* ===== ROTATING BANNER ===== */}
+      <PromoBanner />
 
       {/* ===== RESULTS: CHART + CALCULATOR + COUNTERS ===== */}
       <section className="bg-neutral-950 py-20">
@@ -481,20 +481,22 @@ export default function HomePage() {
               </div>
             </Reveal>
           ))}
-          <Reveal delay={0.25}>
+          <Reveal delay={0.25} className="sm:col-span-2 lg:col-span-4">
             <Link
               href="/#contact"
-              className="card card-hover flex h-64 flex-col items-center justify-center gap-3 p-6 text-center"
+              className="card card-hover flex flex-col items-center justify-center gap-4 p-8 text-center sm:flex-row sm:justify-between sm:text-left"
             >
-              <span className="font-display text-lg font-extrabold text-neutral-900">
-                Your business
-              </span>
-              <p className="text-sm text-neutral-500">
-                Trades, gyms, dentists, real estate. If your customers can hold
-                a phone, this works.
-              </p>
-              <span className="text-sm font-bold text-neutral-900">
-                Talk to us →
+              <div>
+                <span className="font-display text-lg font-extrabold text-neutral-900">
+                  Your business
+                </span>
+                <p className="mt-1 text-sm text-neutral-500">
+                  Trades, gyms, dentists, real estate. If your customers can
+                  hold a phone, this works.
+                </p>
+              </div>
+              <span className="inline-flex flex-shrink-0 items-center gap-1.5 text-sm font-bold text-neutral-900">
+                Talk to us <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
           </Reveal>

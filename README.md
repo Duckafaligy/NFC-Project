@@ -306,6 +306,27 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-11 — One rotating banner, chart tooltip fix, industries layout fix, Times New Roman
+- **Consolidated to a single rotating banner.** The static topbar above the
+  navbar (`AnnouncementBar`) and the separate marquee ticker below the hero
+  (`Ticker`) were two competing elements; both are deleted and replaced by
+  one `PromoBanner` below the hero. It crossfades between messages with
+  framer-motion (nicer than the old CSS keyframe roll-up), keeps the
+  gradient progress bar, prev/next arrows, dot navigation, and pause-on-hover.
+- **Fixed the growth chart tooltip.** Hovering months 4-6 used to overlap the
+  permanent "312" / "54" end-value labels, cluttering the chart. The end
+  labels now hide while a tooltip is active, and the tooltip keeps a fixed
+  12px gap from the point instead of a percentage offset that let it drift
+  into the crosshair.
+- **Fixed the "Who it's for" industries grid.** The trailing "Your business"
+  CTA tile used to land alone in a new row at 1/4 grid width, leaving a large
+  empty gap beside it. It now spans the full row as a horizontal banner.
+- **Fonts switched to Times New Roman** site-wide (both `font-sans` and
+  `font-display` tokens in `tailwind.config.ts`). Removed the Inter and
+  Plus Jakarta Sans Google Font loading from `layout.tsx`.
+- Verified with a clean `npm run build` and headless-Chromium screenshots
+  (banner, chart hover at both ends, industries grid, mobile).
+
 ### 2026-07-11 — Immersive results band, hero ticker, numbered section system
 - **Results section is now a full-bleed dark band** (neutral-950): chart and
   calculator restyled for the dark surface (series colors re-validated for

@@ -18,8 +18,8 @@ const config: Config = {
         ink: "#1C1917",
       },
       fontFamily: {
-        display: ["var(--font-jakarta)", "system-ui", "sans-serif"],
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ['"Times New Roman"', "Times", "serif"],
+        sans: ['"Times New Roman"', "Times", "serif"],
       },
       boxShadow: {
         soft: "0 1px 3px rgb(28 25 23 / 0.04), 0 4px 14px rgb(28 25 23 / 0.06)",
@@ -30,24 +30,14 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
         },
-        rollup: {
-          "0%": { transform: "translateY(90%)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
         progressbar: {
           "0%": { width: "0%" },
           "100%": { width: "100%" },
         },
-        marquee: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
-        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
-        rollup: "rollup 0.35s ease-out",
         progressbar: "progressbar 5s linear forwards",
-        marquee: "marquee 32s linear infinite",
       },
     },
   },
