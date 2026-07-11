@@ -1,8 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   BadgePercent,
   Infinity as InfinityIcon,
@@ -24,10 +20,13 @@ interface Item {
 }
 
 /**
- * The one rotating banner, below the hero. Shows a set of offers spread
- * across the full band (1 on phones, 2 on tablets, 3 on desktop), each with
- * a semantic icon, and rotates to the next set on a timer. Pauses on hover;
- * the gradient progress line tracks the timing.
+ * The one promo band, below the hero. A continuous ticker: the offers glide
+ * sideways in an endless loop, each with a semantic icon and generous
+ * spacing between items, pausing while hovered. Replaces both the old
+ * topbar above the navbar and the old color-dot ticker.
+ *
+ * The row is rendered twice back to back; the marquee animation translates
+ * the track by exactly -50%, so the loop is seamless.
  */
 export function PromoBanner() {
   const items: Item[] = [
@@ -73,68 +72,31 @@ export function PromoBanner() {
     },
   ];
 
-  // Rotate through the items three at a time.
-  const groups: Item[][] = [];
-  for (let i = 0; i < items.length; i += 3) groups.push(items.slice(i, i + 3));
-
-  const [page, setPage] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => setPage((p) => (p + 1) % groups.length), 5000);
-    return () => clearInterval(id);
-  }, [paused, groups.length]);
-
   return (
-    <div
-      className="relative overflow-hidden border-y border-white/5 bg-neutral-950"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* Timing indicator: refills for each set, freezes on hover */}
-      <div
-        key={page}
-        className="absolute bottom-0 left-0 h-[2px] animate-progressbar bg-gradient-to-r from-violet-500 via-emerald-500 to-blue-500"
-        style={paused ? { animationPlayState: "paused" } : undefined}
-        aria-hidden
-      />
-      <div className="mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={page}
-            initial={{ y: 14, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -14, opacity: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="flex h-full items-center"
-            aria-live="polite"
+    <div className="group overflow-hidden border-y border-white/5 bg-neutral-950">
+      <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
+        {[0, 1].map((copy) => (
+          <div
+            key={copy}
+            aria-hidden={copy === 1}
+            className="flex items-center gap-16 py-3.5 pr-16"
           >
-            {groups[page].map((item, i) => (
-              <div
+            {items.map((item) => (
+              <Link
                 key={item.label}
-                className={`flex-1 justify-center ${
-                  i === 0
-                    ? "flex"
-                    : i === 1
-                      ? "hidden sm:flex"
-                      : "hidden lg:flex"
-                }`}
+                href={item.href}
+                tabIndex={copy === 1 ? -1 : undefined}
+                className="flex items-center gap-2.5 whitespace-nowrap text-sm font-semibold text-neutral-300 transition-colors hover:text-white"
               >
-                <Link
-                  href={item.href}
-                  className="flex items-center gap-2 text-center text-xs font-semibold text-neutral-200 transition-colors hover:text-white lg:text-sm"
-                >
-                  <item.icon
-                    className={`h-4 w-4 flex-shrink-0 ${item.color}`}
-                    aria-hidden
-                  />
-                  {item.label}
-                </Link>
-              </div>
+                <item.icon
+                  className={`h-4 w-4 flex-shrink-0 ${item.color}`}
+                  aria-hidden
+                />
+                {item.label}
+              </Link>
             ))}
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -307,15 +307,15 @@ Ordered roughly by priority. Update as things get done.
 Newest first. **Add an entry for every meaningful change.**
 
 ### 2026-07-11 — One rotating banner, chart tooltip fix, industries layout fix, Times New Roman
-- **Consolidated to a single rotating banner.** The static topbar above the
-  navbar (`AnnouncementBar`) and the separate marquee ticker below the hero
-  (`Ticker`) were two competing elements; both are deleted and replaced by
-  one `PromoBanner` below the hero. It shows the offers spread evenly across
-  the full band (3 on desktop, 2 on tablet, 1 on phones), each with a
-  semantic lucide icon instead of a color-dot square (BadgePercent, Truck,
-  ShieldCheck, Timer, TrendingUp, Infinity), and rotates to the next set
-  every 5 seconds with a framer-motion crossfade. Gradient progress line
-  tracks the timing; rotation pauses on hover.
+- **Consolidated to a single promo band.** The static topbar above the
+  navbar (`AnnouncementBar`) and the old color-dot ticker (`Ticker`) are
+  both deleted; one `PromoBanner` below the hero replaces them. It is a
+  continuous ticker: the topbar's offers plus the ticker's stats glide
+  sideways in an endless seamless loop (track rendered twice, translated
+  -50%), each item carrying a semantic lucide icon (BadgePercent,
+  TrendingUp, Truck, Timer, ShieldCheck, Infinity) instead of the old
+  color-dot squares, with generous gap-16 spacing. Pauses on hover;
+  duplicate copy is aria-hidden with links untabbable.
 - **Fixed the growth chart tooltip.** Hovering months 4-6 used to overlap the
   permanent "312" / "54" end-value labels, cluttering the chart. The end
   labels now hide while a tooltip is active, and the tooltip keeps a fixed
