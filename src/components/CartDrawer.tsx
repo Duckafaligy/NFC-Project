@@ -6,14 +6,22 @@ import { useCart } from "@/context/CartContext";
 import { getProduct } from "@/lib/products";
 import { site } from "@/lib/site";
 import { formatPrice, cn } from "@/lib/utils";
-import { lineTotal } from "@/lib/pricing";
+import { lineTotal, preorderActive } from "@/lib/pricing";
 import { ProductVisual } from "./ProductVisual";
 import { ButtonLink } from "./Button";
 
 /** Slide-out mini cart. Opens when items are added or the cart icon is clicked. */
 export function CartDrawer() {
-  const { items, subtotal, itemCount, setQuantity, removeItem, drawerOpen, closeDrawer } =
-    useCart();
+  const {
+    items,
+    subtotal,
+    compareSubtotal,
+    itemCount,
+    setQuantity,
+    removeItem,
+    drawerOpen,
+    closeDrawer,
+  } = useCart();
 
   const remaining = site.shipping.freeThreshold - subtotal;
   const progress = Math.min(100, (subtotal / site.shipping.freeThreshold) * 100);
@@ -160,14 +168,21 @@ export function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-neutral-200 px-5 py-4">
-            <div className="flex items-center justify-between text-sm">
+            {preorderActive() && compareSubtotal > subtotal && (
+              <div className="flex items-center justify-between text-xs font-semibold text-orange-600">
+                <span>Pre-order discount</span>
+                <span>-{formatPrice(compareSubtotal - subtotal)}</span>
+              </div>
+            )}
+            <div className="mt-1 flex items-center justify-between text-sm">
               <span className="text-neutral-500">Subtotal</span>
               <span className="font-display text-lg font-extrabold text-neutral-900">
                 {formatPrice(subtotal)}
               </span>
             </div>
             <p className="mt-1 text-xs text-neutral-400">
-              Shipping calculated at checkout. Pack discounts already applied.
+              Shipping calculated at checkout. Pre-order pricing already
+              applied.
             </p>
             <ButtonLink
               href="/checkout"

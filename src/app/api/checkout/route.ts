@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
-import { unitAmountCents, lineTotal } from "@/lib/pricing";
+import { unitAmountCents, lineTotal, preorderActive, discountRate } from "@/lib/pricing";
 
 /**
  * Creates a Stripe Checkout Session from the cart.
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     lines.push({
       name: product.name,
       description: note ? `${designLabel} · ${note}` : designLabel,
-      unitCents: unitAmountCents(baseUnit, quantity),
+      unitCents: unitAmountCents(baseUnit),
       quantity,
       fulfillmentNote: `${product.name} x${quantity} | ${designLabel}${note ? ` | ${note}` : ""}`,
     });
@@ -105,6 +105,9 @@ export async function POST(request: Request) {
     lines.forEach((line, i) => {
       metadata[`item_${i + 1}`] = line.fulfillmentNote.slice(0, 500);
     });
+    if (preorderActive()) {
+      metadata.preorder = `yes (${Math.round(discountRate() * 100)}% off applied)`;
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

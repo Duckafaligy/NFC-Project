@@ -1,35 +1,40 @@
+import { site } from "./site";
+
 /**
- * Volume pricing — shared by the client UI and the Stripe API route so the
+ * Pricing rules, shared by the client UI and the Stripe API route so the
  * price a customer sees is exactly the price they're charged.
  *
- * Tiers apply per line item based on quantity.
+ * There are no volume/pack discounts. The only discount is the pre-order
+ * window (site.preorder): while it's enabled, every item in the cart is
+ * discounted by the configured rate.
  */
 
-export const volumeTiers = [
-  { min: 10, discount: 0.2, label: "10+", badge: "Save 20%" },
-  { min: 5, discount: 0.15, label: "5", badge: "Save 15%" },
-  { min: 3, discount: 0.1, label: "3", badge: "Save 10%" },
-] as const;
-
-/** Discount rate (0–1) for a given quantity. */
-export function tierDiscount(quantity: number): number {
-  for (const tier of volumeTiers) {
-    if (quantity >= tier.min) return tier.discount;
-  }
-  return 0;
+/** Whether the pre-order discount window is currently active. */
+export function preorderActive(): boolean {
+  return site.preorder.enabled;
 }
 
-/** Per-unit price in dollars after volume discount, rounded to cents. */
-export function unitPriceFor(baseUnit: number, quantity: number): number {
-  return Math.round(baseUnit * (1 - tierDiscount(quantity)) * 100) / 100;
+/** Cart-wide discount rate (0-1). Zero once pre-order ends. */
+export function discountRate(): number {
+  return preorderActive() ? site.preorder.discount : 0;
+}
+
+/** Per-unit price in dollars after the pre-order discount, rounded to cents. */
+export function unitPriceFor(baseUnit: number): number {
+  return Math.round(baseUnit * (1 - discountRate()) * 100) / 100;
 }
 
 /** Per-unit price in cents (for Stripe). */
-export function unitAmountCents(baseUnit: number, quantity: number): number {
-  return Math.round(baseUnit * (1 - tierDiscount(quantity)) * 100);
+export function unitAmountCents(baseUnit: number): number {
+  return Math.round(baseUnit * (1 - discountRate()) * 100);
 }
 
-/** Line total in dollars after volume discount. */
+/** Line total in dollars after the pre-order discount. */
 export function lineTotal(baseUnit: number, quantity: number): number {
-  return Math.round(unitPriceFor(baseUnit, quantity) * quantity * 100) / 100;
+  return Math.round(unitPriceFor(baseUnit) * quantity * 100) / 100;
+}
+
+/** Line total at full price (for strikethrough displays). */
+export function compareLineTotal(baseUnit: number, quantity: number): number {
+  return Math.round(baseUnit * quantity * 100) / 100;
 }

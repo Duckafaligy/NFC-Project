@@ -18,8 +18,8 @@ export default function ProductsPage() {
             Pick the card for your counter
           </h1>
           <p className="mt-4 text-lg text-neutral-600">
-            Every product ships programmed to your link and can carry your own
-            design. Pack discounts apply automatically from 3 units up.
+            Every product is $34.99 with a clean standard design, or $42.99
+            with your own branding. Programmed to your link before it ships.
           </p>
         </div>
       </Reveal>

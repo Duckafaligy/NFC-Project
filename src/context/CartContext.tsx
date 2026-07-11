@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { lineTotal } from "@/lib/pricing";
+import { lineTotal, compareLineTotal } from "@/lib/pricing";
 
 export type DesignType = "standard" | "custom";
 export type CustomMethod = "upload" | "we-design";
@@ -40,7 +40,9 @@ type CartAction =
   | { type: "CLEAR" }
   | { type: "HYDRATE"; items: CartItem[] };
 
-const STORAGE_KEY = "taplink-cart-v1";
+// v2: pricing model changed to flat $34.99/$42.99 + pre-order discount.
+// Bumping the key drops carts saved under the old per-product prices.
+const STORAGE_KEY = "taplink-cart-v2";
 
 function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -79,7 +81,10 @@ function reducer(state: CartState, action: CartAction): CartState {
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
+  /** Cart total after the pre-order discount. */
   subtotal: number;
+  /** Cart total at full price (for showing the discount saved). */
+  compareSubtotal: number;
   addItem: (item: Omit<CartItem, "key"> & { key?: string }) => void;
   removeItem: (key: string) => void;
   setQuantity: (key: string, quantity: number) => void;
@@ -129,15 +134,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = state.items.reduce((n, i) => n + i.quantity, 0);
-    // Subtotal applies volume tier discounts per line (see lib/pricing).
+    // Subtotal applies the pre-order discount per line (see lib/pricing).
     const subtotal = state.items.reduce(
       (sum, i) => sum + lineTotal(i.unitPrice, i.quantity),
+      0,
+    );
+    const compareSubtotal = state.items.reduce(
+      (sum, i) => sum + compareLineTotal(i.unitPrice, i.quantity),
       0,
     );
     return {
       items: state.items,
       itemCount,
       subtotal,
+      compareSubtotal,
       addItem: (item) =>
         dispatch({
           type: "ADD",

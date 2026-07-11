@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     q: "Which phones support tapping?",
-    a: "Practically every iPhone from the iPhone 7 onward and nearly all Android phones from the last several years.",
+    a: "iPhone XS (2018) and newer read tags automatically in the background. iPhone 7 through X can read them through the camera or a scanner app. Nearly all Android phones with NFC read tags natively. Every card also carries a free QR code fallback if you want one.",
   },
   {
     q: "Can I change where the card points later?",

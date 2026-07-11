@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
+import { unitPriceFor, preorderActive } from "@/lib/pricing";
 import { ProductVisual } from "./ProductVisual";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -30,10 +31,20 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-4 flex items-center justify-between">
           <div>
-            <span className="text-xs text-neutral-400">from</span>
-            <p className="font-display text-xl font-extrabold text-neutral-900">
-              {formatPrice(product.basePrice)}
-            </p>
+            {preorderActive() ? (
+              <div className="flex items-baseline gap-1.5">
+                <p className="font-display text-xl font-extrabold text-neutral-900">
+                  {formatPrice(unitPriceFor(product.basePrice))}
+                </p>
+                <p className="text-sm text-neutral-400 line-through">
+                  {formatPrice(product.basePrice)}
+                </p>
+              </div>
+            ) : (
+              <p className="font-display text-xl font-extrabold text-neutral-900">
+                {formatPrice(product.basePrice)}
+              </p>
+            )}
           </div>
           <span className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 transition-colors group-hover:bg-neutral-900 group-hover:text-white">
             <ArrowUpRight className="h-5 w-5" />

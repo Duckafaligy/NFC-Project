@@ -15,6 +15,7 @@ import {
   Truck,
   RefreshCw,
   CalendarCheck,
+  Clock,
 } from "lucide-react";
 import type { Product } from "@/lib/products";
 import {
@@ -23,7 +24,13 @@ import {
   type DesignType,
 } from "@/context/CartContext";
 import { formatPrice, cn } from "@/lib/utils";
-import { unitPriceFor, lineTotal, tierDiscount } from "@/lib/pricing";
+import {
+  unitPriceFor,
+  lineTotal,
+  compareLineTotal,
+  preorderActive,
+  discountRate,
+} from "@/lib/pricing";
 import { site } from "@/lib/site";
 import { Button } from "./Button";
 
@@ -64,6 +71,9 @@ export function ProductConfigurator({ product }: { product: Product }) {
     [designType, product.basePrice, product.customUpcharge],
   );
 
+  const preorder = preorderActive();
+  const payNow = unitPriceFor(unitPrice);
+
   function handleAdd(goToCheckout: boolean) {
     const noteParts: string[] = [];
     if (designType === "custom") {
@@ -97,9 +107,23 @@ export function ProductConfigurator({ product }: { product: Product }) {
       <div className="flex items-end justify-between">
         <div>
           <span className="text-sm text-neutral-400">Price</span>
-          <p className="font-display text-3xl font-extrabold text-neutral-900">
-            {formatPrice(unitPrice)}
-          </p>
+          <div className="flex items-baseline gap-2">
+            <p className="font-display text-3xl font-extrabold text-neutral-900">
+              {formatPrice(payNow)}
+            </p>
+            {preorder && (
+              <p className="text-lg font-semibold text-neutral-400 line-through">
+                {formatPrice(unitPrice)}
+              </p>
+            )}
+          </div>
+          {preorder && (
+            <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-orange-600 px-2 py-0.5 text-[11px] font-bold text-white">
+              <Clock className="h-3 w-3" />
+              {site.preorder.label}: {Math.round(discountRate() * 100)}% off
+              your whole cart
+            </span>
+          )}
         </div>
         <span className="rounded-md bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-600">
           {product.formFactor}
@@ -115,14 +139,14 @@ export function ProductConfigurator({ product }: { product: Product }) {
             className={cn(
               "rounded-md border-2 p-4 text-left transition-all",
               designType === "standard"
-                ? "border-neutral-500 bg-neutral-50"
-                : "border-neutral-200 bg-white hover:border-neutral-300",
+                ? "border-neutral-900 bg-neutral-50"
+                : "border-neutral-200 bg-white hover:border-neutral-400",
             )}
           >
             <Sparkles className="h-5 w-5 text-neutral-900" />
             <p className="mt-2 font-bold text-neutral-900">Standard</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              Clean, ready-made design
+              Clean, ready-made design · {formatPrice(product.basePrice)}
             </p>
           </button>
           <button
@@ -130,14 +154,15 @@ export function ProductConfigurator({ product }: { product: Product }) {
             className={cn(
               "rounded-md border-2 p-4 text-left transition-all",
               designType === "custom"
-                ? "border-neutral-500 bg-neutral-50"
-                : "border-neutral-200 bg-white hover:border-neutral-300",
+                ? "border-neutral-900 bg-neutral-50"
+                : "border-neutral-200 bg-white hover:border-neutral-400",
             )}
           >
             <PenTool className="h-5 w-5 text-neutral-900" />
             <p className="mt-2 font-bold text-neutral-900">Custom</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              +{formatPrice(product.customUpcharge)} · your brand
+              Your brand ·{" "}
+              {formatPrice(product.basePrice + product.customUpcharge)}
             </p>
           </button>
         </div>
@@ -155,8 +180,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
               className={cn(
                 "flex items-start gap-3 rounded-md border-2 p-3 text-left transition-all",
                 customMethod === "upload"
-                  ? "border-neutral-500 bg-white"
-                  : "border-neutral-200 bg-white/70 hover:border-neutral-300",
+                  ? "border-neutral-900 bg-white"
+                  : "border-neutral-200 bg-white/70 hover:border-neutral-400",
               )}
             >
               <Upload className="mt-0.5 h-5 w-5 text-neutral-900" />
@@ -174,8 +199,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
               className={cn(
                 "flex items-start gap-3 rounded-md border-2 p-3 text-left transition-all",
                 customMethod === "we-design"
-                  ? "border-neutral-500 bg-white"
-                  : "border-neutral-200 bg-white/70 hover:border-neutral-300",
+                  ? "border-neutral-900 bg-white"
+                  : "border-neutral-200 bg-white/70 hover:border-neutral-400",
               )}
             >
               <PenTool className="mt-0.5 h-5 w-5 text-neutral-900" />
@@ -201,7 +226,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-neutral-300 bg-white px-4 py-4 text-sm font-semibold text-neutral-600 transition-colors hover:border-neutral-400 hover:text-neutral-900"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-neutral-300 bg-white px-4 py-4 text-sm font-semibold text-neutral-600 transition-colors hover:border-neutral-900 hover:text-neutral-900"
               >
                 {fileName ? (
                   <>
@@ -242,82 +267,56 @@ export function ProductConfigurator({ product }: { product: Product }) {
         </div>
       )}
 
-      {/* Quantity + pack pricing */}
-      <div className="mt-6">
-        <div className="flex items-center justify-between">
+      {/* Quantity */}
+      <div className="mt-6 flex items-center justify-between">
+        <div>
           <span className="text-sm font-bold text-neutral-900">How many?</span>
-          <div className="flex items-center gap-2 rounded-md border border-neutral-200 bg-white p-1">
-            <button
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
-              aria-label="Decrease quantity"
-            >
-              <Minus className="h-4 w-4" />
-            </button>
-            <span className="w-6 text-center font-bold text-neutral-900">
-              {qty}
-            </span>
-            <button
-              onClick={() => setQty((q) => q + 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
-              aria-label="Increase quantity"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
+          <p className="text-xs text-neutral-400">
+            Counter, door, and a spare is a common setup.
+          </p>
         </div>
-
-        <div className="mt-3 grid grid-cols-4 gap-2">
-          {[
-            { qty: 1, label: "Single", badge: null },
-            { qty: 3, label: "3-pack", badge: "-10%" },
-            { qty: 5, label: "5-pack", badge: "-15%" },
-            { qty: 10, label: "10-pack", badge: "-20%" },
-          ].map((pack) => (
-            <button
-              key={pack.qty}
-              onClick={() => setQty(pack.qty)}
-              className={cn(
-                "rounded-md border-2 px-2 py-2.5 text-center transition-all",
-                qty === pack.qty
-                  ? "border-neutral-500 bg-neutral-50"
-                  : "border-neutral-200 bg-white hover:border-neutral-300",
-              )}
-            >
-              <span className="block text-xs font-bold text-neutral-900">
-                {pack.label}
-              </span>
-              {pack.badge && (
-                <span className="mt-0.5 block text-[10px] font-bold text-orange-600">
-                  {pack.badge}
-                </span>
-              )}
-            </button>
-          ))}
+        <div className="flex items-center gap-2 rounded-md border border-neutral-200 bg-white p-1">
+          <button
+            onClick={() => setQty((q) => Math.max(1, q - 1))}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+          <span className="w-6 text-center font-bold text-neutral-900">
+            {qty}
+          </span>
+          <button
+            onClick={() => setQty((q) => q + 1)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-100"
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
         </div>
-        <p className="mt-2 text-xs text-neutral-400">
-          Most shops take 3: counter, door, spare.
-        </p>
       </div>
 
       {/* Total + actions */}
       <div className="mt-6 space-y-1.5 border-t border-neutral-200 pt-4">
-        {tierDiscount(qty) > 0 && (
+        {preorder && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-neutral-500">
-              {formatPrice(unitPriceFor(unitPrice, qty))} each × {qty}
+              {formatPrice(payNow)} each × {qty}
             </span>
             <span className="font-bold text-orange-600">
-              You save {formatPrice(unitPrice * qty - lineTotal(unitPrice, qty))}
+              You save{" "}
+              {formatPrice(
+                compareLineTotal(unitPrice, qty) - lineTotal(unitPrice, qty),
+              )}
             </span>
           </div>
         )}
         <div className="flex items-center justify-between">
           <span className="text-sm text-neutral-500">Subtotal</span>
           <span className="font-display text-xl font-extrabold text-neutral-900">
-            {tierDiscount(qty) > 0 && (
+            {preorder && (
               <span className="mr-2 text-sm font-normal text-neutral-400 line-through">
-                {formatPrice(unitPrice * qty)}
+                {formatPrice(compareLineTotal(unitPrice, qty))}
               </span>
             )}
             {formatPrice(lineTotal(unitPrice, qty))}
@@ -327,26 +326,31 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
       <div className="mt-4 grid gap-3">
         <Button onClick={() => handleAdd(true)} size="lg">
-          <ShoppingBag className="h-5 w-5" /> Buy now
+          <ShoppingBag className="h-5 w-5" />
+          {preorder ? "Pre-order now" : "Buy now"}
         </Button>
         <Button variant="secondary" onClick={() => handleAdd(false)}>
           Add to cart
         </Button>
       </div>
 
-      {/* Delivery estimate */}
-      {eta && designType === "standard" && (
-        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-800">
+      {/* Fulfilment note */}
+      {preorder ? (
+        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-100 px-3 py-2 text-xs font-semibold text-neutral-700">
+          <Clock className="h-4 w-4" />
+          {site.preorder.shipNote}
+        </p>
+      ) : designType === "standard" && eta ? (
+        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-100 px-3 py-2 text-xs font-semibold text-neutral-700">
           <CalendarCheck className="h-4 w-4" />
           Order today, estimated arrival {eta}
         </p>
-      )}
-      {designType === "custom" && (
-        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-800">
+      ) : designType === "custom" ? (
+        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-neutral-100 px-3 py-2 text-xs font-semibold text-neutral-700">
           <Check className="h-4 w-4" />
-          Design proof by email within 48 hours, ships after your approval
+          Design proof by email within 48 hours, printed after your approval
         </p>
-      )}
+      ) : null}
 
       {/* Trust row */}
       <div className="mt-4 grid grid-cols-3 gap-2 border-t border-neutral-200 pt-4 text-center">
@@ -357,9 +361,9 @@ export function ProductConfigurator({ product }: { product: Product }) {
           </p>
         </div>
         <div>
-          <Truck className="mx-auto h-4 w-4 text-neutral-500" />
+          <Truck className="mx-auto h-4 w-4 text-neutral-900" />
           <p className="mt-1 text-[11px] leading-tight text-neutral-500">
-            Ships in {site.shipping.handlingDays}
+            Free shipping over {formatPrice(site.shipping.freeThreshold)}
           </p>
         </div>
         <div>

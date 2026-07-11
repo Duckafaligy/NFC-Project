@@ -26,6 +26,17 @@ export const site = {
   },
   // Money-back guarantee window (days), surfaced across the store.
   guaranteeDays: 30,
+  /**
+   * Pre-order window. While enabled, the discount applies to the whole cart
+   * (shown in the UI and recomputed server-side for Stripe). Flip `enabled`
+   * to false when the pre-order period ends and full pricing takes over.
+   */
+  preorder: {
+    enabled: true,
+    discount: 0.2,
+    label: "Pre-order",
+    shipNote: "Pre-orders ship in 2-3 weeks, in the order they were placed",
+  },
 } as const;
 
 export type Site = typeof site;

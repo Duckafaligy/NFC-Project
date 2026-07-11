@@ -57,7 +57,7 @@ const faqs = [
   },
   {
     q: "Do my customers need an app?",
-    a: "No. NFC is built into iPhones since the iPhone 7 and almost every Android from recent years. They hold their phone near the card and the link opens.",
+    a: "No. iPhones from the XS (2018) onward read NFC tags automatically in the background, and nearly every Android sold in recent years does the same. The customer holds their phone near the card and the link pops up. Older iPhones (7 through X) can read tags too but need the camera or a scanner app, which is why we also print a free QR code on the back as a fallback.",
   },
   {
     q: "Is there a subscription or monthly fee?",
@@ -66,6 +66,10 @@ const faqs = [
   {
     q: "What if I change my Google page, menu, or WiFi password?",
     a: "Every product can be reprogrammed. Point it somewhere new whenever you want. The card never goes obsolete.",
+  },
+  {
+    q: "How does pre-order pricing work?",
+    a: `While the pre-order window is open, everything in your cart is ${Math.round(site.preorder.discount * 100)}% off, no code needed. ${site.preorder.shipNote}. When the window closes, pricing returns to standard and orders ship on the normal schedule.`,
   },
   {
     q: "How fast will I get it?",
@@ -251,8 +255,8 @@ export default function HomePage() {
                 Best sellers
               </h2>
               <p className="mt-3 max-w-xl text-neutral-500">
-                Buy 3 and save 10%. Buy 5, save 15%. Buy 10, save 20%. Most
-                shops take three: counter, door, spare.
+                Every product is $34.99, or $42.99 with your own branding.
+                Pre-order now and 20% comes off your whole cart at checkout.
               </p>
             </div>
           </Reveal>
@@ -431,7 +435,7 @@ export default function HomePage() {
                 { icon: BadgeCheck, title: "Proof first", desc: "You approve the design before we print." },
                 { icon: RefreshCw, title: "Reprogram free", desc: "New link, same card, any time." },
                 { icon: ShieldCheck, title: "Replace free", desc: "If a card stops scanning, we send a new one." },
-                { icon: Layers, title: "Bulk pricing", desc: "Up to 20% off on packs of 10." },
+                { icon: Layers, title: "QR fallback", desc: "Free QR code printed on the back if you want it." },
               ].map((p) => (
                 <div key={p.title} className="card p-5">
                   <p.icon className="h-6 w-6 text-neutral-900" />
@@ -444,6 +448,56 @@ export default function HomePage() {
             </div>
           </div>
         </Reveal>
+      </section>
+
+      {/* ===== WHAT TO SAY ===== */}
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <Reveal>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Steal these scripts</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+              What to actually say
+            </h2>
+            <p className="mt-3 text-neutral-500">
+              The card does the technical part. One rehearsed sentence does the
+              rest. These are the asks that work, word for word.
+            </p>
+          </div>
+        </Reveal>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              setting: "Barbershop, at the register",
+              script:
+                "“While I ring you up, would you mind tapping your phone here? It opens our Google page. Takes about twenty seconds.”",
+              why: "The customer is waiting anyway. You are filling dead time, not asking for extra time.",
+            },
+            {
+              setting: "Restaurant, dropping the check",
+              script:
+                "“If you enjoyed tonight, there's a card on the stand that opens our reviews with a tap. It genuinely helps a small place like ours.”",
+              why: "“Small place like ours” converts. People want to help a business they can picture.",
+            },
+            {
+              setting: "Mobile trades, wrapping the job",
+              script:
+                "“Before I pack up, could I ask a quick favor? Tap your phone on my keychain and it opens our review page. Two lines is plenty.”",
+              why: "“Two lines is plenty” removes the biggest excuse: not knowing what to write.",
+            },
+          ].map((c, i) => (
+            <Reveal key={c.setting} delay={i * 0.06}>
+              <div className="card flex h-full flex-col p-6">
+                <p className="eyebrow">{c.setting}</p>
+                <blockquote className="mt-3 flex-1 font-display text-base font-bold leading-relaxed text-neutral-900">
+                  {c.script}
+                </blockquote>
+                <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-500">
+                  Why it works: {c.why}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </section>
 
       {/* ===== TESTIMONIALS ===== */}
@@ -504,6 +558,48 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ===== REFERENCES ===== */}
+      <section className="mx-auto max-w-3xl px-4 pb-4 sm:px-6 lg:px-8">
+        <div className="border-t border-neutral-200 pt-6">
+          <p className="eyebrow">Sources</p>
+          <ul className="mt-3 space-y-1.5 text-xs text-neutral-500">
+            <li>
+              98% figure:{" "}
+              <a
+                href="https://www.brightlocal.com/research/local-consumer-review-survey/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-neutral-700 underline hover:text-neutral-900"
+              >
+                BrightLocal, Local Consumer Review Survey
+              </a>
+            </li>
+            <li>
+              Review rules (honest reviews yes, paying for reviews no):{" "}
+              <a
+                href="https://support.google.com/contributionpolicy/answer/7400114"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-neutral-700 underline hover:text-neutral-900"
+              >
+                Google Maps content policies
+              </a>
+            </li>
+            <li>
+              Background NFC tag reading on iPhone XS and later:{" "}
+              <a
+                href="https://support.apple.com/guide/iphone/use-nfc-tag-reader-iph30d73c78d/ios"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-neutral-700 underline hover:text-neutral-900"
+              >
+                Apple iPhone User Guide
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* ===== FINAL CTA ===== */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Reveal>
@@ -512,8 +608,8 @@ export default function HomePage() {
               Put a card on your counter this week
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-neutral-300">
-              Cards from {`$${products[0].basePrice}`}, programmed to your link
-              before we ship. At your door in days.
+              Every card $34.99, custom designs $42.99. Pre-order now and 20%
+              comes off your whole cart.
             </p>
             <div className="mt-8 flex justify-center">
               <ButtonLink href="/products" size="lg">

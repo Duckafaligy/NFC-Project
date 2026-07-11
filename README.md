@@ -301,6 +301,28 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-11 — Pricing overhaul: flat $34.99/$42.99 + pre-order 20%, richer content
+- **New pricing model:** every product is $34.99 standard, $42.99 custom
+  (constants STANDARD_PRICE / CUSTOM_UPCHARGE in `src/lib/products.ts`).
+  **Volume/pack discounts removed entirely.** The only discount is the
+  **pre-order window** (`site.preorder` in `src/lib/site.ts`): while
+  `enabled: true`, 20% comes off every item, shown with strikethrough prices
+  everywhere and recomputed server-side for Stripe. Flip `enabled: false`
+  when pre-orders end. Order metadata marks pre-order purchases.
+- Cart storage key bumped to v2 so carts saved under old prices reset.
+- **Richer product content:** every product rewritten with a longer real
+  description, a concrete "A real example" story (rendered on the detail
+  page), and a "What's in the box" list (new `example` and `box` fields).
+- **New home content:** "What to actually say" counter-script section with
+  three word-for-word asks, and a cited Sources block (BrightLocal survey,
+  Google Maps content policies, Apple NFC background-reading guide).
+- **Accuracy fix:** phone-support claims corrected (background NFC reading is
+  iPhone XS+; iPhone 7-X need camera/app; QR fallback offered free).
+- Configurator shows per-design pricing on the option tiles, pre-order chip,
+  strikethrough compare prices, and the pre-order ship note.
+- Verified with clean build and screenshots (product, checkout with discount
+  line, scripts section).
+
 ### 2026-07-10 — Redesign #4: monochrome minimal (replaces warm orange)
 - Re-skinned to white/black monotone at the owner's request: pure white page,
   neutral text scale, hairline borders, tight radii (rounded-md max, no

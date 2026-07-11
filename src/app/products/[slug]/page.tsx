@@ -82,6 +82,16 @@ export default async function ProductPage({
             </div>
           </Reveal>
 
+          {/* Real example */}
+          <Reveal delay={0.08}>
+            <div className="mt-6 rounded-md border-l-4 border-neutral-900 bg-neutral-50 p-5">
+              <p className="eyebrow">A real example</p>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-700">
+                {product.example}
+              </p>
+            </div>
+          </Reveal>
+
           {/* Features */}
           <Reveal delay={0.1}>
             <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
@@ -115,6 +125,26 @@ export default async function ProductPage({
                   </div>
                 ))}
               </dl>
+            </div>
+          </Reveal>
+
+          {/* What's in the box */}
+          <Reveal delay={0.18}>
+            <div className="mt-8">
+              <h2 className="text-sm font-bold text-neutral-900">
+                What&apos;s in the box
+              </h2>
+              <ul className="card mt-3 divide-y divide-neutral-100 p-0">
+                {product.box.map((line) => (
+                  <li
+                    key={line}
+                    className="flex items-start gap-2 px-4 py-3 text-sm text-neutral-600"
+                  >
+                    <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-neutral-900" />
+                    {line}
+                  </li>
+                ))}
+              </ul>
             </div>
           </Reveal>
 
