@@ -1,5 +1,3 @@
-import storeState from "@/data/store-state.json";
-
 /**
  * Central brand / site configuration.
  * Update values here to rebrand the whole site in one place.
@@ -31,12 +29,12 @@ export const site = {
   // an in-person visit.
   guaranteeDays: 30,
   /**
-   * Pre-order window. While enabled, the discount applies to the whole cart
-   * (shown in the UI and recomputed server-side for Stripe). The flag lives
-   * in src/data/store-state.json and is toggled from /admin-dashboard.
+   * Pre-order window default. The LIVE flag is toggled from
+   * /admin-dashboard (lib/adminStore) and overrides this; this value is the
+   * fallback until an admin choice exists and the first-paint default.
    */
   preorder: {
-    enabled: storeState.preorderEnabled,
+    enabled: true,
     discount: 0.2,
     label: "Pre-order",
     shipNote: "Pre-orders ship in 2-3 weeks, in the order they were placed",

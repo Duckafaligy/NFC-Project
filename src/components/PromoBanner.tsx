@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   BadgePercent,
@@ -10,7 +12,8 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { site } from "@/lib/site";
 import { formatPrice } from "@/lib/utils";
-import { preorderActive, discountRate } from "@/lib/pricing";
+import { discountRate } from "@/lib/pricing";
+import { useStoreStatus } from "@/context/StoreStatus";
 
 interface Item {
   href: string;
@@ -29,14 +32,15 @@ interface Item {
  * the track by exactly -50%, so the loop is seamless.
  */
 export function PromoBanner() {
+  const { preorder } = useStoreStatus();
   const items: Item[] = [
-    ...(preorderActive()
+    ...(preorder
       ? [
           {
             href: "/products",
             icon: BadgePercent,
             color: "text-violet-400",
-            label: `Pre-order open: ${Math.round(discountRate() * 100)}% off everything, no code needed`,
+            label: `Pre-order open: ${Math.round(discountRate(true) * 100)}% off everything, no code needed`,
           },
         ]
       : []),

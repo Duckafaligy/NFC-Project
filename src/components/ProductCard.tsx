@@ -1,11 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
-import { unitPriceFor, preorderActive } from "@/lib/pricing";
+import { unitPriceFor } from "@/lib/pricing";
+import { useStoreStatus } from "@/context/StoreStatus";
 import { ProductVisual } from "./ProductVisual";
 
 export function ProductCard({ product }: { product: Product }) {
+  const { preorder } = useStoreStatus();
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -31,10 +35,10 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-4 flex items-center justify-between">
           <div>
-            {preorderActive() ? (
+            {preorder ? (
               <div className="flex items-baseline gap-1.5">
                 <p className="font-display text-xl font-extrabold text-neutral-900">
-                  {formatPrice(unitPriceFor(product.basePrice))}
+                  {formatPrice(unitPriceFor(product.basePrice, preorder))}
                 </p>
                 <p className="text-sm text-neutral-400 line-through">
                   {formatPrice(product.basePrice)}

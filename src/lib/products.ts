@@ -1,5 +1,3 @@
-import storeState from "@/data/store-state.json";
-
 /**
  * Product catalog (single source of truth).
  *
@@ -13,8 +11,8 @@ import storeState from "@/data/store-state.json";
  * "We design it" adds the $4.99 design labour fee on top of custom.
  * The only discount is the site-wide pre-order window (lib/site.ts).
  *
- * This is a static catalog, no database. Stock and the pre-order flag live
- * in src/data/store-state.json, managed from /admin-dashboard.
+ * This is a static catalog, no database. The live stock pool and pre-order
+ * flag live in lib/adminStore, managed from /admin-dashboard.
  */
 
 export type ProductCategory =
@@ -41,13 +39,14 @@ export const BUSINESS_CUSTOM_UPCHARGE = 7;
 export const DESIGN_LABOUR_FEE = 4.99;
 
 /**
- * Shared stock: how many cards are left in the current print run. All five
- * products draw from this one pool because they are the same physical card.
- * Managed from /admin-dashboard; decremented automatically by the Stripe
- * webhook (api/stripe-webhook) when an order is paid.
+ * Shared stock default: all five products draw from ONE pool because they
+ * are the same physical card. The live number is managed from
+ * /admin-dashboard (lib/adminStore) and decremented automatically by the
+ * Stripe webhook when an order is paid; this constant is only the fallback
+ * before any admin value exists.
  */
-export const CARD_STOCK = Math.max(0, Math.round(storeState.cardStock));
-/** Size of one print run (the stock bar shows CARD_STOCK out of this). */
+export const DEFAULT_CARD_STOCK = 50;
+/** Size of one print run (the stock bar shows the pool out of this). */
 export const STOCK_BATCH = 50;
 /** At or below this the UI switches to the amber "only N left" state. */
 export const LOW_STOCK = 10;

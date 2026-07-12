@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import {
   configuredUnitPrice,
-  CARD_STOCK,
   DESIGN_LABOUR_FEE,
   type Product,
 } from "@/lib/products";
@@ -33,9 +32,9 @@ import {
   unitPriceFor,
   lineTotal,
   compareLineTotal,
-  preorderActive,
   discountRate,
 } from "@/lib/pricing";
+import { useStoreStatus } from "@/context/StoreStatus";
 import { site } from "@/lib/site";
 import { Button } from "./Button";
 import { StockBar } from "./StockBar";
@@ -74,8 +73,12 @@ export function ProductConfigurator({ product }: { product: Product }) {
     [product, designType, customMethod],
   );
 
-  const preorder = preorderActive();
-  const payNow = unitPriceFor(unitPrice);
+  const status = useStoreStatus();
+  const preorder = status.preorder;
+  // One shared pool: every product is the same physical card.
+  const liveStock = status.cardStock;
+  const outOfStock = liveStock <= 0;
+  const payNow = unitPriceFor(unitPrice, preorder);
 
   function handleAdd(goToCheckout: boolean) {
     const noteParts: string[] = [];
@@ -123,7 +126,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
           {preorder && (
             <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-violet-600 px-2 py-0.5 text-[11px] font-bold text-white">
               <Clock className="h-3 w-3" />
-              {site.preorder.label}: {Math.round(discountRate() * 100)}% off
+              {site.preorder.label}: {Math.round(discountRate(true) * 100)}% off
               your whole cart
             </span>
           )}
@@ -133,8 +136,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
         </span>
       </div>
 
-      {/* Availability: one shared pool, every product is the same card */}
-      <StockBar stock={CARD_STOCK} />
+      {/* Availability */}
+      <StockBar stock={liveStock} />
 
       {/* Design type choice */}
       <div className="mt-6">
@@ -313,7 +316,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <span className="font-bold text-emerald-600">
               You save{" "}
               {formatPrice(
-                compareLineTotal(unitPrice, qty) - lineTotal(unitPrice, qty),
+                compareLineTotal(unitPrice, qty) - lineTotal(unitPrice, qty, preorder),
               )}
             </span>
           </div>
@@ -326,18 +329,26 @@ export function ProductConfigurator({ product }: { product: Product }) {
                 {formatPrice(compareLineTotal(unitPrice, qty))}
               </span>
             )}
-            {formatPrice(lineTotal(unitPrice, qty))}
+            {formatPrice(lineTotal(unitPrice, qty, preorder))}
           </span>
         </div>
       </div>
 
       <div className="mt-4 grid gap-3">
-        <Button onClick={() => handleAdd(true)} size="lg">
+        <Button onClick={() => handleAdd(true)} size="lg" disabled={outOfStock}>
           <ShoppingBag className="h-5 w-5" />
-          {preorder ? "Pre-order now" : "Buy now"}
+          {outOfStock
+            ? "Out of stock"
+            : preorder
+              ? "Pre-order now"
+              : "Buy now"}
         </Button>
-        <Button variant="secondary" onClick={() => handleAdd(false)}>
-          Add to cart
+        <Button
+          variant="secondary"
+          onClick={() => handleAdd(false)}
+          disabled={outOfStock}
+        >
+          {outOfStock ? "Back soon" : "Add to cart"}
         </Button>
       </div>
 

@@ -1,69 +1,84 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Lock, LogOut, Package, Tag, Check, AlertTriangle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useState } from "react";
+import {
+  AlertTriangle,
+  Check,
+  Clock,
+  Lock,
+  LogOut,
+  Package,
+  ShieldAlert,
+} from "lucide-react";
+import { Button } from "@/components/Button";
 
 /**
- * Owner dashboard behind /admin-dashboard. Password wall with Apple-style
- * escalating IP lockout (enforced server-side); inside: the shared card
- * stock (all products are the same card) and the pre-order toggle. Saving
- * commits src/data/store-state.json, which redeploys the site.
+ * /admin-dashboard — password-walled store controls.
+ * Login is rate limited per IP (10 fails -> 1 min lock, escalating 5/15/60).
+ * Inside: a pre-order toggle and ONE shared stock count (every product is
+ * the same physical card, just programmed differently). Changes apply to
+ * the storefront immediately (stock bars, buy buttons, checkout pricing).
  */
 
-type Phase = "loading" | "login" | "dashboard";
+interface AdminState {
+  settings: { preorder: boolean | null; cardStock: number | null };
+  defaults: { preorder: boolean; cardStock: number };
+  persistentStore: boolean;
+  defaultPassword: boolean;
+}
+
+type View = "loading" | "login" | "dashboard";
 
 export function AdminDashboard() {
-  const [phase, setPhase] = useState<Phase>("loading");
+  const [view, setView] = useState<View>("loading");
+  const [state, setState] = useState<AdminState | null>(null);
 
   // Login state
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [lockUntil, setLockUntil] = useState(0);
-  const [now, setNow] = useState(Date.now());
+  const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
+  const [lockSeconds, setLockSeconds] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
   // Dashboard state
-  const [hasStock, setHasStock] = useState(true);
+  const [preorder, setPreorder] = useState(true);
   const [cardStock, setCardStock] = useState(0);
-  const [preorderEnabled, setPreorderEnabled] = useState(true);
-  const [persistence, setPersistence] = useState<string>("");
+  const [hasStock, setHasStock] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [saveNote, setSaveNote] = useState("");
-  const [saveError, setSaveError] = useState("");
+  const [savedAt, setSavedAt] = useState(0);
 
-  const lockedSecs = Math.max(0, Math.ceil((lockUntil - now) / 1000));
-
-  useEffect(() => {
-    if (lockUntil <= Date.now()) return;
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, [lockUntil]);
-
-  useEffect(() => {
-    fetch("/api/admin/state")
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((data) => {
-        applyState(data);
-        setPhase("dashboard");
-      })
-      .catch(() => setPhase("login"));
+  const loadState = useCallback(async () => {
+    const res = await fetch("/api/admin/state");
+    if (res.status === 401) {
+      setView("login");
+      return;
+    }
+    const data = (await res.json()) as AdminState;
+    setState(data);
+    setPreorder(data.settings.preorder ?? data.defaults.preorder);
+    const stock = data.settings.cardStock ?? data.defaults.cardStock;
+    setCardStock(stock);
+    setHasStock(stock > 0);
+    setView("dashboard");
   }, []);
 
-  function applyState(data: {
-    cardStock: number;
-    preorderEnabled: boolean;
-    persistence: string;
-  }) {
-    setCardStock(data.cardStock);
-    setHasStock(data.cardStock > 0);
-    setPreorderEnabled(data.preorderEnabled);
-    setPersistence(data.persistence);
-  }
+  useEffect(() => {
+    loadState();
+  }, [loadState]);
+
+  // Lockout countdown ticker.
+  useEffect(() => {
+    if (lockSeconds <= 0) return;
+    const id = setInterval(
+      () => setLockSeconds((s) => Math.max(0, s - 1)),
+      1000,
+    );
+    return () => clearInterval(id);
+  }, [lockSeconds > 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (submitting || lockedSecs > 0) return;
+    if (lockSeconds > 0) return;
     setSubmitting(true);
     setLoginError("");
     try {
@@ -72,23 +87,18 @@ export function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = await res.json();
       if (res.ok) {
         setPassword("");
-        const state = await fetch("/api/admin/state").then((r) => r.json());
-        applyState(state);
-        setPhase("dashboard");
-      } else if (res.status === 429 && data.remainingMs) {
-        setLockUntil(Date.now() + data.remainingMs);
-        setLoginError("Too many wrong attempts.");
-      } else if (res.status === 401) {
-        setLoginError(
-          typeof data.attemptsLeft === "number" && data.attemptsLeft <= 5
-            ? `Wrong password. ${data.attemptsLeft} attempt${data.attemptsLeft === 1 ? "" : "s"} left before lockout.`
-            : "Wrong password.",
-        );
+        await loadState();
+        return;
+      }
+      if (res.status === 429) {
+        setLockSeconds(Number(data.retryAfter) || 60);
+        setLoginError("");
       } else {
-        setLoginError(data.error ?? "Login failed. Try again.");
+        setAttemptsLeft(data.attemptsLeft ?? null);
+        setLoginError("Wrong password.");
       }
     } catch {
       setLoginError("Network error. Try again.");
@@ -98,27 +108,17 @@ export function AdminDashboard() {
   }
 
   async function handleSave() {
-    if (saving) return;
     setSaving(true);
-    setSaveNote("");
-    setSaveError("");
     try {
-      const res = await fetch("/api/admin/update", {
+      await fetch("/api/admin/state", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          preorderEnabled,
+          preorder,
           cardStock: hasStock ? cardStock : 0,
         }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        setSaveNote(data.note ?? "Saved.");
-      } else {
-        setSaveError(data.error ?? "Save failed.");
-      }
-    } catch {
-      setSaveError("Network error. Try again.");
+      setSavedAt(Date.now());
     } finally {
       setSaving(false);
     }
@@ -126,111 +126,166 @@ export function AdminDashboard() {
 
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" });
-    setPhase("login");
+    setView("login");
   }
 
-  if (phase === "loading") {
+  const mmss = (s: number) =>
+    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+  if (view === "loading") {
     return (
-      <section className="mx-auto flex min-h-[60vh] max-w-md items-center justify-center px-4">
-        <p className="text-sm text-neutral-400">Loading…</p>
-      </section>
+      <div className="flex min-h-[60vh] items-center justify-center text-neutral-400">
+        Loading…
+      </div>
     );
   }
 
-  if (phase === "login") {
+  /* ---------- LOGIN WALL ---------- */
+  if (view === "login") {
     return (
-      <section className="mx-auto flex min-h-[60vh] max-w-md items-center px-4">
-        <form onSubmit={handleLogin} className="card w-full p-8">
-          <span className="flex h-11 w-11 items-center justify-center rounded-md bg-neutral-900">
-            <Lock className="h-5 w-5 text-white" />
+      <section className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-16">
+        <div className="card p-8">
+          <span className="flex h-12 w-12 items-center justify-center rounded-md bg-neutral-900">
+            <Lock className="h-6 w-6 text-white" />
           </span>
-          <h1 className="mt-4 font-display text-2xl font-extrabold text-neutral-900">
+          <h1 className="mt-5 font-display text-2xl font-extrabold text-neutral-900">
             Admin access
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Enter the admin password to manage the store.
+            This area is for the store owner.
           </p>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            autoFocus
-            disabled={lockedSecs > 0}
-            className="mt-5 w-full rounded-md border border-neutral-300 px-3.5 py-2.5 text-sm focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:bg-neutral-100"
-          />
-
-          {lockedSecs > 0 ? (
-            <p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-amber-600">
-              <AlertTriangle className="h-4 w-4" />
-              Locked. Try again in {Math.floor(lockedSecs / 60)}:
-              {String(lockedSecs % 60).padStart(2, "0")}
-            </p>
-          ) : loginError ? (
-            <p className="mt-3 text-sm font-semibold text-amber-600">
-              {loginError}
-            </p>
-          ) : null}
-
-          <button
-            type="submit"
-            disabled={submitting || lockedSecs > 0 || !password}
-            className="mt-5 w-full rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
-          >
-            {submitting ? "Checking…" : "Unlock"}
-          </button>
-        </form>
+          {lockSeconds > 0 ? (
+            <div className="mt-6 rounded-md border border-amber-300 bg-amber-50 p-4">
+              <p className="flex items-center gap-2 text-sm font-bold text-amber-800">
+                <Clock className="h-4 w-4" /> Too many attempts
+              </p>
+              <p className="mt-1 text-sm text-amber-700">
+                Try again in{" "}
+                <span className="font-mono font-bold tabular-nums">
+                  {mmss(lockSeconds)}
+                </span>
+                . Repeated failures extend the lock.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleLogin} className="mt-6 space-y-4">
+              <input
+                type="password"
+                required
+                autoFocus
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+              />
+              {loginError && (
+                <p className="flex items-center gap-1.5 text-sm font-semibold text-red-600">
+                  <AlertTriangle className="h-4 w-4" />
+                  {loginError}
+                  {attemptsLeft !== null && attemptsLeft <= 5 && (
+                    <span className="text-neutral-500">
+                      ({attemptsLeft} attempts before lockout)
+                    </span>
+                  )}
+                </p>
+              )}
+              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                {submitting ? "Checking…" : "Unlock"}
+              </Button>
+            </form>
+          )}
+        </div>
       </section>
     );
   }
 
+  /* ---------- DASHBOARD ---------- */
   return (
-    <section className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <div className="flex items-center justify-between">
+    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold text-neutral-900">
-            Store admin
+          <p className="eyebrow">Store controls</p>
+          <h1 className="mt-1 font-display text-3xl font-extrabold text-neutral-900">
+            Admin dashboard
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            Stock and pre-order controls. Saving publishes the change to the
-            live site.
-          </p>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-2 text-xs font-bold text-neutral-600 transition-colors hover:border-neutral-500 hover:text-neutral-900"
+          className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-600 hover:border-neutral-500 hover:text-neutral-900"
         >
-          <LogOut className="h-3.5 w-3.5" /> Log out
+          <LogOut className="h-4 w-4" /> Sign out
         </button>
       </div>
 
-      {/* Stock */}
-      <div className="card mt-8 p-6">
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-100">
-            <Package className="h-5 w-5 text-neutral-900" />
+      {state?.defaultPassword && (
+        <div className="mt-6 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+          <ShieldAlert className="mt-0.5 h-4 w-4 flex-shrink-0" />
+          <span>
+            You are using the default password. Set{" "}
+            <code className="rounded bg-amber-100 px-1 font-mono">
+              ADMIN_PASSWORD
+            </code>{" "}
+            in Vercel → Settings → Environment Variables, then redeploy.
           </span>
-          <div>
-            <h2 className="font-display text-lg font-extrabold text-neutral-900">
-              Card stock
-            </h2>
-            <p className="text-xs text-neutral-500">
-              One shared pool. Every product is the same card, just programmed
-              differently.
-            </p>
-          </div>
+        </div>
+      )}
+      {state && !state.persistentStore && (
+        <div className="mt-3 flex items-start gap-2 rounded-md border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600">
+          <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+          <span>
+            No KV storage connected: changes reset on redeploy or cold start.
+            Add the free Upstash KV integration in Vercel (Storage tab) to make
+            them permanent.
+          </span>
+        </div>
+      )}
+
+      {/* Pre-order toggle */}
+      <div className="card mt-6 flex items-center justify-between p-6">
+        <div>
+          <p className="font-display text-lg font-extrabold text-neutral-900">
+            Pre-order window
+          </p>
+          <p className="mt-1 text-sm text-neutral-500">
+            While on, the whole cart is 20% off and buttons say
+            &ldquo;Pre-order&rdquo;. Takes effect immediately.
+          </p>
+        </div>
+        <button
+          onClick={() => setPreorder((v) => !v)}
+          className={`relative h-8 w-14 flex-shrink-0 rounded-md transition-colors ${
+            preorder ? "bg-violet-600" : "bg-neutral-300"
+          }`}
+          aria-pressed={preorder}
+          aria-label="Toggle pre-order"
+        >
+          <span
+            className={`absolute top-1 h-6 w-6 rounded-sm bg-white shadow-soft transition-all ${
+              preorder ? "left-7" : "left-1"
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Shared card stock */}
+      <div className="card mt-4 p-6">
+        <div className="flex items-center gap-2">
+          <Package className="h-4 w-4 text-neutral-500" />
+          <p className="text-sm font-bold text-neutral-900">Card stock</p>
+          <p className="ml-auto text-xs text-neutral-400">
+            One pool: every product is the same card, programmed differently
+          </p>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-3">
           <button
             onClick={() => setHasStock(true)}
-            className={cn(
-              "rounded-md border-2 p-4 text-left transition-all",
+            className={`rounded-md border-2 p-4 text-left transition-all ${
               hasStock
                 ? "border-neutral-900 bg-neutral-50"
-                : "border-neutral-200 bg-white hover:border-neutral-400",
-            )}
+                : "border-neutral-200 bg-white hover:border-neutral-400"
+            }`}
           >
             <p className="font-bold text-neutral-900">Has stock</p>
             <p className="mt-0.5 text-xs text-neutral-500">
@@ -239,16 +294,15 @@ export function AdminDashboard() {
           </button>
           <button
             onClick={() => setHasStock(false)}
-            className={cn(
-              "rounded-md border-2 p-4 text-left transition-all",
+            className={`rounded-md border-2 p-4 text-left transition-all ${
               !hasStock
                 ? "border-neutral-900 bg-neutral-50"
-                : "border-neutral-200 bg-white hover:border-neutral-400",
-            )}
+                : "border-neutral-200 bg-white hover:border-neutral-400"
+            }`}
           >
             <p className="font-bold text-neutral-900">Out of stock</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              Shows &ldquo;out of stock&rdquo; on every product
+              Shows &ldquo;out of stock&rdquo;, buying disabled
             </p>
           </button>
         </div>
@@ -258,94 +312,38 @@ export function AdminDashboard() {
             <span className="text-sm font-bold text-neutral-900">
               How many cards do we have?
             </span>
-            <input
-              type="number"
-              min={0}
-              max={9999}
-              value={cardStock}
-              onChange={(e) =>
-                setCardStock(Math.max(0, Math.floor(Number(e.target.value) || 0)))
-              }
-              className="mt-2 w-40 rounded-md border border-neutral-300 px-3.5 py-2.5 text-sm font-semibold focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
-            />
-            <span className="ml-3 text-xs text-neutral-400">
-              Paid Stripe orders subtract from this automatically once the
-              webhook is set up.
-            </span>
+            <div className="mt-2 flex items-center gap-3">
+              <input
+                type="number"
+                min={0}
+                max={100000}
+                value={cardStock}
+                onChange={(e) =>
+                  setCardStock(
+                    Math.max(0, Math.floor(Number(e.target.value) || 0)),
+                  )
+                }
+                className="w-32 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+              />
+              <span className="text-xs text-neutral-400">
+                Paid Stripe orders subtract from this automatically once the
+                webhook is connected.
+              </span>
+            </div>
           </label>
         )}
       </div>
 
-      {/* Pre-order */}
-      <div className="card mt-4 p-6">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-100">
-              <Tag className="h-5 w-5 text-violet-600" />
-            </span>
-            <div>
-              <h2 className="font-display text-lg font-extrabold text-neutral-900">
-                Pre-order window
-              </h2>
-              <p className="text-xs text-neutral-500">
-                While on, 20% comes off every cart and pre-order labels show
-                site-wide.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setPreorderEnabled((v) => !v)}
-            role="switch"
-            aria-checked={preorderEnabled}
-            className={cn(
-              "relative h-7 w-12 flex-shrink-0 rounded-md transition-colors",
-              preorderEnabled ? "bg-violet-600" : "bg-neutral-300",
-            )}
-          >
-            <span
-              className={cn(
-                "absolute top-1 h-5 w-5 rounded-sm bg-white shadow transition-all",
-                preorderEnabled ? "left-6" : "left-1",
-              )}
-            />
-          </button>
-        </div>
-        <p className="mt-3 text-sm font-semibold text-neutral-700">
-          Pre-order is{" "}
-          <span className={preorderEnabled ? "text-violet-600" : "text-neutral-500"}>
-            {preorderEnabled ? "ON" : "OFF"}
+      <div className="mt-6 flex items-center gap-3">
+        <Button onClick={handleSave} size="lg" disabled={saving}>
+          {saving ? "Saving…" : "Save changes"}
+        </Button>
+        {savedAt > 0 && Date.now() - savedAt < 4000 && (
+          <span className="flex items-center gap-1 text-sm font-semibold text-emerald-600">
+            <Check className="h-4 w-4" /> Saved, live now
           </span>
-        </p>
-      </div>
-
-      {/* Save */}
-      <div className="mt-6 flex items-center gap-4">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-md bg-neutral-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
-        >
-          {saving ? "Publishing…" : "Save & publish"}
-        </button>
-        {saveNote && (
-          <p className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600">
-            <Check className="h-4 w-4" /> {saveNote}
-          </p>
-        )}
-        {saveError && (
-          <p className="flex items-center gap-1.5 text-sm font-semibold text-amber-600">
-            <AlertTriangle className="h-4 w-4" /> {saveError}
-          </p>
         )}
       </div>
-
-      {persistence === "none" && (
-        <p className="mt-4 rounded-md bg-amber-50 p-3 text-xs text-amber-700">
-          Heads up: GITHUB_TOKEN is not configured, so saving will fail. Add a
-          fine-grained GitHub token (contents read/write on this repo) in
-          Vercel&apos;s environment variables.
-        </p>
-      )}
     </section>
   );
 }

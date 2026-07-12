@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import { StoreStatusProvider } from "@/context/StoreStatus";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
@@ -41,12 +42,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${archivo.variable}`}>
       <body className="min-h-screen font-sans">
-        <CartProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <CartDrawer />
-        </CartProvider>
+        <StoreStatusProvider>
+          <CartProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <CartDrawer />
+          </CartProvider>
+        </StoreStatusProvider>
       </body>
     </html>
   );

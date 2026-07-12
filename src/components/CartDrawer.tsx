@@ -6,12 +6,14 @@ import { useCart } from "@/context/CartContext";
 import { getProduct } from "@/lib/products";
 import { site } from "@/lib/site";
 import { formatPrice, cn } from "@/lib/utils";
-import { lineTotal, preorderActive } from "@/lib/pricing";
+import { lineTotal } from "@/lib/pricing";
+import { useStoreStatus } from "@/context/StoreStatus";
 import { ProductVisual } from "./ProductVisual";
 import { ButtonLink } from "./Button";
 
 /** Slide-out mini cart. Opens when items are added or the cart icon is clicked. */
 export function CartDrawer() {
+  const { preorder } = useStoreStatus();
   const {
     items,
     subtotal,
@@ -154,7 +156,7 @@ export function CartDrawer() {
                           </button>
                         </div>
                         <span className="text-sm font-bold text-neutral-900">
-                          {formatPrice(lineTotal(item.unitPrice, item.quantity))}
+                          {formatPrice(lineTotal(item.unitPrice, item.quantity, preorder))}
                         </span>
                       </div>
                     </div>
@@ -168,7 +170,7 @@ export function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-neutral-200 px-5 py-4">
-            {preorderActive() && compareSubtotal > subtotal && (
+            {preorder && compareSubtotal > subtotal && (
               <div className="flex items-center justify-between text-xs font-semibold text-emerald-600">
                 <span>Pre-order discount</span>
                 <span>-{formatPrice(compareSubtotal - subtotal)}</span>

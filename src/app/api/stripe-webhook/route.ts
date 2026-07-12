@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { decrementCardStock } from "@/lib/admin";
+import { decrementCardStock } from "@/lib/adminStore";
 
 /**
- * Keeps card stock in sync with Stripe. When a checkout is paid, the total
- * quantity across the order's line items is subtracted from the shared card
- * pool in src/data/store-state.json (committed to git, which redeploys the
- * site with the new number).
+ * Keeps the shared card pool in sync with Stripe. When a checkout is paid,
+ * the total quantity across the order's line items is subtracted from the
+ * pool (lib/adminStore), so stock bars and buy buttons update immediately.
  *
  * Setup (one time, in the Stripe dashboard):
  *   Developers > Webhooks > Add endpoint

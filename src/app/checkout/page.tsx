@@ -16,7 +16,8 @@ import {
 import { useCart } from "@/context/CartContext";
 import { site } from "@/lib/site";
 import { formatPrice } from "@/lib/utils";
-import { unitPriceFor, lineTotal, preorderActive, discountRate } from "@/lib/pricing";
+import { unitPriceFor, lineTotal, discountRate } from "@/lib/pricing";
+import { useStoreStatus } from "@/context/StoreStatus";
 import { ProductVisual } from "@/components/ProductVisual";
 import { Button, ButtonLink } from "@/components/Button";
 import { PaymentBadges } from "@/components/PaymentBadges";
@@ -25,6 +26,7 @@ import { getProduct } from "@/lib/products";
 type PayState = "idle" | "loading" | "demo-placed" | "error";
 
 export default function CheckoutPage() {
+  const { preorder } = useStoreStatus();
   const { items, subtotal, compareSubtotal, setQuantity, removeItem, clear } = useCart();
   const [payState, setPayState] = useState<PayState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -129,8 +131,8 @@ export default function CheckoutPage() {
         <div className="space-y-4">
           {items.map((item) => {
             const product = getProduct(item.slug);
-            const discounted = unitPriceFor(item.unitPrice);
-            const hasDiscount = preorderActive();
+            const discounted = unitPriceFor(item.unitPrice, preorder);
+            const hasDiscount = preorder;
             return (
               <div key={item.key} className="card flex gap-4 p-4">
                 <div className="w-28 flex-shrink-0 overflow-hidden rounded-md">
@@ -199,7 +201,7 @@ export default function CheckoutPage() {
                       </button>
                     </div>
                     <span className="font-bold text-neutral-900">
-                      {formatPrice(lineTotal(item.unitPrice, item.quantity))}
+                      {formatPrice(lineTotal(item.unitPrice, item.quantity, preorder))}
                     </span>
                   </div>
                 </div>
@@ -242,7 +244,7 @@ export default function CheckoutPage() {
             </div>
 
             <dl className="mt-4 space-y-3 text-sm">
-              {preorderActive() && (
+              {preorder && (
                 <>
                   <div className="flex justify-between text-neutral-600">
                     <dt>Full price</dt>
@@ -252,7 +254,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between font-semibold text-emerald-600">
                     <dt>
-                      Pre-order discount ({Math.round(discountRate() * 100)}%)
+                      Pre-order discount ({Math.round(discountRate(true) * 100)}%)
                     </dt>
                     <dd>-{formatPrice(compareSubtotal - subtotal)}</dd>
                   </div>
