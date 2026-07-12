@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { lineTotal, compareLineTotal } from "@/lib/pricing";
+import { useStoreStatus } from "@/context/StoreStatus";
 
 export type DesignType = "standard" | "custom";
 export type CustomMethod = "upload" | "we-design";
@@ -108,6 +109,7 @@ export function buildCartKey(
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { items: [] });
+  const { preorder } = useStoreStatus();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Hydrate from localStorage on mount.
@@ -136,7 +138,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const itemCount = state.items.reduce((n, i) => n + i.quantity, 0);
     // Subtotal applies the pre-order discount per line (see lib/pricing).
     const subtotal = state.items.reduce(
-      (sum, i) => sum + lineTotal(i.unitPrice, i.quantity),
+      (sum, i) => sum + lineTotal(i.unitPrice, i.quantity, preorder),
       0,
     );
     const compareSubtotal = state.items.reduce(
@@ -166,7 +168,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       openDrawer: () => setDrawerOpen(true),
       closeDrawer: () => setDrawerOpen(false),
     };
-  }, [state.items, drawerOpen]);
+  }, [state.items, drawerOpen, preorder]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

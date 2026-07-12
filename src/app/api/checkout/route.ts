@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { products, configuredUnitPrice } from "@/lib/products";
 import { site } from "@/lib/site";
-import { unitAmountCents, lineTotal, preorderActive, discountRate } from "@/lib/pricing";
+import { unitAmountCents, lineTotal, discountRate } from "@/lib/pricing";
+import { effectivePreorder, effectiveStockMap } from "@/lib/adminStore";
 
 /**
  * Creates a Stripe Checkout Session from the cart.
@@ -37,6 +38,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
   }
 
+  // Live storefront state set from /admin-dashboard.
+  const [preorderNow, stockMap] = await Promise.all([
+    effectivePreorder(),
+    effectiveStockMap(),
+  ]);
+
   // Build validated line items with server-side prices.
   const lines: {
     name: string;
@@ -51,6 +58,19 @@ export async function POST(request: Request) {
     const quantity = Math.floor(Number(item.quantity));
     if (!product || !Number.isFinite(quantity) || quantity < 1 || quantity > 999) {
       return NextResponse.json({ error: "Invalid item in cart" }, { status: 400 });
+    }
+
+    const available = stockMap[product.id] ?? product.stock;
+    if (available < quantity) {
+      return NextResponse.json(
+        {
+          error:
+            available <= 0
+              ? `${product.name} is out of stock right now.`
+              : `Only ${available} of ${product.name} left in stock.`,
+        },
+        { status: 409 },
+      );
     }
 
     const isCustom = item.designType === "custom";
@@ -71,7 +91,7 @@ export async function POST(request: Request) {
     lines.push({
       name: product.name,
       description: note ? `${designLabel} · ${note}` : designLabel,
-      unitCents: unitAmountCents(baseUnit),
+      unitCents: unitAmountCents(baseUnit, preorderNow),
       quantity,
       fulfillmentNote: `${product.name} x${quantity} | ${designLabel}${note ? ` | ${note}` : ""}`,
     });
@@ -90,7 +110,7 @@ export async function POST(request: Request) {
       item.designType,
       item.customMethod,
     );
-    return sum + lineTotal(baseUnit, Math.floor(Number(item.quantity)));
+    return sum + lineTotal(baseUnit, Math.floor(Number(item.quantity)), preorderNow);
   }, 0);
 
   const freeShipping = subtotal >= site.shipping.freeThreshold;
@@ -108,8 +128,8 @@ export async function POST(request: Request) {
     lines.forEach((line, i) => {
       metadata[`item_${i + 1}`] = line.fulfillmentNote.slice(0, 500);
     });
-    if (preorderActive()) {
-      metadata.preorder = `yes (${Math.round(discountRate() * 100)}% off applied)`;
+    if (preorderNow) {
+      metadata.preorder = `yes (${Math.round(discountRate(true) * 100)}% off applied)`;
     }
 
     const session = await stripe.checkout.sessions.create({

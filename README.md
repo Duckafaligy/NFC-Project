@@ -62,6 +62,8 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | Variable            | Required | What it does                                                        |
 | ------------------- | -------- | ------------------------------------------------------------------- |
 | `STRIPE_SECRET_KEY` | For real payments | Enables Stripe Checkout. Without it, checkout falls back to a clearly-labelled test-order flow (no card charged). |
+| `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the default `taplink-admin` works and the dashboard shows a warning. |
+| `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -305,6 +307,26 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-12 — Admin dashboard: password wall, IP lockouts, live stock + pre-order control
+- **/admin-dashboard**: password-walled store controls. Login is limited per
+  IP Apple-style: 10 failed attempts lock for 1 minute, further failures
+  escalate to 5 / 15 / 60 minutes; the wall shows a live countdown, and even
+  the correct password is rejected while locked. Sessions are 2-hour signed
+  HttpOnly cookies. Page is noindex.
+- **Inside**: a pre-order window toggle and a per-product stock table
+  (Has stock / Out of stock chip + quantity input). Saving applies to the
+  storefront immediately.
+- **Live wiring**: new `/api/store-status` + `StoreStatusProvider` feed the
+  storefront; product pages show live stock bars and disable buying at 0,
+  cart/checkout/product cards price by the live pre-order flag, and the
+  Stripe route enforces both (rejects out-of-stock, charges by live flag).
+- **Persistence**: uses Vercel/Upstash KV via REST when the env vars exist;
+  otherwise in-memory (resets on redeploy — the dashboard warns about this).
+  Auth: ADMIN_PASSWORD env var, default `taplink-admin` until set (warned).
+- Verified end to end with curl + browser: 401 wall, 10-fail lockout with
+  correct-password-while-locked rejected, per-IP isolation, save > public
+  status > storefront out-of-stock UI > checkout 409.
 
 ### 2026-07-11 — One rotating banner, chart tooltip fix, industries layout fix, Times New Roman
 - **Consolidated to a single promo band.** The static topbar above the
