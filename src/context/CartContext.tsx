@@ -40,9 +40,10 @@ type CartAction =
   | { type: "CLEAR" }
   | { type: "HYDRATE"; items: CartItem[] };
 
-// v2: pricing model changed to flat $34.99/$42.99 + pre-order discount.
-// Bumping the key drops carts saved under the old per-product prices.
-const STORAGE_KEY = "taplink-cart-v2";
+// v3: catalog restructured to five card products (shared stock, new
+// business-card pricing). Bumping the key drops carts saved under the old
+// catalog so removed products and stale prices can't reach checkout.
+const STORAGE_KEY = "taplink-cart-v3";
 
 function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import {
   configuredUnitPrice,
+  CARD_STOCK,
   DESIGN_LABOUR_FEE,
   type Product,
 } from "@/lib/products";
@@ -132,8 +133,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
         </span>
       </div>
 
-      {/* Availability */}
-      <StockBar stock={product.stock} />
+      {/* Availability: one shared pool, every product is the same card */}
+      <StockBar stock={CARD_STOCK} />
 
       {/* Design type choice */}
       <div className="mt-6">

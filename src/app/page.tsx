@@ -63,7 +63,7 @@ const faqs = [
     a: "No. You buy the card once and you own it. There is no monthly fee and no per-tap charge.",
   },
   {
-    q: "What if I change my Google page, menu, or WiFi password?",
+    q: "What if I change my Google page, menu, or website?",
     a: "Every product can be reprogrammed. Point it somewhere new whenever you want. The card never goes obsolete.",
   },
   {
@@ -256,7 +256,7 @@ export default function HomePage() {
               align="left"
               eyebrow="Shop"
               title="Best sellers"
-              sub="Every product is $34.99, or $42.99 with your own branding. Pre-order now and 20% comes off your whole cart at checkout."
+              sub="Routing cards are $34.99, or $42.99 with your own branding. The all-in-one Digital Business Card is $49.99. Pre-order now and 20% comes off your whole cart at checkout."
             />
           </Reveal>
           <Reveal>
@@ -341,7 +341,7 @@ export default function HomePage() {
             {
               icon: Nfc,
               title: "A chip in every card",
-              desc: "We program it with the link of your choice before it ships: reviews, socials, menu, WiFi, or a hub.",
+              desc: "We program it with the route of your choice before it ships: reviews, socials, menu, website, or your business card hub.",
               color: "text-blue-600",
             },
             {
@@ -572,7 +572,7 @@ export default function HomePage() {
             {
               setting: "Mobile trades, wrapping the job",
               script:
-                "“Before I pack up, could I ask a quick favor? Tap your phone on my keychain and it opens our review page. Two lines is plenty.”",
+                "“Before I pack up, could I ask a quick favor? Tap your phone on my card and it opens our review page. Two lines is plenty.”",
               why: "“Two lines is plenty” removes the biggest excuse: not knowing what to write.",
             },
           ].map((c, i) => (
@@ -704,8 +704,8 @@ export default function HomePage() {
               Put a card on your counter this week
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-neutral-300">
-              Every card $34.99, custom designs $42.99. Pre-order now and 20%
-              comes off your whole cart.
+              Routing cards $34.99, the all-in-one business card $49.99.
+              Pre-order now and 20% comes off your whole cart.
             </p>
             <div className="mt-8 flex justify-center">
               <ButtonLink href="/products" size="lg">

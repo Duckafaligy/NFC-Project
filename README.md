@@ -62,6 +62,10 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | Variable            | Required | What it does                                                        |
 | ------------------- | -------- | ------------------------------------------------------------------- |
 | `STRIPE_SECRET_KEY` | For real payments | Enables Stripe Checkout. Without it, checkout falls back to a clearly-labelled test-order flow (no card charged). |
+| `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for the `/api/stripe-webhook` endpoint. With it, every paid order automatically subtracts its quantity from the shared card stock. |
+| `GITHUB_TOKEN`      | For admin saves in production | Fine-grained GitHub token (contents read/write on this repo). The admin dashboard and Stripe webhook persist changes by committing `src/data/store-state.json` to `main`, which triggers a redeploy. |
+| `ADMIN_PASSWORD`    | Recommended | Overrides the default admin password that is hardcoded in `src/lib/admin.ts` (a hardcoded password is visible to anyone with repo access). |
+| `GITHUB_REPO` / `GITHUB_BRANCH` | Optional | Override the repo (`Duckafaligy/NFC-Project`) and branch (`main`) the dashboard commits to. |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -305,6 +309,38 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-12 — Admin dashboard, 5-card catalog with shared stock, Stripe stock sync
+- **Catalog restructured to five products, all the same physical card**
+  routed differently: Google Review Card, Social Media Card, Menu Card
+  (was a sticker, now a card), **Website Card (new)**, and the Digital
+  Business Card as the all-in-one flagship at **$49.99 base / $56.99
+  custom** (+$4.99 we-design fee). Review Stand, WiFi Tag, Keychain Tag,
+  and the separate All-in-One card are gone; copy referencing them
+  updated. Cart storage key bumped to v3.
+- **Shared stock pool.** Because every product is the same card, stock is
+  one number (`cardStock` in `src/data/store-state.json`), shown by the
+  stock bar on every product page as N of the 50-card print run.
+- **Admin dashboard at `/admin-dashboard`** (noindex). Password wall with
+  **Apple-style per-IP lockout**: attempts 1-9 free, 10th wrong locks the
+  IP 1 minute, then 5, 15, 60 minutes; the correct password is also
+  rejected while locked. Session is an HMAC-signed HttpOnly cookie.
+  Default password is hardcoded (set `ADMIN_PASSWORD` in Vercel to
+  override it, which also invalidates old sessions). Inside: Has stock /
+  Out of stock toggle with a quantity input, and a pre-order ON/OFF
+  switch that drives every pre-order chip/discount site-wide.
+- **Persistence is a git commit.** Saving commits `store-state.json` to
+  `main` via the GitHub API (needs `GITHUB_TOKEN`), Vercel redeploys, and
+  the change is live in ~2 minutes with a full audit trail in git
+  history. In local dev it writes the file directly.
+- **Stripe stock sync** (`/api/stripe-webhook`): on
+  `checkout.session.completed`, the order's total quantity is subtracted
+  from the shared stock (reads the live committed value first). Set the
+  endpoint up in Stripe (Developers > Webhooks, event
+  `checkout.session.completed`) and put its signing secret in
+  `STRIPE_WEBHOOK_SECRET`.
+- Rate-limit state is in-memory (per serverless instance); good enough
+  for this threat model, move to a KV store if stakes rise.
 
 ### 2026-07-11 — One rotating banner, chart tooltip fix, industries layout fix, Times New Roman
 - **Consolidated to a single promo band.** The static topbar above the

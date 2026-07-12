@@ -23,7 +23,7 @@ const testimonials = [
   },
   {
     quote:
-      "I keep the keychain tag on my belt loop. Job done, customer happy, tap. Review posted before I pack the van.",
+      "I keep the card in the van door. Job done, customer happy, tap. Review posted before I pack up.",
     name: "Example: mobile detailer",
     detail: "Replace with a real customer quote",
   },
