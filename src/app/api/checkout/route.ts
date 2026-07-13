@@ -92,9 +92,20 @@ export async function POST(request: Request) {
 
     const note = (item.note ?? "").slice(0, 400);
 
+    // Full configuration on the line item, so Stripe's payment page and the
+    // post-payment invoice both show exactly what was ordered.
+    const configParts = [
+      `Routing: ${product.category}`,
+      designLabel,
+      ...(note ? [note] : []),
+      ...(preorderNow
+        ? [`Pre-order price (${Math.round(discountRate(true) * 100)}% off)`]
+        : []),
+    ];
+
     lines.push({
       name: product.name,
-      description: note ? `${designLabel} · ${note}` : designLabel,
+      description: configParts.join(" · "),
       unitCents: unitAmountCents(baseUnit, preorderNow),
       quantity,
       fulfillmentNote: `${product.name} x${quantity} | ${designLabel}${note ? ` | ${note}` : ""}`,
@@ -172,6 +183,25 @@ export async function POST(request: Request) {
         },
       ],
       metadata,
+      // Post-payment invoice: the customer gets a proper invoice listing
+      // every line with its full configuration (routing, design choice,
+      // notes, pre-order discount), plus the order details in metadata.
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          description: preorderNow
+            ? `Pre-order: ${Math.round(discountRate(true) * 100)}% off applied. ${site.preorder.shipNote}.`
+            : "Thank you for your order. Configurations are listed per line item.",
+          footer: `${site.guaranteeDays} days of free maintenance on every order: if anything is wrong, we correct it free. Questions: ${site.email}`,
+          metadata,
+          custom_fields: [
+            {
+              name: "Order type",
+              value: preorderNow ? "Pre-order" : "Standard",
+            },
+          ],
+        },
+      },
       // Lets customers enter promo codes (e.g. a WELCOME10 code created in
       // the Stripe dashboard for the newsletter signup offer).
       allow_promotion_codes: true,

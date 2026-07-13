@@ -312,6 +312,16 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-07-13 — Stripe invoices with full order configuration
+- **Post-payment invoices enabled** (`invoice_creation` on the Checkout
+  session): every paid order now generates a Stripe invoice. Line items
+  carry the complete configuration — routing category, standard/custom,
+  who designs it, the customer's note, and the pre-order discount — and
+  the invoice adds an "Order type" field, a pre-order/thank-you
+  description, and the free-maintenance promise in the footer.
+- To have Stripe email invoices automatically: Stripe Dashboard >
+  Settings > Billing > Invoices > "Email finalized invoices".
+
 ### 2026-07-13 — Webhook hardening, refunds, order log, low-stock email, pre-order auto-end
 - **Exactly-once webhook processing:** every Stripe event id is claimed in
   the store (7-day TTL) before handling, so Stripe's retries/duplicate
