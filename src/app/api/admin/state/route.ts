@@ -39,6 +39,7 @@ export async function GET() {
       process.env.RESEND_API_KEY && process.env.LOW_STOCK_ALERT_EMAIL,
     ),
     webhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
+    stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
   });
 }
 

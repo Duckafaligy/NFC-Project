@@ -108,6 +108,141 @@ async function handlePaidOrder(
     ),
     preorder: Boolean(session.metadata?.preorder),
   });
+
+  // Branded order confirmation with the invoice links. Fails soft: the
+  // customer still gets Stripe's own invoice email if this one can't send.
+  try {
+    await sendOrderInvoiceEmail(stripe, session, lineItems.data);
+  } catch (e) {
+    console.error("Order invoice email failed:", e);
+  }
+}
+
+/**
+ * Emails the customer a branded order confirmation with their line items,
+ * totals, and links to the Stripe-hosted invoice page + PDF. Sent via
+ * Resend; a no-op until RESEND_API_KEY is configured. ORDER_FROM_EMAIL
+ * (falling back to ALERT_FROM_EMAIL) sets a verified sender.
+ */
+async function sendOrderInvoiceEmail(
+  stripe: Stripe,
+  session: Stripe.Checkout.Session,
+  lineItems: Stripe.LineItem[],
+) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = session.customer_details?.email;
+  if (!apiKey || !to) return;
+
+  // The invoice finalizes right after payment; fetch its links if it exists.
+  let invoiceUrl: string | null = null;
+  let invoicePdf: string | null = null;
+  let invoiceNumber: string | null = null;
+  if (session.invoice) {
+    const invoice =
+      typeof session.invoice === "string"
+        ? await stripe.invoices.retrieve(session.invoice)
+        : session.invoice;
+    invoiceUrl = invoice.hosted_invoice_url ?? null;
+    invoicePdf = invoice.invoice_pdf ?? null;
+    invoiceNumber = invoice.number ?? null;
+  }
+
+  const money = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const preorder = Boolean(session.metadata?.preorder);
+  const reference = invoiceNumber ?? session.id.slice(-8).toUpperCase();
+
+  const rows = lineItems
+    .map(
+      (li) => `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid #e5e5e5;font-size:14px;color:#171717;">
+            ${escapeHtml(li.description ?? "NFC card")}
+            ${li.quantity && li.quantity > 1 ? ` <span style="color:#a3a3a3;">×${li.quantity}</span>` : ""}
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid #e5e5e5;font-size:14px;color:#171717;text-align:right;white-space:nowrap;">
+            ${money(li.amount_total ?? 0)}
+          </td>
+        </tr>`,
+    )
+    .join("");
+
+  const discount = session.total_details?.amount_discount ?? 0;
+  const shippingCents = session.total_details?.amount_shipping ?? 0;
+
+  const html = `
+  <div style="background:#f5f5f5;padding:32px 16px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+    <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e5e5;">
+      <div style="background:#171717;padding:20px 28px;">
+        <p style="margin:0;color:#ffffff;font-size:18px;font-weight:800;">${escapeHtml(site.name)}</p>
+      </div>
+      <div style="padding:28px;">
+        <p style="margin:0;font-size:20px;font-weight:800;color:#171717;">Thanks for your order!</p>
+        <p style="margin:8px 0 0;font-size:14px;color:#525252;">
+          Invoice ${escapeHtml(reference)}${preorder ? " · Pre-order (ships in 2-3 weeks, in order placed)" : ""}
+        </p>
+        <table style="width:100%;border-collapse:collapse;margin-top:20px;">${rows}
+          <tr>
+            <td style="padding:10px 0 2px;font-size:13px;color:#525252;">Subtotal</td>
+            <td style="padding:10px 0 2px;font-size:13px;color:#525252;text-align:right;">${money(session.amount_subtotal ?? 0)}</td>
+          </tr>
+          ${
+            discount > 0
+              ? `<tr><td style="padding:2px 0;font-size:13px;color:#059669;">Discount</td><td style="padding:2px 0;font-size:13px;color:#059669;text-align:right;">-${money(discount)}</td></tr>`
+              : ""
+          }
+          <tr>
+            <td style="padding:2px 0;font-size:13px;color:#525252;">Shipping</td>
+            <td style="padding:2px 0;font-size:13px;color:#525252;text-align:right;">${shippingCents === 0 ? "Free" : money(shippingCents)}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;font-size:16px;font-weight:800;color:#171717;border-top:1px solid #e5e5e5;">Total paid</td>
+            <td style="padding:10px 0;font-size:16px;font-weight:800;color:#171717;text-align:right;border-top:1px solid #e5e5e5;">${money(session.amount_total ?? 0)}</td>
+          </tr>
+        </table>
+        ${
+          invoiceUrl || invoicePdf
+            ? `<div style="margin-top:20px;">
+                ${invoiceUrl ? `<a href="${invoiceUrl}" style="display:inline-block;background:#171717;color:#ffffff;font-size:14px;font-weight:700;padding:10px 18px;border-radius:6px;text-decoration:none;">View invoice</a>` : ""}
+                ${invoicePdf ? `<a href="${invoicePdf}" style="display:inline-block;margin-left:8px;color:#171717;font-size:14px;font-weight:700;padding:10px 18px;border:1px solid #d4d4d4;border-radius:6px;text-decoration:none;">Download PDF</a>` : ""}
+              </div>`
+            : ""
+        }
+        <p style="margin:24px 0 0;font-size:12px;color:#a3a3a3;">
+          ${site.guaranteeDays} days of free maintenance on every order — if anything is wrong, we correct it free.
+          Questions? Reply to this email or write to ${escapeHtml(site.email)}.
+        </p>
+      </div>
+    </div>
+  </div>`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from:
+        process.env.ORDER_FROM_EMAIL ??
+        process.env.ALERT_FROM_EMAIL ??
+        "TapLink Orders <onboarding@resend.dev>",
+      to: [to],
+      reply_to: site.email,
+      subject: `Your ${site.name} order is confirmed (${reference})`,
+      html,
+    }),
+  });
+  if (!res.ok) {
+    console.error("Order invoice email failed:", res.status);
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 async function handleRefund(stripe: Stripe, charge: Stripe.Charge) {

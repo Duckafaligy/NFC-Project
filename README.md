@@ -66,6 +66,7 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
 | `RESEND_API_KEY` + `LOW_STOCK_ALERT_EMAIL` | Optional | Low-stock alert: emails you (via Resend) when the card pool crosses down through 10. `ALERT_FROM_EMAIL` optionally sets a verified sender. |
+| `ORDER_FROM_EMAIL` | Optional | Verified Resend sender for the branded order-confirmation/invoice email customers get after paying (falls back to `ALERT_FROM_EMAIL`, then Resend's onboarding sender — which can only deliver to your own Resend account email until you verify a domain). |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -74,6 +75,34 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
    `STRIPE_SECRET_KEY` with that value, then **Redeploy**.
 4. Test with card number `4242 4242 4242 4242` (any future expiry/CVC) while
    using the `sk_test_` key. Swap to `sk_live_` when ready to take real money.
+
+**Full test-payment walkthrough (test mode):**
+1. With `sk_test_…` set, add any card to the cart and hit **Pay securely** —
+   you land on Stripe's hosted checkout showing each line's full
+   configuration (routing, design choice, notes, pre-order price).
+2. Pay with `4242 4242 4242 4242`, any future expiry, any CVC/ZIP. Declines
+   can be tested with `4000 0000 0000 0002`.
+3. You're redirected to `/checkout/success`, which fetches the order and
+   shows an **on-page invoice**: line items, discount, shipping, total, plus
+   **View invoice** / **Download PDF** buttons (Stripe-hosted invoice).
+4. If the webhook is connected, stock drops in /admin-dashboard, the order
+   appears under **Recent orders**, and (with `RESEND_API_KEY`) the customer
+   gets the branded invoice email.
+5. Refund the payment in the Stripe dashboard → stock goes back up and the
+   order is flagged **Refunded**.
+
+**Invoices:** every paid order creates a Stripe invoice automatically
+(`invoice_creation` on the Checkout Session). The success page displays it,
+the webhook emails it via Resend, and you can additionally have Stripe email
+its own copy: Stripe Dashboard → **Settings → Emails** → enable "Email
+finalized invoices to customers".
+
+**Syncing the catalog into Stripe:** /admin-dashboard has a **Sync products
+to Stripe** button (`/api/admin/stripe-sync`). It creates/updates one Stripe
+Product per card with three prices each (standard / custom-upload /
+custom-we-design, stable lookup keys). Idempotent — rerun after any price
+change in `src/lib/products.ts`. Checkout still charges via inline
+`price_data` because the pre-order discount changes amounts dynamically.
 
 Order details (product, design choice, customer notes) appear in the Stripe
 Dashboard on each payment under **metadata** — that's your fulfilment queue.
