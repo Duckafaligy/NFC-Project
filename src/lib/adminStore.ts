@@ -20,6 +20,29 @@ export interface AdminSettings {
    * null = catalog default (DEFAULT_CARD_STOCK).
    */
   cardStock: number | null;
+  /**
+   * Auto-end for the pre-order window (ms epoch). When set and passed,
+   * effectivePreorder() reports false without anyone touching the toggle.
+   * null = stays on until switched off manually.
+   */
+  preorderEndsAt: number | null;
+}
+
+/** One fulfilled Stripe order, logged by the webhook for the dashboard. */
+export interface OrderRecord {
+  /** Stripe checkout session id. */
+  id: string;
+  /** ms epoch when the webhook processed it. */
+  at: number;
+  email: string | null;
+  /** Dollars actually charged. */
+  total: number;
+  /** Cards in the order (what was subtracted from the pool). */
+  quantity: number;
+  /** Human line summaries, e.g. "Google Review Card ×2". */
+  items: string[];
+  preorder: boolean;
+  refunded?: boolean;
 }
 
 export interface AttemptRecord {
@@ -53,15 +76,22 @@ async function kvGet(key: string): Promise<string | null> {
   return data.result;
 }
 
-async function kvSet(key: string, value: string): Promise<void> {
+async function kvSet(
+  key: string,
+  value: string,
+  ttlSeconds?: number,
+): Promise<void> {
   if (!persistentStore) {
     memory.set(key, value);
     return;
   }
-  await fetch(
-    `${kvUrl}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
-    { headers: { Authorization: `Bearer ${kvToken}` }, cache: "no-store" },
-  );
+  const url =
+    `${kvUrl}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}` +
+    (ttlSeconds ? `?EX=${ttlSeconds}` : "");
+  await fetch(url, {
+    headers: { Authorization: `Bearer ${kvToken}` },
+    cache: "no-store",
+  });
 }
 
 export async function getSettings(): Promise<AdminSettings> {
@@ -76,22 +106,34 @@ export async function getSettings(): Promise<AdminSettings> {
           Number.isFinite(parsed.cardStock)
             ? Math.max(0, Math.round(parsed.cardStock))
             : null,
+        preorderEndsAt:
+          typeof parsed.preorderEndsAt === "number" &&
+          Number.isFinite(parsed.preorderEndsAt)
+            ? parsed.preorderEndsAt
+            : null,
       };
     }
   } catch {
     // Corrupt value: fall through to defaults.
   }
-  return { preorder: null, cardStock: null };
+  return { preorder: null, cardStock: null, preorderEndsAt: null };
 }
 
 export async function saveSettings(settings: AdminSettings): Promise<void> {
   await kvSet(SETTINGS_KEY, JSON.stringify(settings));
 }
 
-/** The pre-order flag the storefront should actually use right now. */
+/**
+ * The pre-order flag the storefront should actually use right now,
+ * honouring the optional auto-end date.
+ */
 export async function effectivePreorder(): Promise<boolean> {
   const s = await getSettings();
-  return s.preorder ?? site.preorder.enabled;
+  const on = s.preorder ?? site.preorder.enabled;
+  if (on && s.preorderEndsAt !== null && Date.now() >= s.preorderEndsAt) {
+    return false;
+  }
+  return on;
 }
 
 /** The shared card pool the storefront should show right now. */
@@ -102,14 +144,84 @@ export async function effectiveCardStock(): Promise<number> {
 
 /**
  * Subtract a paid order's quantity from the shared pool (called by the
- * Stripe webhook). Clamps at zero.
+ * Stripe webhook). Clamps at zero. Returns before/after so callers can
+ * detect the low-stock threshold crossing.
  */
-export async function decrementCardStock(quantity: number): Promise<number> {
+export async function decrementCardStock(
+  quantity: number,
+): Promise<{ previous: number; next: number }> {
+  const s = await getSettings();
+  const previous = s.cardStock ?? DEFAULT_CARD_STOCK;
+  const next = Math.max(0, previous - Math.max(0, Math.round(quantity)));
+  await saveSettings({ ...s, cardStock: next });
+  return { previous, next };
+}
+
+/** Add cards back to the pool (full refunds). Caps at a sane maximum. */
+export async function incrementCardStock(quantity: number): Promise<number> {
   const s = await getSettings();
   const current = s.cardStock ?? DEFAULT_CARD_STOCK;
-  const next = Math.max(0, current - Math.max(0, Math.round(quantity)));
+  const next = Math.min(100000, current + Math.max(0, Math.round(quantity)));
   await saveSettings({ ...s, cardStock: next });
   return next;
+}
+
+// ---------------------------------------------------------------------------
+// Stripe webhook support: event de-duplication + order log
+// ---------------------------------------------------------------------------
+
+const EVENT_PREFIX = "taplink:stripe:event:";
+const ORDERS_KEY = "taplink:admin:orders";
+const ORDERS_KEPT = 50;
+
+/**
+ * Claim a Stripe event id so retried/duplicate webhook deliveries are
+ * processed exactly once. Returns false when the id was already handled.
+ * Claims expire after 7 days (Stripe never retries older events).
+ */
+export async function claimStripeEvent(eventId: string): Promise<boolean> {
+  const key = EVENT_PREFIX + eventId;
+  if (await kvGet(key)) return false;
+  await kvSet(key, "1", 7 * 24 * 3600);
+  return true;
+}
+
+/** Most recent orders first. */
+export async function getOrders(): Promise<OrderRecord[]> {
+  try {
+    const raw = await kvGet(ORDERS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as OrderRecord[];
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch {
+    // Corrupt value: treat as empty.
+  }
+  return [];
+}
+
+/** Prepend an order, keeping the most recent ORDERS_KEPT. */
+export async function logOrder(order: OrderRecord): Promise<void> {
+  const orders = await getOrders();
+  const next = [order, ...orders.filter((o) => o.id !== order.id)].slice(
+    0,
+    ORDERS_KEPT,
+  );
+  await kvSet(ORDERS_KEY, JSON.stringify(next));
+}
+
+/** Flag a logged order as refunded (if it is still in the log). */
+export async function markOrderRefunded(sessionId: string): Promise<void> {
+  const orders = await getOrders();
+  let changed = false;
+  const next = orders.map((o) => {
+    if (o.id === sessionId && !o.refunded) {
+      changed = true;
+      return { ...o, refunded: true };
+    }
+    return o;
+  });
+  if (changed) await kvSet(ORDERS_KEY, JSON.stringify(next));
 }
 
 export async function getAttempts(ip: string): Promise<AttemptRecord> {

@@ -62,9 +62,10 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | Variable            | Required | What it does                                                        |
 | ------------------- | -------- | ------------------------------------------------------------------- |
 | `STRIPE_SECRET_KEY` | For real payments | Enables Stripe Checkout. Without it, checkout falls back to a clearly-labelled test-order flow (no card charged). |
-| `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for the `/api/stripe-webhook` endpoint. With it, every paid order automatically subtracts its quantity from the shared card pool. |
+| `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for the `/api/stripe-webhook` endpoint (events: `checkout.session.completed`, `charge.refunded`). Paid orders subtract from the shared pool, full refunds add back, orders get logged for the dashboard. |
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
+| `RESEND_API_KEY` + `LOW_STOCK_ALERT_EMAIL` | Optional | Low-stock alert: emails you (via Resend) when the card pool crosses down through 10. `ALERT_FROM_EMAIL` optionally sets a verified sender. |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -310,6 +311,32 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-07-13 — Webhook hardening, refunds, order log, low-stock email, pre-order auto-end
+- **Exactly-once webhook processing:** every Stripe event id is claimed in
+  the store (7-day TTL) before handling, so Stripe's retries/duplicate
+  deliveries can never subtract stock twice. Verified with a signed
+  synthetic event: first delivery processes, replay returns
+  `duplicate: true`, bad signatures 400.
+- **Refund restock:** `charge.refunded` (full refunds only) adds the
+  order's quantity back to the pool and flags the order refunded in the
+  log; partial refunds stay a manual dashboard adjustment. The Stripe
+  endpoint now needs both events: `checkout.session.completed` +
+  `charge.refunded`.
+- **Order log in the dashboard:** the webhook records the last 50 orders
+  (items, quantity, total, customer email, pre-order + refunded badges),
+  shown in a Recent orders card. No more opening Stripe to see what to
+  fulfil.
+- **Low-stock email alert:** when a paid order drops the pool from above
+  10 to 10 or below, one email goes out via Resend's REST API (needs
+  `RESEND_API_KEY` + `LOW_STOCK_ALERT_EMAIL`; silently skipped otherwise;
+  the dashboard shows which state you're in).
+- **Pre-order auto-end date:** optional date field under the pre-order
+  toggle; `effectivePreorder()` reports false once the end of that day
+  passes, so discounts/labels stop site-wide with no manual flip.
+  Verified: past date → storefront immediately shows pre-order off.
+- Footer shop links updated for the 5-card catalog (the removed
+  all-in-one slug 404'd).
 
 ### 2026-07-12 — Admin dashboard, 5-card catalog with shared stock, Stripe stock sync
 Two parallel sessions built the dashboard; merged: the live KV architecture

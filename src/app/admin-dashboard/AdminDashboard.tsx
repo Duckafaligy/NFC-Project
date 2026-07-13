@@ -8,6 +8,7 @@ import {
   Lock,
   LogOut,
   Package,
+  ReceiptText,
   ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/Button";
@@ -20,11 +21,45 @@ import { Button } from "@/components/Button";
  * the storefront immediately (stock bars, buy buttons, checkout pricing).
  */
 
+interface OrderRecord {
+  id: string;
+  at: number;
+  email: string | null;
+  total: number;
+  quantity: number;
+  items: string[];
+  preorder: boolean;
+  refunded?: boolean;
+}
+
 interface AdminState {
-  settings: { preorder: boolean | null; cardStock: number | null };
+  settings: {
+    preorder: boolean | null;
+    cardStock: number | null;
+    preorderEndsAt: number | null;
+  };
   defaults: { preorder: boolean; cardStock: number };
+  orders: OrderRecord[];
   persistentStore: boolean;
   defaultPassword: boolean;
+  alertsConfigured: boolean;
+  webhookConfigured: boolean;
+}
+
+/** ms epoch -> value for <input type="date"> in the viewer's timezone. */
+function msToDateInput(ms: number | null): string {
+  if (!ms) return "";
+  const d = new Date(ms);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+/** Date input value -> end of that day (local time) in ms, or null. */
+function dateInputToMs(value: string): number | null {
+  if (!value) return null;
+  const [y, m, d] = value.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d, 23, 59, 59).getTime();
 }
 
 type View = "loading" | "login" | "dashboard";
@@ -42,6 +77,7 @@ export function AdminDashboard() {
 
   // Dashboard state
   const [preorder, setPreorder] = useState(true);
+  const [preorderEnds, setPreorderEnds] = useState("");
   const [cardStock, setCardStock] = useState(0);
   const [hasStock, setHasStock] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -56,6 +92,7 @@ export function AdminDashboard() {
     const data = (await res.json()) as AdminState;
     setState(data);
     setPreorder(data.settings.preorder ?? data.defaults.preorder);
+    setPreorderEnds(msToDateInput(data.settings.preorderEndsAt));
     const stock = data.settings.cardStock ?? data.defaults.cardStock;
     setCardStock(stock);
     setHasStock(stock > 0);
@@ -116,6 +153,7 @@ export function AdminDashboard() {
         body: JSON.stringify({
           preorder,
           cardStock: hasStock ? cardStock : 0,
+          preorderEndsAt: preorder ? dateInputToMs(preorderEnds) : null,
         }),
       });
       setSavedAt(Date.now());
@@ -242,30 +280,60 @@ export function AdminDashboard() {
       )}
 
       {/* Pre-order toggle */}
-      <div className="card mt-6 flex items-center justify-between p-6">
-        <div>
-          <p className="font-display text-lg font-extrabold text-neutral-900">
-            Pre-order window
-          </p>
-          <p className="mt-1 text-sm text-neutral-500">
-            While on, the whole cart is 20% off and buttons say
-            &ldquo;Pre-order&rdquo;. Takes effect immediately.
-          </p>
-        </div>
-        <button
-          onClick={() => setPreorder((v) => !v)}
-          className={`relative h-8 w-14 flex-shrink-0 rounded-md transition-colors ${
-            preorder ? "bg-violet-600" : "bg-neutral-300"
-          }`}
-          aria-pressed={preorder}
-          aria-label="Toggle pre-order"
-        >
-          <span
-            className={`absolute top-1 h-6 w-6 rounded-sm bg-white shadow-soft transition-all ${
-              preorder ? "left-7" : "left-1"
+      <div className="card mt-6 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-display text-lg font-extrabold text-neutral-900">
+              Pre-order window
+            </p>
+            <p className="mt-1 text-sm text-neutral-500">
+              While on, the whole cart is 20% off and buttons say
+              &ldquo;Pre-order&rdquo;. Takes effect immediately.
+            </p>
+          </div>
+          <button
+            onClick={() => setPreorder((v) => !v)}
+            className={`relative h-8 w-14 flex-shrink-0 rounded-md transition-colors ${
+              preorder ? "bg-violet-600" : "bg-neutral-300"
             }`}
-          />
-        </button>
+            aria-pressed={preorder}
+            aria-label="Toggle pre-order"
+          >
+            <span
+              className={`absolute top-1 h-6 w-6 rounded-sm bg-white shadow-soft transition-all ${
+                preorder ? "left-7" : "left-1"
+              }`}
+            />
+          </button>
+        </div>
+
+        {preorder && (
+          <label className="mt-4 block border-t border-neutral-100 pt-4">
+            <span className="text-sm font-bold text-neutral-900">
+              Auto-end date (optional)
+            </span>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <input
+                type="date"
+                value={preorderEnds}
+                onChange={(e) => setPreorderEnds(e.target.value)}
+                className="rounded-md border border-neutral-300 px-3 py-2 text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+              />
+              {preorderEnds && (
+                <button
+                  onClick={() => setPreorderEnds("")}
+                  className="text-xs font-bold text-neutral-500 underline hover:text-neutral-900"
+                >
+                  Clear
+                </button>
+              )}
+              <span className="text-xs text-neutral-400">
+                Pre-order switches off by itself at the end of that day. Leave
+                empty to keep it on until you flip the toggle.
+              </span>
+            </div>
+          </label>
+        )}
       </div>
 
       {/* Shared card stock */}
@@ -326,12 +394,19 @@ export function AdminDashboard() {
                 className="w-32 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
               />
               <span className="text-xs text-neutral-400">
-                Paid Stripe orders subtract from this automatically once the
-                webhook is connected.
+                {state?.webhookConfigured
+                  ? "Paid Stripe orders subtract from this automatically; full refunds add back."
+                  : "Connect the Stripe webhook (STRIPE_WEBHOOK_SECRET) and paid orders subtract from this automatically."}
               </span>
             </div>
           </label>
         )}
+
+        <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-400">
+          {state?.alertsConfigured
+            ? "Low-stock email alert is on: you get an email when the pool drops to 10 or fewer."
+            : "Optional: add RESEND_API_KEY and LOW_STOCK_ALERT_EMAIL env vars to get an email when stock drops to 10."}
+        </p>
       </div>
 
       <div className="mt-6 flex items-center gap-3">
@@ -342,6 +417,61 @@ export function AdminDashboard() {
           <span className="flex items-center gap-1 text-sm font-semibold text-emerald-600">
             <Check className="h-4 w-4" /> Saved, live now
           </span>
+        )}
+      </div>
+
+      {/* Recent orders (logged by the Stripe webhook) */}
+      <div className="card mt-8 overflow-hidden p-0">
+        <div className="flex items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-6 py-3">
+          <ReceiptText className="h-4 w-4 text-neutral-500" />
+          <p className="text-sm font-bold text-neutral-900">Recent orders</p>
+          <p className="ml-auto text-xs text-neutral-400">
+            Last {state?.orders.length ?? 0} · logged automatically from Stripe
+          </p>
+        </div>
+        {state && state.orders.length > 0 ? (
+          <ul className="max-h-96 divide-y divide-neutral-100 overflow-y-auto">
+            {state.orders.map((o) => (
+              <li key={o.id} className="flex items-start gap-4 px-6 py-3.5">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-neutral-900">
+                    {o.items.join(", ") || `${o.quantity} card${o.quantity === 1 ? "" : "s"}`}
+                  </p>
+                  <p className="mt-0.5 text-xs text-neutral-400">
+                    {new Date(o.at).toLocaleString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                    {o.email ? ` · ${o.email}` : ""}
+                  </p>
+                </div>
+                <div className="flex flex-shrink-0 items-center gap-2">
+                  {o.preorder && (
+                    <span className="rounded-sm bg-violet-100 px-1.5 py-0.5 text-[11px] font-bold text-violet-700">
+                      Pre-order
+                    </span>
+                  )}
+                  {o.refunded && (
+                    <span className="rounded-sm bg-neutral-200 px-1.5 py-0.5 text-[11px] font-bold text-neutral-600">
+                      Refunded
+                    </span>
+                  )}
+                  <span
+                    className={`text-sm font-bold ${o.refunded ? "text-neutral-400 line-through" : "text-neutral-900"}`}
+                  >
+                    ${o.total.toFixed(2)}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="px-6 py-8 text-center text-sm text-neutral-400">
+            No orders logged yet. They appear here automatically once the
+            Stripe webhook is connected and the first order comes in.
+          </p>
         )}
       </div>
     </section>

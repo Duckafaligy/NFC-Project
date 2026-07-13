@@ -10,8 +10,8 @@ const columns = [
     links: [
       { href: "/products", label: "All products" },
       { href: "/products/google-review-card", label: "Review cards" },
+      { href: "/products/website-card", label: "Website cards" },
       { href: "/products/digital-business-card", label: "Business cards" },
-      { href: "/products/all-in-one-card", label: "All-in-one" },
     ],
   },
   {
