@@ -4,12 +4,13 @@ import { site } from "./site";
 /**
  * Server-side store for admin-controlled settings and login rate limiting.
  *
- * Persistence: if Vercel KV / Upstash env vars are present
- * (KV_REST_API_URL + KV_REST_API_TOKEN) values persist there via plain REST,
- * no SDK needed. Otherwise an in-memory Map is used, which works for local
- * dev and single-instance servers but resets on redeploy/cold start on
- * serverless. For production on Vercel, add the free Upstash KV integration
- * (Storage tab > Create KV) and the env vars appear automatically.
+ * Persistence: if Upstash Redis env vars are present (KV_REST_API_URL +
+ * KV_REST_API_TOKEN, or UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN)
+ * values persist there via plain REST, no SDK needed. Otherwise an
+ * in-memory Map is used, which works for local dev and single-instance
+ * servers but resets on redeploy/cold start on serverless. For production
+ * on Vercel: Storage tab > "Upstash for Redis" — the env vars appear
+ * automatically.
  */
 
 export interface AdminSettings {
@@ -60,20 +61,31 @@ const memory = ((
   globalThis as typeof globalThis & { __taplinkAdminMemory?: Map<string, string> }
 ).__taplinkAdminMemory ??= new Map<string, string>());
 
-const kvUrl = process.env.KV_REST_API_URL;
-const kvToken = process.env.KV_REST_API_TOKEN;
+// Vercel's old KV product used KV_REST_API_*; the current "Upstash for
+// Redis" marketplace integration uses UPSTASH_REDIS_REST_*. Accept both.
+const kvUrl =
+  process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
+const kvToken =
+  process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
 
 export const persistentStore = Boolean(kvUrl && kvToken);
 
+// Both helpers fail soft: a KV outage degrades persistence for a moment
+// instead of turning admin login or the Stripe webhook into 500s.
 async function kvGet(key: string): Promise<string | null> {
   if (!persistentStore) return memory.get(key) ?? null;
-  const res = await fetch(`${kvUrl}/get/${encodeURIComponent(key)}`, {
-    headers: { Authorization: `Bearer ${kvToken}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  const data = (await res.json()) as { result: string | null };
-  return data.result;
+  try {
+    const res = await fetch(`${kvUrl}/get/${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${kvToken}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { result: string | null };
+    return data.result;
+  } catch (e) {
+    console.error("KV read failed:", e);
+    return null;
+  }
 }
 
 async function kvSet(
@@ -85,13 +97,17 @@ async function kvSet(
     memory.set(key, value);
     return;
   }
-  const url =
-    `${kvUrl}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}` +
-    (ttlSeconds ? `?EX=${ttlSeconds}` : "");
-  await fetch(url, {
-    headers: { Authorization: `Bearer ${kvToken}` },
-    cache: "no-store",
-  });
+  try {
+    const url =
+      `${kvUrl}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}` +
+      (ttlSeconds ? `?EX=${ttlSeconds}` : "");
+    await fetch(url, {
+      headers: { Authorization: `Bearer ${kvToken}` },
+      cache: "no-store",
+    });
+  } catch (e) {
+    console.error("KV write failed:", e);
+  }
 }
 
 export async function getSettings(): Promise<AdminSettings> {
