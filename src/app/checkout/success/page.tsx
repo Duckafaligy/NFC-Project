@@ -207,12 +207,8 @@ function SuccessContent() {
                 </div>
                 <div className="flex justify-between border-t border-neutral-200 pt-2 text-base font-extrabold text-neutral-900">
                   <dt>Total paid</dt>
-                  <dd>
-                    {formatPrice(order?.amountTotal ?? 0)}{" "}
-                    <span className="text-xs font-semibold text-neutral-400">
-                      {order?.currency}
-                    </span>
-                  </dd>
+                  {/* formatPrice already renders the currency (e.g. "CA$42.98"). */}
+                  <dd>{formatPrice(order?.amountTotal ?? 0)}</dd>
                 </div>
               </dl>
 

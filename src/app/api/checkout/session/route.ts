@@ -68,7 +68,7 @@ export async function GET(request: Request) {
     paid,
     email: session.customer_details?.email ?? null,
     name: session.customer_details?.name ?? null,
-    currency: (session.currency ?? "usd").toUpperCase(),
+    currency: (session.currency ?? "cad").toUpperCase(),
     amountSubtotal: (session.amount_subtotal ?? 0) / 100,
     amountDiscount: (session.total_details?.amount_discount ?? 0) / 100,
     amountShipping: (session.total_details?.amount_shipping ?? 0) / 100,

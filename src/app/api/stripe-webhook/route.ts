@@ -9,6 +9,7 @@ import {
 } from "@/lib/adminStore";
 import { LOW_STOCK } from "@/lib/products";
 import { site } from "@/lib/site";
+import { formatPrice } from "@/lib/utils";
 
 /**
  * Keeps the store in sync with Stripe.
@@ -147,7 +148,8 @@ async function sendOrderInvoiceEmail(
     invoiceNumber = invoice.number ?? null;
   }
 
-  const money = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  // Format in the store currency (e.g. "CA$34.99") to match the site.
+  const money = (cents: number) => formatPrice(cents / 100);
   const preorder = Boolean(session.metadata?.preorder);
   const reference = invoiceNumber ?? session.id.slice(-8).toUpperCase();
 

@@ -7,6 +7,7 @@ import {
   configuredUnitPrice,
   type Product,
 } from "@/lib/products";
+import { site } from "@/lib/site";
 
 /**
  * POST /api/admin/stripe-sync — pushes the site catalog into Stripe.
@@ -68,6 +69,7 @@ export async function POST() {
   }
 
   const stripe = new Stripe(key);
+  const currency = site.currency.code.toLowerCase();
   let productsCreated = 0;
   let productsUpdated = 0;
   let pricesCreated = 0;
@@ -115,17 +117,21 @@ export async function POST() {
         const lookupKey = `${stripeId}-${variant.suffix}`;
         const match = existing.data.find((p) => p.lookup_key === lookupKey);
 
-        if (match && match.unit_amount === variant.amountCents) {
+        if (
+          match &&
+          match.unit_amount === variant.amountCents &&
+          match.currency === currency
+        ) {
           pricesUnchanged++;
           if (variant.suffix === "standard") defaultPriceId = match.id;
           continue;
         }
 
-        // New variant, or the amount changed: create a fresh Price. The
-        // lookup key transfers over; the old price is archived after.
+        // New variant, or the amount/currency changed: create a fresh Price.
+        // The lookup key transfers over; the old price is archived after.
         const created = await stripe.prices.create({
           product: stripeId,
-          currency: "usd",
+          currency,
           unit_amount: variant.amountCents,
           nickname: variant.label,
           lookup_key: lookupKey,

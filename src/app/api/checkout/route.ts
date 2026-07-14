@@ -126,6 +126,7 @@ export async function POST(request: Request) {
   // invalid/absent zone falls back to the default (Canada — home base).
   const zone = getShippingZone(body.zoneId);
   const shippingAmount = shippingCost(zone, totalCards);
+  const currency = site.currency.code.toLowerCase();
 
   try {
     const stripe = new Stripe(key);
@@ -149,7 +150,7 @@ export async function POST(request: Request) {
       line_items: lines.map((line) => ({
         quantity: line.quantity,
         price_data: {
-          currency: "usd",
+          currency,
           unit_amount: line.unitCents,
           product_data: {
             name: line.name,
@@ -168,7 +169,7 @@ export async function POST(request: Request) {
             display_name: `Shipping to ${zone.label}`,
             type: "fixed_amount",
             fixed_amount: {
-              currency: "usd",
+              currency,
               amount: Math.round(shippingAmount * 100),
             },
             delivery_estimate: {

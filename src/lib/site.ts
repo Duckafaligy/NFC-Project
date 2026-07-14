@@ -17,6 +17,18 @@ export const site = {
     facebook: "https://facebook.com/",
     tiktok: "https://tiktok.com/",
   },
+  /**
+   * Store currency. `code` is the ISO 4217 currency Stripe charges in and
+   * every price is formatted in. `locale` drives Intl formatting: en-US with
+   * CAD renders prices as "CA$34.99" so it's unambiguous these are Canadian
+   * dollars (helpful for US/overseas visitors too). Change `code` to switch
+   * the whole store's currency in one place; product prices in products.ts
+   * are plain numbers interpreted in this currency.
+   */
+  currency: {
+    code: "CAD",
+    locale: "en-US",
+  },
   // Shipping / fulfilment defaults surfaced across the store.
   shipping: {
     handlingDays: "1-2 business days",
