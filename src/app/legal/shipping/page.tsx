@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 import { site } from "@/lib/site";
-import { shippingZones } from "@/lib/shipping";
+import { shippingZones, tierRangeLabel } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -35,25 +35,38 @@ export default function ShippingPage() {
 
       <LegalSection heading="Shipping rates">
         <p>
-          Shipping is a flat rate based on where your order is going. You pick
-          your region at checkout and the matching rate is applied
-          automatically:
+          Shipping is based on where your order is going and how many cards you
+          order. Because several cards ship in one mailer, the rate steps up in
+          brackets instead of charging full postage per card. You pick your
+          region at checkout and the matching rate is applied automatically.
         </p>
-        <ul className="mt-1 space-y-1.5">
+        <div className="mt-1 space-y-4">
           {shippingZones.map((z) => (
-            <li key={z.id} className="flex justify-between gap-4">
-              <span>
+            <div key={z.id}>
+              <p className="font-semibold text-neutral-900">
                 {z.label}{" "}
-                <span className="text-neutral-400">
+                <span className="font-normal text-neutral-400">
                   ({z.etaMin}–{z.etaMax} business days)
                 </span>
-              </span>
-              <span className="font-semibold text-neutral-900">
-                {formatPrice(z.rate)}
-              </span>
-            </li>
+              </p>
+              <ul className="mt-1 space-y-1">
+                {z.tiers.map((t, i) => {
+                  const range = tierRangeLabel(z, i);
+                  return (
+                    <li key={t.minQty} className="flex justify-between gap-4">
+                      <span>
+                        {range} card{range === "1" ? "" : "s"}
+                      </span>
+                      <span className="font-semibold text-neutral-900">
+                        {formatPrice(t.price)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </LegalSection>
 
       <LegalSection heading="International shipping">

@@ -314,7 +314,7 @@ nothing gets lost.
   page, and joins the category filter. Set `popular: true` to feature it.
 - **Rebrand:** edit `src/lib/site.ts` (name/contact/shipping) and the color tokens
   in `tailwind.config.ts`.
-- **Change shipping rates / zones / countries:** `site.shipping.zones` in `src/lib/site.ts` (each zone's `rate`, `countries`, and `etaMin`/`etaMax`). Every country in a zone's `countries` is what the buyer's address is locked to when they pick that region.
+- **Change shipping rates / zones / countries:** `site.shipping.zones` in `src/lib/site.ts`. Each zone has quantity `tiers` (`{ minQty, price }` brackets — the charge is the highest tier whose `minQty` ≤ the order quantity), plus `countries` and `etaMin`/`etaMax`. The buyer's address is locked to the `countries` of the region they pick, and the tier for their card count is bound to Stripe.
 - **Edit legal copy:** the four files under `src/app/legal/`.
 - **Add a nav link:** `links` array in `src/components/Navbar.tsx` (and `Footer.tsx`).
 

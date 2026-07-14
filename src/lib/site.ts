@@ -22,19 +22,31 @@ export const site = {
     handlingDays: "1-2 business days",
     deliveryDays: "3-14 business days",
     /**
-     * Destination-based flat rates (USD). Checkout asks the buyer which
-     * region they're in, then binds the matching rate to the Stripe session
-     * and restricts the shipping address to that zone's countries — so the
-     * rate charged always matches where it's going. Edit rates, delivery
-     * estimates, and covered countries here in one place; every country in
-     * shipping_address_collection must belong to exactly one zone.
+     * Destination + quantity based shipping (USD). Checkout asks which
+     * region the buyer is in and how many cards they're ordering, then binds
+     * the matching rate to the Stripe session and locks the shipping address
+     * to that zone's countries — so the rate always matches where it's going.
+     *
+     * Rates scale in brackets (`tiers`), not per-card: several cards ship in
+     * one mailer, so the price steps up at set quantities instead of adding
+     * the same amount for every card. Each tier is `{ minQty, price }`; the
+     * charge is the price of the highest tier whose `minQty` is <= the order
+     * quantity. Keep tiers sorted by `minQty` ascending, starting at 1.
+     *
+     * Edit tiers, delivery estimates, and countries here in one place; every
+     * country in shipping_address_collection must belong to exactly one zone.
      */
     zones: [
       {
         id: "us",
         label: "United States",
         countries: ["US"],
-        rate: 4.99,
+        tiers: [
+          { minQty: 1, price: 2.49 },
+          { minQty: 2, price: 3.98 },
+          { minQty: 5, price: 7.47 },
+          { minQty: 10, price: 9.99 },
+        ],
         etaMin: 3,
         etaMax: 5,
       },
@@ -42,7 +54,12 @@ export const site = {
         id: "ca",
         label: "Canada",
         countries: ["CA"],
-        rate: 9.99,
+        tiers: [
+          { minQty: 1, price: 4.99 },
+          { minQty: 2, price: 7.49 },
+          { minQty: 5, price: 12.99 },
+          { minQty: 10, price: 16.99 },
+        ],
         etaMin: 5,
         etaMax: 10,
       },
@@ -50,7 +67,12 @@ export const site = {
         id: "intl",
         label: "UK, Australia & New Zealand",
         countries: ["GB", "AU", "NZ"],
-        rate: 14.99,
+        tiers: [
+          { minQty: 1, price: 6.99 },
+          { minQty: 2, price: 10.99 },
+          { minQty: 5, price: 18.99 },
+          { minQty: 10, price: 26.99 },
+        ],
         etaMin: 7,
         etaMax: 14,
       },

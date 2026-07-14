@@ -14,7 +14,12 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { site } from "@/lib/site";
-import { shippingZones, getShippingZone, defaultZoneId } from "@/lib/shipping";
+import {
+  shippingZones,
+  getShippingZone,
+  defaultZoneId,
+  shippingCost,
+} from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 import { unitPriceFor, lineTotal, discountRate } from "@/lib/pricing";
 import { useStoreStatus } from "@/context/StoreStatus";
@@ -27,15 +32,18 @@ type PayState = "idle" | "loading" | "demo-placed" | "error";
 
 export default function CheckoutPage() {
   const { preorder } = useStoreStatus();
-  const { items, subtotal, compareSubtotal, setQuantity, removeItem, clear } = useCart();
+  const { items, itemCount, subtotal, compareSubtotal, setQuantity, removeItem, clear } =
+    useCart();
   const [payState, setPayState] = useState<PayState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [zoneId, setZoneId] = useState(defaultZoneId);
 
-  // Destination-based shipping: the buyer picks their region here, the rate
-  // is bound to the Stripe session, and the address is locked to that zone.
+  // Destination + quantity based shipping: the buyer picks their region here,
+  // the tiered rate for the cart's card count is bound to the Stripe session,
+  // and the address is locked to that zone. Rate rises in brackets, so it
+  // updates live as the region or quantity changes.
   const zone = getShippingZone(zoneId);
-  const shipping = zone.rate;
+  const shipping = shippingCost(zone, itemCount);
   const total = subtotal + shipping;
 
   async function handlePay() {
@@ -238,13 +246,14 @@ export default function CheckoutPage() {
               >
                 {shippingZones.map((z) => (
                   <option key={z.id} value={z.id}>
-                    {z.label} — {formatPrice(z.rate)}
+                    {z.label} — {formatPrice(shippingCost(z, itemCount))}
                   </option>
                 ))}
               </select>
               <p className="mt-1.5 text-xs text-neutral-400">
-                Arrives in about {zone.etaMin}–{zone.etaMax} business days. You
-                confirm your exact address on the secure Stripe page.
+                Rate covers all {itemCount} card{itemCount === 1 ? "" : "s"} in
+                your order. Arrives in about {zone.etaMin}–{zone.etaMax} business
+                days; you confirm your exact address on the secure Stripe page.
               </p>
             </div>
 

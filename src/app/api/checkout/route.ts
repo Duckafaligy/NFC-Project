@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { products, configuredUnitPrice } from "@/lib/products";
 import { site } from "@/lib/site";
 import { unitAmountCents, discountRate } from "@/lib/pricing";
-import { getShippingZone } from "@/lib/shipping";
+import { getShippingZone, shippingCost } from "@/lib/shipping";
 import { effectivePreorder, effectiveCardStock } from "@/lib/adminStore";
 
 /**
@@ -119,11 +119,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ demo: true });
   }
 
-  // Destination-based shipping: the buyer picked a region on the checkout
-  // page. Bind that zone's flat rate to the session and restrict the address
-  // to the zone's countries, so the rate charged always matches where it
-  // ships. An invalid/absent zone falls back to the default (US).
+  // Destination + quantity based shipping: the buyer picked a region on the
+  // checkout page. Bind that zone's rate for this order's card count to the
+  // session and restrict the address to the zone's countries, so the rate
+  // charged always matches where it ships and how many cards. An
+  // invalid/absent zone falls back to the default (US).
   const zone = getShippingZone(body.zoneId);
+  const shippingAmount = shippingCost(zone, totalCards);
 
   try {
     const stripe = new Stripe(key);
@@ -167,7 +169,7 @@ export async function POST(request: Request) {
             type: "fixed_amount",
             fixed_amount: {
               currency: "usd",
-              amount: Math.round(zone.rate * 100),
+              amount: Math.round(shippingAmount * 100),
             },
             delivery_estimate: {
               minimum: { unit: "business_day", value: zone.etaMin },
