@@ -38,9 +38,11 @@ export const site = {
      */
     zones: [
       {
-        id: "us",
-        label: "United States",
-        countries: ["US"],
+        // Home base: shipping within Canada is domestic (cheapest) and the
+        // default selection. Listed first so it's the default zone.
+        id: "ca",
+        label: "Canada",
+        countries: ["CA"],
         tiers: [
           { minQty: 1, price: 2.49 },
           { minQty: 2, price: 3.98 },
@@ -54,9 +56,10 @@ export const site = {
         etaMax: 5,
       },
       {
-        id: "ca",
-        label: "Canada",
-        countries: ["CA"],
+        // Cross-border from Canada: a step up from domestic.
+        id: "us",
+        label: "United States",
+        countries: ["US"],
         tiers: [
           { minQty: 1, price: 4.99 },
           { minQty: 2, price: 7.49 },

@@ -123,7 +123,7 @@ export async function POST(request: Request) {
   // checkout page. Bind that zone's rate for this order's card count to the
   // session and restrict the address to the zone's countries, so the rate
   // charged always matches where it ships and how many cards. An
-  // invalid/absent zone falls back to the default (US).
+  // invalid/absent zone falls back to the default (Canada — home base).
   const zone = getShippingZone(body.zoneId);
   const shippingAmount = shippingCost(zone, totalCards);
 

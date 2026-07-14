@@ -38,7 +38,7 @@ export const shippingZones: ShippingZone[] = site.shipping.zones.map((z) => ({
   etaMax: z.etaMax,
 }));
 
-/** First zone (US) is the default selection. */
+/** First zone (Canada — home base) is the default selection. */
 export const defaultZoneId = shippingZones[0].id;
 
 /** Resolve a zone id to its zone, falling back to the default zone. */
