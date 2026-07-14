@@ -21,7 +21,7 @@ export const site = {
    * Store currency. `code` is the ISO 4217 currency Stripe charges in and
    * every price is formatted in. `locale` drives Intl formatting: en-US with
    * CAD renders prices as "CA$34.99" so it's unambiguous these are Canadian
-   * dollars (helpful for US/overseas visitors too). Change `code` to switch
+   * dollars (helpful for US shoppers too). Change `code` to switch
    * the whole store's currency in one place; product prices in products.ts
    * are plain numbers interpreted in this currency.
    */
@@ -32,7 +32,7 @@ export const site = {
   // Shipping / fulfilment defaults surfaced across the store.
   shipping: {
     handlingDays: "1-2 business days",
-    deliveryDays: "3-14 business days",
+    deliveryDays: "3-10 business days",
     /**
      * Destination + quantity based shipping (USD). Checkout asks which
      * region the buyer is in and how many cards they're ordering, then binds
@@ -83,22 +83,6 @@ export const site = {
         ],
         etaMin: 5,
         etaMax: 10,
-      },
-      {
-        id: "intl",
-        label: "UK, Australia & New Zealand",
-        countries: ["GB", "AU", "NZ"],
-        tiers: [
-          { minQty: 1, price: 6.99 },
-          { minQty: 2, price: 10.99 },
-          { minQty: 5, price: 18.99 },
-          { minQty: 10, price: 26.99 },
-          { minQty: 25, price: 39.99 },
-          { minQty: 50, price: 59.99 },
-          { minQty: 100, price: 84.99 },
-        ],
-        etaMin: 7,
-        etaMax: 14,
       },
     ],
   },

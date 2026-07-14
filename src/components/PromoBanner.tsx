@@ -53,7 +53,7 @@ export function PromoBanner() {
       href: "/legal/shipping",
       icon: Truck,
       color: "text-blue-400",
-      label: "Ships to the US, Canada, UK, Australia & New Zealand",
+      label: "Ships across Canada & the US",
     },
     {
       href: "/#how-it-works",

@@ -69,12 +69,11 @@ export default function ShippingPage() {
         </div>
       </LegalSection>
 
-      <LegalSection heading="International shipping">
+      <LegalSection heading="Where we ship">
         <p>
-          We currently ship to the United States, Canada, the United Kingdom,
-          Australia, and New Zealand. Delivery times vary by destination, and
-          any customs fees or import taxes are the responsibility of the
-          recipient.
+          We ship within North America — Canada and the United States. For
+          cross-border orders into the US, any customs fees or import taxes are
+          the responsibility of the recipient.
         </p>
       </LegalSection>
 
