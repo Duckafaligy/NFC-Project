@@ -19,10 +19,42 @@ export const site = {
   },
   // Shipping / fulfilment defaults surfaced across the store.
   shipping: {
-    flatRate: 4.99,
-    freeThreshold: 50,
     handlingDays: "1-2 business days",
-    deliveryDays: "3-7 business days",
+    deliveryDays: "3-14 business days",
+    /**
+     * Destination-based flat rates (USD). Checkout asks the buyer which
+     * region they're in, then binds the matching rate to the Stripe session
+     * and restricts the shipping address to that zone's countries — so the
+     * rate charged always matches where it's going. Edit rates, delivery
+     * estimates, and covered countries here in one place; every country in
+     * shipping_address_collection must belong to exactly one zone.
+     */
+    zones: [
+      {
+        id: "us",
+        label: "United States",
+        countries: ["US"],
+        rate: 4.99,
+        etaMin: 3,
+        etaMax: 5,
+      },
+      {
+        id: "ca",
+        label: "Canada",
+        countries: ["CA"],
+        rate: 9.99,
+        etaMin: 5,
+        etaMax: 10,
+      },
+      {
+        id: "intl",
+        label: "UK, Australia & New Zealand",
+        countries: ["GB", "AU", "NZ"],
+        rate: 14.99,
+        etaMin: 7,
+        etaMax: 14,
+      },
+    ],
   },
   // Free maintenance window (days), surfaced across the store. No refunds:
   // within this window we correct any problem free, by return shipping or

@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { site } from "@/lib/site";
-import { formatPrice } from "@/lib/utils";
 import { discountRate } from "@/lib/pricing";
 import { useStoreStatus } from "@/context/StoreStatus";
 
@@ -51,10 +50,10 @@ export function PromoBanner() {
       label: "312 reviews in 6 months at 2 yeses a day",
     },
     {
-      href: "/products",
+      href: "/legal/shipping",
       icon: Truck,
       color: "text-blue-400",
-      label: `Free shipping on orders over ${formatPrice(site.shipping.freeThreshold)}`,
+      label: "Ships to the US, Canada, UK, Australia & New Zealand",
     },
     {
       href: "/#how-it-works",

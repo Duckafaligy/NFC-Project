@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 import { site } from "@/lib/site";
+import { shippingZones } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -34,15 +35,33 @@ export default function ShippingPage() {
 
       <LegalSection heading="Shipping rates">
         <p>
-          Flat-rate shipping is {formatPrice(site.shipping.flatRate)}. Orders
-          over {formatPrice(site.shipping.freeThreshold)} ship free.
+          Shipping is a flat rate based on where your order is going. You pick
+          your region at checkout and the matching rate is applied
+          automatically:
         </p>
+        <ul className="mt-1 space-y-1.5">
+          {shippingZones.map((z) => (
+            <li key={z.id} className="flex justify-between gap-4">
+              <span>
+                {z.label}{" "}
+                <span className="text-neutral-400">
+                  ({z.etaMin}–{z.etaMax} business days)
+                </span>
+              </span>
+              <span className="font-semibold text-neutral-900">
+                {formatPrice(z.rate)}
+              </span>
+            </li>
+          ))}
+        </ul>
       </LegalSection>
 
       <LegalSection heading="International shipping">
         <p>
-          International delivery times and duties vary. Any customs fees or import
-          taxes are the responsibility of the recipient.
+          We currently ship to the United States, Canada, the United Kingdom,
+          Australia, and New Zealand. Delivery times vary by destination, and
+          any customs fees or import taxes are the responsibility of the
+          recipient.
         </p>
       </LegalSection>
 

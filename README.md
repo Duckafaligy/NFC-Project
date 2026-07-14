@@ -197,8 +197,8 @@ in a handful of deliberate places. Corners are tight (rounded-md max).
   - **orange-600**: logo mark, Best seller badge (brand identity)
   - **blue-600**: cart count badge, shipping/truck icons, $0 hero stat,
     step labels (info)
-  - **emerald-500/600**: free-shipping progress bars, discount amounts,
-    guarantee shields, success states (money/positive)
+  - **emerald-500/600**: discount amounts, guarantee shields, success
+    states (money/positive)
   - **violet-600**: everything pre-order (announcement chip, price chip,
     "(pre-order price)" labels)
   - **amber-400/500**: review stars, support icon (highlight)
@@ -214,8 +214,8 @@ in a handful of deliberate places. Corners are tight (rounded-md max).
   conversion features carry over from the previous iteration unchanged.
 
 **E-commerce conversion checklist built in:**
-- Slide-out cart drawer with free-shipping progress bar (opens on add-to-cart)
-- Free-shipping progress repeated in checkout order summary
+- Slide-out cart drawer (opens on add-to-cart)
+- Destination selector in checkout that binds the correct shipping rate
 - Estimated delivery date on product pages
 - Payment method badges (checkout + footer)
 - Newsletter signup with 10% first-order incentive (needs email service +
@@ -288,9 +288,9 @@ nothing gets lost.
   (`slug::designType::customMethod`).
 - Persisted to `localStorage` (`taplink-cart-v1`) so it survives refreshes.
 - Navbar shows a live item count badge.
-- `/checkout` lists items, collects shipping details, computes shipping
-  (flat rate, free over threshold from `site.ts`) + total, and on submit shows an
-  order-confirmation state and clears the cart.
+- `/checkout` lists items, has a **Ship to** region selector that binds the
+  matching destination rate (from `site.shipping.zones`) + total, and on
+  submit opens Stripe Checkout (or the labelled test-order flow without a key).
 
 ---
 
@@ -314,7 +314,7 @@ nothing gets lost.
   page, and joins the category filter. Set `popular: true` to feature it.
 - **Rebrand:** edit `src/lib/site.ts` (name/contact/shipping) and the color tokens
   in `tailwind.config.ts`.
-- **Change shipping rates / free-shipping threshold:** `site.shipping` in `src/lib/site.ts`.
+- **Change shipping rates / zones / countries:** `site.shipping.zones` in `src/lib/site.ts` (each zone's `rate`, `countries`, and `etaMin`/`etaMax`). Every country in a zone's `countries` is what the buyer's address is locked to when they pick that region.
 - **Edit legal copy:** the four files under `src/app/legal/`.
 - **Add a nav link:** `links` array in `src/components/Navbar.tsx` (and `Footer.tsx`).
 

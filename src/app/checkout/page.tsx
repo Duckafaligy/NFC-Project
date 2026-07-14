@@ -11,10 +11,10 @@ import {
   Lock,
   ShieldCheck,
   AlertTriangle,
-  Truck,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { site } from "@/lib/site";
+import { shippingZones, getShippingZone, defaultZoneId } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 import { unitPriceFor, lineTotal, discountRate } from "@/lib/pricing";
 import { useStoreStatus } from "@/context/StoreStatus";
@@ -30,14 +30,13 @@ export default function CheckoutPage() {
   const { items, subtotal, compareSubtotal, setQuantity, removeItem, clear } = useCart();
   const [payState, setPayState] = useState<PayState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [zoneId, setZoneId] = useState(defaultZoneId);
 
-  const shipping =
-    subtotal === 0 || subtotal >= site.shipping.freeThreshold
-      ? 0
-      : site.shipping.flatRate;
+  // Destination-based shipping: the buyer picks their region here, the rate
+  // is bound to the Stripe session, and the address is locked to that zone.
+  const zone = getShippingZone(zoneId);
+  const shipping = zone.rate;
   const total = subtotal + shipping;
-  const remaining = site.shipping.freeThreshold - subtotal;
-  const progress = Math.min(100, (subtotal / site.shipping.freeThreshold) * 100);
 
   async function handlePay() {
     setPayState("loading");
@@ -47,6 +46,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          zoneId,
           items: items.map((i) => ({
             productId: i.productId,
             designType: i.designType,
@@ -222,25 +222,30 @@ export default function CheckoutPage() {
               Order summary
             </h2>
 
-            {/* Free shipping progress */}
-            <div className="mt-4 rounded-md bg-neutral-50 p-3">
-              {remaining > 0 ? (
-                <p className="flex items-center gap-1.5 text-xs text-neutral-700">
-                  <Truck className="h-4 w-4 text-blue-600" />
-                  Add <strong>{formatPrice(remaining)}</strong> more for free
-                  shipping
-                </p>
-              ) : (
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900">
-                  <Truck className="h-4 w-4" /> Free shipping unlocked!
-                </p>
-              )}
-              <div className="mt-2 h-2 overflow-hidden rounded-md bg-white">
-                <div
-                  className="h-full rounded-md bg-emerald-500 transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+            {/* Shipping destination — binds the correct rate to Stripe */}
+            <div className="mt-4">
+              <label
+                htmlFor="ship-zone"
+                className="text-sm font-bold text-neutral-900"
+              >
+                Ship to
+              </label>
+              <select
+                id="ship-zone"
+                value={zoneId}
+                onChange={(e) => setZoneId(e.target.value)}
+                className="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+              >
+                {shippingZones.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.label} — {formatPrice(z.rate)}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-xs text-neutral-400">
+                Arrives in about {zone.etaMin}–{zone.etaMax} business days. You
+                confirm your exact address on the secure Stripe page.
+              </p>
             </div>
 
             <dl className="mt-4 space-y-3 text-sm">
@@ -265,8 +270,8 @@ export default function CheckoutPage() {
                 <dd>{formatPrice(subtotal)}</dd>
               </div>
               <div className="flex justify-between text-neutral-600">
-                <dt>Shipping</dt>
-                <dd>{shipping === 0 ? "Free" : formatPrice(shipping)}</dd>
+                <dt>Shipping to {zone.label}</dt>
+                <dd>{formatPrice(shipping)}</dd>
               </div>
               <div className="flex justify-between border-t border-neutral-200 pt-3 text-base font-extrabold text-neutral-900">
                 <dt>Total</dt>
