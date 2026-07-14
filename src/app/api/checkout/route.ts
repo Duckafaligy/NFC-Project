@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { products, configuredUnitPrice } from "@/lib/products";
 import { site } from "@/lib/site";
-import { unitAmountCents, lineTotal, discountRate } from "@/lib/pricing";
+import { unitAmountCents, discountRate } from "@/lib/pricing";
+import { getShippingZone, shippingCost } from "@/lib/shipping";
 import { effectivePreorder, effectiveCardStock } from "@/lib/adminStore";
 
 /**
@@ -26,7 +27,7 @@ interface CheckoutItem {
 }
 
 export async function POST(request: Request) {
-  let body: { items?: CheckoutItem[] };
+  let body: { items?: CheckoutItem[]; zoneId?: string };
   try {
     body = await request.json();
   } catch {
@@ -118,17 +119,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ demo: true });
   }
 
-  const subtotal = items.reduce((sum, item) => {
-    const product = products.find((p) => p.id === item.productId)!;
-    const baseUnit = configuredUnitPrice(
-      product,
-      item.designType,
-      item.customMethod,
-    );
-    return sum + lineTotal(baseUnit, Math.floor(Number(item.quantity)), preorderNow);
-  }, 0);
-
-  const freeShipping = subtotal >= site.shipping.freeThreshold;
+  // Destination + quantity based shipping: the buyer picked a region on the
+  // checkout page. Bind that zone's rate for this order's card count to the
+  // session and restrict the address to the zone's countries, so the rate
+  // charged always matches where it ships and how many cards. An
+  // invalid/absent zone falls back to the default (US).
+  const zone = getShippingZone(body.zoneId);
+  const shippingAmount = shippingCost(zone, totalCards);
 
   try {
     const stripe = new Stripe(key);
@@ -161,23 +158,22 @@ export async function POST(request: Request) {
         },
       })),
       shipping_address_collection: {
-        allowed_countries: ["US", "CA", "GB", "AU", "NZ"],
+        allowed_countries:
+          zone.countries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
       },
       phone_number_collection: { enabled: true },
       shipping_options: [
         {
           shipping_rate_data: {
-            display_name: freeShipping ? "Free shipping" : "Standard shipping",
+            display_name: `Shipping to ${zone.label}`,
             type: "fixed_amount",
             fixed_amount: {
               currency: "usd",
-              amount: freeShipping
-                ? 0
-                : Math.round(site.shipping.flatRate * 100),
+              amount: Math.round(shippingAmount * 100),
             },
             delivery_estimate: {
-              minimum: { unit: "business_day", value: 3 },
-              maximum: { unit: "business_day", value: 7 },
+              minimum: { unit: "business_day", value: zone.etaMin },
+              maximum: { unit: "business_day", value: zone.etaMax },
             },
           },
         },

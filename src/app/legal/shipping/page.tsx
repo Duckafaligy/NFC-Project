@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 import { site } from "@/lib/site";
+import { shippingZones, tierRangeLabel } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -34,15 +35,46 @@ export default function ShippingPage() {
 
       <LegalSection heading="Shipping rates">
         <p>
-          Flat-rate shipping is {formatPrice(site.shipping.flatRate)}. Orders
-          over {formatPrice(site.shipping.freeThreshold)} ship free.
+          Shipping is based on where your order is going and how many cards you
+          order. Because several cards ship in one mailer, the rate steps up in
+          brackets instead of charging full postage per card. You pick your
+          region at checkout and the matching rate is applied automatically.
         </p>
+        <div className="mt-1 space-y-4">
+          {shippingZones.map((z) => (
+            <div key={z.id}>
+              <p className="font-semibold text-neutral-900">
+                {z.label}{" "}
+                <span className="font-normal text-neutral-400">
+                  ({z.etaMin}–{z.etaMax} business days)
+                </span>
+              </p>
+              <ul className="mt-1 space-y-1">
+                {z.tiers.map((t, i) => {
+                  const range = tierRangeLabel(z, i);
+                  return (
+                    <li key={t.minQty} className="flex justify-between gap-4">
+                      <span>
+                        {range} card{range === "1" ? "" : "s"}
+                      </span>
+                      <span className="font-semibold text-neutral-900">
+                        {formatPrice(t.price)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
       </LegalSection>
 
       <LegalSection heading="International shipping">
         <p>
-          International delivery times and duties vary. Any customs fees or import
-          taxes are the responsibility of the recipient.
+          We currently ship to the United States, Canada, the United Kingdom,
+          Australia, and New Zealand. Delivery times vary by destination, and
+          any customs fees or import taxes are the responsibility of the
+          recipient.
         </p>
       </LegalSection>
 

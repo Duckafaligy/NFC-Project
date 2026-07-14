@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   Check,
   Clock,
+  CreditCard,
   Lock,
   LogOut,
   Package,
@@ -84,6 +85,9 @@ export function AdminDashboard() {
   const [hasStock, setHasStock] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(0);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
+  const [syncError, setSyncError] = useState(false);
 
   const loadState = useCallback(async () => {
     const res = await fetch("/api/admin/state");
@@ -161,6 +165,30 @@ export function AdminDashboard() {
       setSavedAt(Date.now());
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleStripeSync() {
+    setSyncing(true);
+    setSyncMessage("");
+    setSyncError(false);
+    try {
+      const res = await fetch("/api/admin/stripe-sync", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Sync failed.");
+      const created = data.productsCreated + data.pricesCreated;
+      setSyncMessage(
+        created > 0
+          ? `Synced: ${data.productsCreated} products created, ${data.productsUpdated} updated, ${data.pricesCreated} prices created.`
+          : "Already in sync — nothing to change.",
+      );
+    } catch (err) {
+      setSyncError(true);
+      setSyncMessage(
+        err instanceof Error ? err.message : "Sync failed. Try again.",
+      );
+    } finally {
+      setSyncing(false);
     }
   }
 
@@ -480,6 +508,42 @@ export function AdminDashboard() {
             ? "Low-stock email alert is on: you get an email when the pool drops to 10 or fewer."
             : "Optional: add RESEND_API_KEY and LOW_STOCK_ALERT_EMAIL env vars to get an email when stock drops to 10."}
         </p>
+      </div>
+
+      {/* Stripe catalog sync */}
+      <div className="card mt-4 p-6">
+        <div className="flex items-center gap-2">
+          <CreditCard className="h-4 w-4 text-neutral-500" />
+          <p className="text-sm font-bold text-neutral-900">Stripe catalog</p>
+          <p className="ml-auto text-xs text-neutral-400">
+            {state?.stripeConfigured
+              ? "Payments connected"
+              : "STRIPE_SECRET_KEY not set"}
+          </p>
+        </div>
+        <p className="mt-2 text-sm text-neutral-500">
+          Pushes the five card products (with standard / custom / designed-by-us
+          prices) into your Stripe dashboard. Safe to run again any time — it
+          only changes what&apos;s out of date.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Button
+            onClick={handleStripeSync}
+            variant="secondary"
+            disabled={syncing || !state?.stripeConfigured}
+          >
+            {syncing ? "Syncing…" : "Sync products to Stripe"}
+          </Button>
+          {syncMessage && (
+            <span
+              className={`text-sm font-semibold ${
+                syncError ? "text-red-600" : "text-emerald-600"
+              }`}
+            >
+              {syncMessage}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="mt-6 flex items-center gap-3">

@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag, Trash2, Truck, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getProduct } from "@/lib/products";
-import { site } from "@/lib/site";
 import { formatPrice, cn } from "@/lib/utils";
 import { lineTotal } from "@/lib/pricing";
 import { useStoreStatus } from "@/context/StoreStatus";
@@ -24,9 +23,6 @@ export function CartDrawer() {
     drawerOpen,
     closeDrawer,
   } = useCart();
-
-  const remaining = site.shipping.freeThreshold - subtotal;
-  const progress = Math.min(100, (subtotal / site.shipping.freeThreshold) * 100);
 
   return (
     <>
@@ -59,27 +55,6 @@ export function CartDrawer() {
           >
             <X className="h-5 w-5" />
           </button>
-        </div>
-
-        {/* Free shipping progress */}
-        <div className="border-b border-neutral-200 bg-neutral-50 px-5 py-3">
-          {remaining > 0 ? (
-            <p className="flex items-center gap-1.5 text-sm text-neutral-700">
-              <Truck className="h-4 w-4 text-blue-600" />
-              Add <strong>{formatPrice(remaining)}</strong> more for free
-              shipping
-            </p>
-          ) : (
-            <p className="flex items-center gap-1.5 text-sm font-semibold text-neutral-900">
-              <Truck className="h-4 w-4" /> You&apos;ve unlocked free shipping!
-            </p>
-          )}
-          <div className="mt-2 h-2 overflow-hidden rounded-md bg-white">
-            <div
-              className="h-full rounded-md bg-emerald-500 transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
         </div>
 
         {/* Items */}

@@ -66,6 +66,7 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
 | `RESEND_API_KEY` + `LOW_STOCK_ALERT_EMAIL` | Optional | Low-stock alert: emails you (via Resend) when the card pool crosses down through 10. `ALERT_FROM_EMAIL` optionally sets a verified sender. |
+| `ORDER_FROM_EMAIL` | Optional | Verified Resend sender for the branded order-confirmation/invoice email customers get after paying (falls back to `ALERT_FROM_EMAIL`, then Resend's onboarding sender — which can only deliver to your own Resend account email until you verify a domain). |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -74,6 +75,34 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
    `STRIPE_SECRET_KEY` with that value, then **Redeploy**.
 4. Test with card number `4242 4242 4242 4242` (any future expiry/CVC) while
    using the `sk_test_` key. Swap to `sk_live_` when ready to take real money.
+
+**Full test-payment walkthrough (test mode):**
+1. With `sk_test_…` set, add any card to the cart and hit **Pay securely** —
+   you land on Stripe's hosted checkout showing each line's full
+   configuration (routing, design choice, notes, pre-order price).
+2. Pay with `4242 4242 4242 4242`, any future expiry, any CVC/ZIP. Declines
+   can be tested with `4000 0000 0000 0002`.
+3. You're redirected to `/checkout/success`, which fetches the order and
+   shows an **on-page invoice**: line items, discount, shipping, total, plus
+   **View invoice** / **Download PDF** buttons (Stripe-hosted invoice).
+4. If the webhook is connected, stock drops in /admin-dashboard, the order
+   appears under **Recent orders**, and (with `RESEND_API_KEY`) the customer
+   gets the branded invoice email.
+5. Refund the payment in the Stripe dashboard → stock goes back up and the
+   order is flagged **Refunded**.
+
+**Invoices:** every paid order creates a Stripe invoice automatically
+(`invoice_creation` on the Checkout Session). The success page displays it,
+the webhook emails it via Resend, and you can additionally have Stripe email
+its own copy: Stripe Dashboard → **Settings → Emails** → enable "Email
+finalized invoices to customers".
+
+**Syncing the catalog into Stripe:** /admin-dashboard has a **Sync products
+to Stripe** button (`/api/admin/stripe-sync`). It creates/updates one Stripe
+Product per card with three prices each (standard / custom-upload /
+custom-we-design, stable lookup keys). Idempotent — rerun after any price
+change in `src/lib/products.ts`. Checkout still charges via inline
+`price_data` because the pre-order discount changes amounts dynamically.
 
 Order details (product, design choice, customer notes) appear in the Stripe
 Dashboard on each payment under **metadata** — that's your fulfilment queue.
@@ -168,8 +197,8 @@ in a handful of deliberate places. Corners are tight (rounded-md max).
   - **orange-600**: logo mark, Best seller badge (brand identity)
   - **blue-600**: cart count badge, shipping/truck icons, $0 hero stat,
     step labels (info)
-  - **emerald-500/600**: free-shipping progress bars, discount amounts,
-    guarantee shields, success states (money/positive)
+  - **emerald-500/600**: discount amounts, guarantee shields, success
+    states (money/positive)
   - **violet-600**: everything pre-order (announcement chip, price chip,
     "(pre-order price)" labels)
   - **amber-400/500**: review stars, support icon (highlight)
@@ -185,8 +214,8 @@ in a handful of deliberate places. Corners are tight (rounded-md max).
   conversion features carry over from the previous iteration unchanged.
 
 **E-commerce conversion checklist built in:**
-- Slide-out cart drawer with free-shipping progress bar (opens on add-to-cart)
-- Free-shipping progress repeated in checkout order summary
+- Slide-out cart drawer (opens on add-to-cart)
+- Destination selector in checkout that binds the correct shipping rate
 - Estimated delivery date on product pages
 - Payment method badges (checkout + footer)
 - Newsletter signup with 10% first-order incentive (needs email service +
@@ -259,9 +288,9 @@ nothing gets lost.
   (`slug::designType::customMethod`).
 - Persisted to `localStorage` (`taplink-cart-v1`) so it survives refreshes.
 - Navbar shows a live item count badge.
-- `/checkout` lists items, collects shipping details, computes shipping
-  (flat rate, free over threshold from `site.ts`) + total, and on submit shows an
-  order-confirmation state and clears the cart.
+- `/checkout` lists items, has a **Ship to** region selector that binds the
+  matching destination rate (from `site.shipping.zones`) + total, and on
+  submit opens Stripe Checkout (or the labelled test-order flow without a key).
 
 ---
 
@@ -285,7 +314,7 @@ nothing gets lost.
   page, and joins the category filter. Set `popular: true` to feature it.
 - **Rebrand:** edit `src/lib/site.ts` (name/contact/shipping) and the color tokens
   in `tailwind.config.ts`.
-- **Change shipping rates / free-shipping threshold:** `site.shipping` in `src/lib/site.ts`.
+- **Change shipping rates / zones / countries:** `site.shipping.zones` in `src/lib/site.ts`. Each zone has quantity `tiers` (`{ minQty, price }` brackets — the charge is the highest tier whose `minQty` ≤ the order quantity), plus `countries` and `etaMin`/`etaMax`. The buyer's address is locked to the `countries` of the region they pick, and the tier for their card count is bound to Stripe.
 - **Edit legal copy:** the four files under `src/app/legal/`.
 - **Add a nav link:** `links` array in `src/components/Navbar.tsx` (and `Footer.tsx`).
 
