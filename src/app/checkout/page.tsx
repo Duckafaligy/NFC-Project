@@ -89,9 +89,13 @@ export default function CheckoutPage() {
           Test order placed
         </h1>
         <p className="mx-auto mt-3 max-w-md text-neutral-600">
-          Payments aren&apos;t switched on yet, so no card was charged. This
-          confirms the checkout flow works end to end. Once the Stripe key is
-          added, this same button opens a real payment page.
+          No card was charged: the server did not detect a{" "}
+          <code className="rounded bg-neutral-100 px-1 text-sm">
+            STRIPE_SECRET_KEY
+          </code>{" "}
+          environment variable, so this is the test-order fallback. Add the
+          key in Vercel (Production environment), redeploy, and this same
+          button opens Stripe&apos;s real payment page.
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <ButtonLink href="/products">Continue shopping</ButtonLink>

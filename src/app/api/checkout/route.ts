@@ -212,8 +212,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("Stripe checkout error:", err);
+    // Surface Stripe's own reason (e.g. "Invalid API Key provided") so a
+    // misconfigured key is diagnosable from the checkout page instead of
+    // silently looking broken.
+    const detail =
+      err instanceof Stripe.errors.StripeError && err.message
+        ? ` Stripe says: ${err.message.slice(0, 200)}`
+        : "";
     return NextResponse.json(
-      { error: "Payment session could not be created. Please try again." },
+      { error: `Payment session could not be created.${detail}` },
       { status: 500 },
     );
   }

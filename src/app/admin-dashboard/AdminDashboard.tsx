@@ -44,6 +44,8 @@ interface AdminState {
   defaultPassword: boolean;
   alertsConfigured: boolean;
   webhookConfigured: boolean;
+  stripeConfigured: boolean;
+  stripeLiveMode: boolean;
 }
 
 /** ms epoch -> value for <input type="date"> in the viewer's timezone. */
@@ -273,9 +275,80 @@ export function AdminDashboard() {
           <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
           <span>
             No KV storage connected: changes reset on redeploy or cold start.
-            Add the free Upstash KV integration in Vercel (Storage tab) to make
+            Add &ldquo;Upstash for Redis&rdquo; in Vercel (Storage tab) to make
             them permanent.
           </span>
+        </div>
+      )}
+
+      {/* Connections: what the server can actually see right now */}
+      {state && (
+        <div className="card mt-6 p-6">
+          <p className="text-sm font-bold text-neutral-900">Connections</p>
+          <p className="mt-0.5 text-xs text-neutral-400">
+            What this deployment can see. If something you configured shows
+            red, check the env var is in the Production environment and
+            redeploy.
+          </p>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {[
+              {
+                ok: state.stripeConfigured,
+                label: state.stripeConfigured
+                  ? `Stripe payments (${state.stripeLiveMode ? "LIVE mode" : "test mode"})`
+                  : "Stripe payments",
+                hint: state.stripeConfigured
+                  ? "Checkout opens Stripe's payment page."
+                  : "STRIPE_SECRET_KEY not detected — checkout uses the test-order fallback.",
+              },
+              {
+                ok: state.webhookConfigured,
+                label: "Stripe webhook (stock sync)",
+                hint: state.webhookConfigured
+                  ? "Paid orders subtract stock; refunds restock."
+                  : "STRIPE_WEBHOOK_SECRET not detected — stock won't move on orders.",
+              },
+              {
+                ok: state.persistentStore,
+                label: "KV storage",
+                hint: state.persistentStore
+                  ? "Settings and orders survive redeploys."
+                  : "Not connected — settings reset on redeploy.",
+              },
+              {
+                ok: state.alertsConfigured,
+                label: "Low-stock email alert",
+                hint: state.alertsConfigured
+                  ? "Emails you at 10 cards or fewer."
+                  : "Optional — RESEND_API_KEY + LOW_STOCK_ALERT_EMAIL.",
+              },
+            ].map((c) => (
+              <li
+                key={c.label}
+                className="flex items-start gap-2 rounded-md bg-neutral-50 p-3"
+              >
+                <span
+                  className={`mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-sm ${
+                    c.ok ? "bg-emerald-500" : "bg-neutral-300"
+                  }`}
+                >
+                  {c.ok ? (
+                    <Check className="h-3 w-3 text-white" />
+                  ) : (
+                    <AlertTriangle className="h-2.5 w-2.5 text-white" />
+                  )}
+                </span>
+                <span>
+                  <span className="block text-xs font-bold text-neutral-900">
+                    {c.label}
+                  </span>
+                  <span className="block text-[11px] text-neutral-500">
+                    {c.hint}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
