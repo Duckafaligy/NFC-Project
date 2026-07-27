@@ -1,4 +1,4 @@
-import { DEFAULT_CARD_STOCK } from "./products";
+import { DEFAULT_CARD_STOCK, products, type PriceOverride } from "./products";
 import { site } from "./site";
 
 /**
@@ -27,6 +27,12 @@ export interface AdminSettings {
    * null = stays on until switched off manually.
    */
   preorderEndsAt: number | null;
+  /**
+   * Per-product price overrides set from the dashboard, keyed by product id.
+   * Only the fields present override the catalog default (lib/products).
+   * null / missing product = use the catalog price.
+   */
+  prices: Record<string, { basePrice?: number; customUpcharge?: number }> | null;
 }
 
 /** One fulfilled Stripe order, logged by the webhook for the dashboard. */
@@ -127,12 +133,63 @@ export async function getSettings(): Promise<AdminSettings> {
           Number.isFinite(parsed.preorderEndsAt)
             ? parsed.preorderEndsAt
             : null,
+        prices: sanitizePrices(parsed.prices),
       };
     }
   } catch {
     // Corrupt value: fall through to defaults.
   }
-  return { preorder: null, cardStock: null, preorderEndsAt: null };
+  return { preorder: null, cardStock: null, preorderEndsAt: null, prices: null };
+}
+
+/** A price in dollars, rounded to cents, within a sane 0–100000 range. */
+function cleanPrice(v: unknown): number | undefined {
+  const n = Number(v);
+  if (!Number.isFinite(n) || n < 0 || n > 100000) return undefined;
+  return Math.round(n * 100) / 100;
+}
+
+/** Keep only recognized numeric price fields from stored/submitted overrides. */
+function sanitizePrices(
+  raw: unknown,
+): AdminSettings["prices"] {
+  if (!raw || typeof raw !== "object") return null;
+  const out: NonNullable<AdminSettings["prices"]> = {};
+  for (const [id, patch] of Object.entries(raw as Record<string, unknown>)) {
+    if (!patch || typeof patch !== "object") continue;
+    const p = patch as { basePrice?: unknown; customUpcharge?: unknown };
+    const basePrice = cleanPrice(p.basePrice);
+    const customUpcharge = cleanPrice(p.customUpcharge);
+    const entry: { basePrice?: number; customUpcharge?: number } = {};
+    if (basePrice !== undefined) entry.basePrice = basePrice;
+    if (customUpcharge !== undefined) entry.customUpcharge = customUpcharge;
+    if (Object.keys(entry).length) out[id] = entry;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+export { sanitizePrices };
+
+/**
+ * The effective price for every product right now: the admin override merged
+ * over the catalog default. The storefront (via /api/store-status) and the
+ * Stripe checkout route both read this so displayed and charged prices agree.
+ */
+export async function effectivePrices(): Promise<Record<string, PriceOverride>> {
+  const s = await getSettings();
+  const overrides = s.prices ?? {};
+  const out: Record<string, PriceOverride> = {};
+  for (const p of products) {
+    const o = overrides[p.id];
+    out[p.id] = {
+      basePrice: typeof o?.basePrice === "number" ? o.basePrice : p.basePrice,
+      customUpcharge:
+        typeof o?.customUpcharge === "number"
+          ? o.customUpcharge
+          : p.customUpcharge,
+    };
+  }
+  return out;
 }
 
 export async function saveSettings(settings: AdminSettings): Promise<void> {

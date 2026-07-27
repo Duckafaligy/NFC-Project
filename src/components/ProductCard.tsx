@@ -9,7 +9,8 @@ import { useStoreStatus } from "@/context/StoreStatus";
 import { ProductVisual } from "./ProductVisual";
 
 export function ProductCard({ product }: { product: Product }) {
-  const { preorder } = useStoreStatus();
+  const { preorder, prices } = useStoreStatus();
+  const basePrice = prices[product.id]?.basePrice ?? product.basePrice;
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -42,15 +43,15 @@ export function ProductCard({ product }: { product: Product }) {
             {preorder ? (
               <div className="flex items-baseline gap-1.5">
                 <p className="font-display text-xl font-extrabold text-neutral-900">
-                  {formatPrice(unitPriceFor(product.basePrice, preorder))}
+                  {formatPrice(unitPriceFor(basePrice, preorder))}
                 </p>
                 <p className="text-sm text-neutral-400 line-through">
-                  {formatPrice(product.basePrice)}
+                  {formatPrice(basePrice)}
                 </p>
               </div>
             ) : (
               <p className="font-display text-xl font-extrabold text-neutral-900">
-                {formatPrice(product.basePrice)}
+                {formatPrice(basePrice)}
               </p>
             )}
           </div>

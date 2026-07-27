@@ -6,6 +6,7 @@ import {
   Check,
   Clock,
   CreditCard,
+  DollarSign,
   Lock,
   LogOut,
   Package,
@@ -40,6 +41,7 @@ interface AdminState {
     preorderEndsAt: number | null;
   };
   defaults: { preorder: boolean; cardStock: number };
+  products: ProductPrice[];
   orders: OrderRecord[];
   persistentStore: boolean;
   defaultPassword: boolean;
@@ -47,6 +49,16 @@ interface AdminState {
   webhookConfigured: boolean;
   stripeConfigured: boolean;
   stripeLiveMode: boolean;
+}
+
+interface ProductPrice {
+  id: string;
+  name: string;
+  category: string;
+  basePrice: number;
+  customUpcharge: number;
+  defaultBasePrice: number;
+  defaultCustomUpcharge: number;
 }
 
 /** ms epoch -> value for <input type="date"> in the viewer's timezone. */
@@ -88,6 +100,11 @@ export function AdminDashboard() {
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
   const [syncError, setSyncError] = useState(false);
+  // Per-product price editor: standard = base price, custom = price with the
+  // customer's own branding (base + upcharge). Both entered in dollars.
+  const [priceEdits, setPriceEdits] = useState<
+    Record<string, { standard: number; custom: number }>
+  >({});
 
   const loadState = useCallback(async () => {
     const res = await fetch("/api/admin/state");
@@ -102,6 +119,14 @@ export function AdminDashboard() {
     const stock = data.settings.cardStock ?? data.defaults.cardStock;
     setCardStock(stock);
     setHasStock(stock > 0);
+    const edits: Record<string, { standard: number; custom: number }> = {};
+    for (const p of data.products) {
+      edits[p.id] = {
+        standard: p.basePrice,
+        custom: Math.round((p.basePrice + p.customUpcharge) * 100) / 100,
+      };
+    }
+    setPriceEdits(edits);
     setView("dashboard");
   }, []);
 
@@ -153,6 +178,20 @@ export function AdminDashboard() {
   async function handleSave() {
     setSaving(true);
     try {
+      // Convert the editor's standard/custom dollars into base + upcharge.
+      const prices: Record<string, { basePrice: number; customUpcharge: number }> =
+        {};
+      for (const p of state?.products ?? []) {
+        const e = priceEdits[p.id];
+        if (!e) continue;
+        prices[p.id] = {
+          basePrice: e.standard,
+          customUpcharge: Math.max(
+            0,
+            Math.round((e.custom - e.standard) * 100) / 100,
+          ),
+        };
+      }
       await fetch("/api/admin/state", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -160,9 +199,11 @@ export function AdminDashboard() {
           preorder,
           cardStock: hasStock ? cardStock : 0,
           preorderEndsAt: preorder ? dateInputToMs(preorderEnds) : null,
+          prices,
         }),
       });
       setSavedAt(Date.now());
+      await loadState();
     } finally {
       setSaving(false);
     }
@@ -510,6 +551,86 @@ export function AdminDashboard() {
         </p>
       </div>
 
+      {/* Product prices */}
+      {state && state.products.length > 0 && (
+        <div className="card mt-4 p-6">
+          <div className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4 text-neutral-500" />
+            <p className="text-sm font-bold text-neutral-900">Product prices</p>
+            <p className="ml-auto text-xs text-neutral-400">
+              In CAD · applies live to the storefront
+            </p>
+          </div>
+          <div className="mt-4 hidden grid-cols-[1fr_6.5rem_6.5rem] gap-3 px-1 text-xs font-semibold text-neutral-400 sm:grid">
+            <span>Product</span>
+            <span className="text-right">Standard</span>
+            <span className="text-right">Custom</span>
+          </div>
+          <div className="mt-2 space-y-3">
+            {state.products.map((p) => {
+              const e = priceEdits[p.id] ?? {
+                standard: p.basePrice,
+                custom: p.basePrice + p.customUpcharge,
+              };
+              const edited =
+                e.standard !== p.defaultBasePrice ||
+                Math.round((e.custom - e.standard) * 100) / 100 !==
+                  p.defaultCustomUpcharge;
+              const setField = (field: "standard" | "custom", value: number) =>
+                setPriceEdits((prev) => ({
+                  ...prev,
+                  [p.id]: { ...e, [field]: value },
+                }));
+              return (
+                <div
+                  key={p.id}
+                  className="grid grid-cols-2 items-center gap-3 border-t border-neutral-100 pt-3 sm:grid-cols-[1fr_6.5rem_6.5rem] sm:border-0 sm:pt-0"
+                >
+                  <div className="col-span-2 sm:col-span-1">
+                    <p className="text-sm font-bold text-neutral-900">
+                      {p.name}
+                    </p>
+                    <p className="text-xs text-neutral-400">
+                      {p.category}
+                      {edited ? " · edited" : ""}
+                    </p>
+                  </div>
+                  {(["standard", "custom"] as const).map((field) => (
+                    <label key={field} className="block">
+                      <span className="mb-1 block text-xs text-neutral-400 sm:hidden">
+                        {field === "standard" ? "Standard" : "Custom"}
+                      </span>
+                      <div className="flex items-center rounded-md border border-neutral-300 pl-2 focus-within:border-neutral-500 focus-within:ring-2 focus-within:ring-neutral-200">
+                        <span className="text-xs text-neutral-400">$</span>
+                        <input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={e[field]}
+                          onChange={(ev) =>
+                            setField(
+                              field,
+                              Math.max(0, Number(ev.target.value) || 0),
+                            )
+                          }
+                          className="w-full rounded-md bg-transparent px-1.5 py-2 text-right text-sm font-semibold text-neutral-900 focus:outline-none"
+                        />
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-400">
+            &ldquo;Standard&rdquo; is the base price; &ldquo;Custom&rdquo; is the
+            price with the customer&apos;s own branding. The &ldquo;we design
+            it&rdquo; fee is added on top of custom automatically. Changes go
+            live on Save.
+          </p>
+        </div>
+      )}
+
       {/* Stripe catalog sync */}
       <div className="card mt-4 p-6">
         <div className="flex items-center gap-2">
@@ -522,7 +643,7 @@ export function AdminDashboard() {
           </p>
         </div>
         <p className="mt-2 text-sm text-neutral-500">
-          Pushes the five card products (with standard / custom / designed-by-us
+          Pushes your card products (with standard / custom / designed-by-us
           prices) into your Stripe dashboard. Safe to run again any time — it
           only changes what&apos;s out of date.
         </p>

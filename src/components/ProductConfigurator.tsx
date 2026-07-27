@@ -74,16 +74,26 @@ export function ProductConfigurator({ product }: { product: Product }) {
     setEta(`${fmt.format(start)} - ${fmt.format(end)}`);
   }, []);
 
-  const unitPrice = useMemo(
-    () => configuredUnitPrice(product, designType, customMethod),
-    [product, designType, customMethod],
-  );
-
   const status = useStoreStatus();
   const preorder = status.preorder;
   // One shared pool: every product is the same physical card.
   const liveStock = status.cardStock;
   const outOfStock = liveStock <= 0;
+
+  // Effective prices honour the owner's live overrides from /admin-dashboard.
+  const override = status.prices[product.id];
+  const basePrice = override?.basePrice ?? product.basePrice;
+  const customUpcharge = override?.customUpcharge ?? product.customUpcharge;
+
+  const unitPrice = useMemo(
+    () =>
+      configuredUnitPrice(
+        { ...product, basePrice, customUpcharge },
+        designType,
+        customMethod,
+      ),
+    [product, basePrice, customUpcharge, designType, customMethod],
+  );
   const payNow = unitPriceFor(unitPrice, preorder);
 
   function handleAdd(goToCheckout: boolean) {
@@ -203,7 +213,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <Sparkles className="h-5 w-5 text-neutral-900" />
             <p className="mt-2 font-bold text-neutral-900">Standard</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              Clean, ready-made design · {formatPrice(product.basePrice)}
+              Clean, ready-made design · {formatPrice(basePrice)}
             </p>
           </button>
           <button
@@ -218,8 +228,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <PenTool className="h-5 w-5 text-neutral-900" />
             <p className="mt-2 font-bold text-neutral-900">Custom</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              Your brand · from{" "}
-              {formatPrice(product.basePrice + product.customUpcharge)}
+              Your brand · from {formatPrice(basePrice + customUpcharge)}
             </p>
           </button>
         </div>

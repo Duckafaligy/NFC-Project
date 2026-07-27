@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { products, configuredUnitPrice } from "@/lib/products";
+import { products, configuredUnitPrice, withPriceOverride } from "@/lib/products";
 import { site } from "@/lib/site";
 import { unitAmountCents, discountRate } from "@/lib/pricing";
 import { getShippingZone, shippingCost } from "@/lib/shipping";
-import { effectivePreorder, effectiveCardStock } from "@/lib/adminStore";
+import {
+  effectivePreorder,
+  effectiveCardStock,
+  effectivePrices,
+} from "@/lib/adminStore";
 
 /**
  * Creates a Stripe Checkout Session from the cart.
@@ -43,9 +47,10 @@ export async function POST(request: Request) {
 
   // Live storefront state set from /admin-dashboard. Stock is one shared
   // pool: every product is the same physical card.
-  const [preorderNow, cardStock] = await Promise.all([
+  const [preorderNow, cardStock, prices] = await Promise.all([
     effectivePreorder(),
     effectiveCardStock(),
+    effectivePrices(),
   ]);
 
   const totalCards = items.reduce(
@@ -81,8 +86,9 @@ export async function POST(request: Request) {
     }
 
     const isCustom = item.designType === "custom";
+    // Charge the live (admin-overridden) price, never a client-sent one.
     const baseUnit = configuredUnitPrice(
-      product,
+      withPriceOverride(product, prices[product.id]),
       item.designType,
       item.customMethod,
     );
