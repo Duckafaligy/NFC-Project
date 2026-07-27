@@ -10,7 +10,7 @@ import { site } from "./site";
 export interface ShippingTier {
   /** Applies to orders of this many cards or more (until the next tier). */
   minQty: number;
-  /** Flat shipping price in USD for this bracket. */
+  /** Flat shipping price (store currency, CAD) for this bracket. */
   price: number;
 }
 

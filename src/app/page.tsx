@@ -24,6 +24,7 @@ import { ReviewCalculator } from "@/components/ReviewCalculator";
 import { CountUp } from "@/components/CountUp";
 import { PromoBanner } from "@/components/PromoBanner";
 import { SectionHeader } from "@/components/SectionHeader";
+import { PreorderPopup } from "@/components/PreorderPopup";
 import { products } from "@/lib/products";
 import { site } from "@/lib/site";
 
@@ -71,8 +72,8 @@ const faqs = [
     a: `While the pre-order window is open, everything in your cart is ${Math.round(site.preorder.discount * 100)}% off, no code needed. ${site.preorder.shipNote}. When the window closes, pricing returns to standard and orders ship on the normal schedule.`,
   },
   {
-    q: "How fast will I get it?",
-    a: `Standard designs ship in ${site.shipping.handlingDays} and arrive in ${site.shipping.deliveryDays}. Custom designs get a digital proof within 48 hours, and we print after you approve it.`,
+    q: "Where do you ship, and how fast?",
+    a: `We ship across Canada and the United States. Standard designs leave in ${site.shipping.handlingDays}: Canadian orders arrive in about 3-5 business days, US orders in about 5-10. Custom designs get a digital proof within 48 hours, and we print after you approve it.`,
   },
 ];
 
@@ -81,6 +82,9 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Live pre-order info tab (dismissible, only while pre-order is on) */}
+      <PreorderPopup />
+
       {/* ===== BENTO HERO ===== */}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-12">

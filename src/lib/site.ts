@@ -34,7 +34,8 @@ export const site = {
     handlingDays: "1-2 business days",
     deliveryDays: "3-10 business days",
     /**
-     * Destination + quantity based shipping (USD). Checkout asks which
+     * Destination + quantity based shipping (in the store currency, CAD).
+     * Checkout asks which
      * region the buyer is in and how many cards they're ordering, then binds
      * the matching rate to the Stripe session and locks the shipping address
      * to that zone's countries — so the rate always matches where it's going.
