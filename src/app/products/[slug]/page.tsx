@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check, ChevronRight } from "lucide-react";
 import { getAllSlugs, getProduct, products } from "@/lib/products";
-import { ProductVisual } from "@/components/ProductVisual";
+import { ProductColorProvider, HeroVisual } from "@/components/ProductColor";
 import { ProductConfigurator } from "@/components/ProductConfigurator";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
@@ -55,16 +55,16 @@ export default async function ProductPage({
         <span className="font-semibold text-neutral-700">{product.name}</span>
       </nav>
 
+      <ProductColorProvider defaultColor={product.colors?.[0]?.id}>
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         {/* Visual + copy */}
         <div>
           <Reveal>
             <div className="card overflow-hidden p-3">
-              <ProductVisual
+              <HeroVisual
                 visual={product.visual}
                 name={product.name}
-                color={product.colors?.[0]?.id}
-                featured
+                fallbackColor={product.colors?.[0]?.id}
                 className="aspect-[4/3.2]"
               />
             </div>
@@ -172,6 +172,7 @@ export default async function ProductPage({
           <ProductConfigurator product={product} />
         </div>
       </div>
+      </ProductColorProvider>
 
       {/* After you order */}
       <div className="card mt-20 p-8 sm:p-10">

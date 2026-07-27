@@ -39,6 +39,7 @@ import { site } from "@/lib/site";
 import { Button } from "./Button";
 import { StockBar } from "./StockBar";
 import { ProductVisual } from "./ProductVisual";
+import { useProductColor } from "./ProductColor";
 
 const inputFocus =
   "focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200";
@@ -50,13 +51,14 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
   const [designType, setDesignType] = useState<DesignType>("standard");
   const [customMethod, setCustomMethod] = useState<CustomMethod>("we-design");
-  const [color, setColor] = useState<string | undefined>(
-    product.colors?.[0]?.id,
-  );
   const [fileName, setFileName] = useState<string>("");
   const [note, setNote] = useState("");
   const [qty, setQty] = useState(1);
 
+  // Colour is shared with the product-page hero so picking black/white
+  // updates the big preview live (see ProductColorProvider).
+  const { color: ctxColor, setColor } = useProductColor();
+  const color = ctxColor ?? product.colors?.[0]?.id;
   const selectedColorLabel = product.colors?.find((c) => c.id === color)?.label;
 
   // Estimated delivery window, computed client-side after mount so the
