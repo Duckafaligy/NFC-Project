@@ -21,7 +21,11 @@ export function ProductCard({ product }: { product: Product }) {
         </span>
       )}
       <div className="p-3 pb-0">
-        <ProductVisual name={product.name} accent={product.accent} />
+        <ProductVisual
+          visual={product.visual}
+          name={product.name}
+          color={product.colors?.[0]?.id}
+        />
       </div>
 
       <div className="flex flex-1 flex-col p-5">

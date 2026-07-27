@@ -22,6 +22,8 @@ interface CheckoutItem {
   productId: string;
   designType: "standard" | "custom";
   customMethod?: "upload" | "we-design";
+  /** Colourway id for cards with variants (e.g. Google "black"/"white"). */
+  color?: string;
   note?: string;
   quantity: number;
 }
@@ -91,12 +93,18 @@ export async function POST(request: Request) {
         : "Custom design: designed by us (incl. design fee)"
       : "Standard design";
 
+    // Colourway label, validated against the product's real options.
+    const colorLabel = item.color
+      ? product.colors?.find((c) => c.id === item.color)?.label
+      : undefined;
+
     const note = (item.note ?? "").slice(0, 400);
 
     // Full configuration on the line item, so Stripe's payment page and the
     // post-payment invoice both show exactly what was ordered.
     const configParts = [
       `Routing: ${product.category}`,
+      ...(colorLabel ? [`Colour: ${colorLabel}`] : []),
       designLabel,
       ...(note ? [note] : []),
       ...(preorderNow
@@ -109,7 +117,7 @@ export async function POST(request: Request) {
       description: configParts.join(" · "),
       unitCents: unitAmountCents(baseUnit, preorderNow),
       quantity,
-      fulfillmentNote: `${product.name} x${quantity} | ${designLabel}${note ? ` | ${note}` : ""}`,
+      fulfillmentNote: `${product.name} x${quantity} | ${designLabel}${colorLabel ? ` | ${colorLabel}` : ""}${note ? ` | ${note}` : ""}`,
     });
   }
 

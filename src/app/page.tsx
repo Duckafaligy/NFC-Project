@@ -256,7 +256,7 @@ export default function HomePage() {
               align="left"
               eyebrow="Shop"
               title="Best sellers"
-              sub="Routing cards are $34.99, or $42.99 with your own branding. The all-in-one Digital Business Card is $49.99. Pre-order now and 20% comes off your whole cart at checkout."
+              sub="One premium NFC card, routed your way — Google reviews, Instagram, menu, or website. Add your own branding if you want, and pre-order now for 20% off your whole cart at checkout."
             />
           </Reveal>
           <Reveal>
@@ -704,7 +704,7 @@ export default function HomePage() {
               Put a card on your counter this week
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-neutral-300">
-              Routing cards $34.99, the all-in-one business card $49.99.
+              Google reviews, Instagram, menu, or website — one tap, one card.
               Pre-order now and 20% comes off your whole cart.
             </p>
             <div className="mt-8 flex justify-center">

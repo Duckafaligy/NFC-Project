@@ -2,36 +2,43 @@
  * Product catalog (single source of truth).
  *
  * Every product is the SAME physical NFC card, just programmed (routed)
- * differently: menu, website, Google reviews, social media, or the digital
- * business card hub. Because of that, stock is one shared pool of cards
- * (CARD_STOCK below), not a per-product count.
+ * differently: Google reviews, Instagram, menu, or website. Because of that,
+ * stock is one shared pool of cards (CARD_STOCK below), not a per-product
+ * count.
  *
- * Pricing: routing cards are $34.99 standard, $42.99 custom. The Digital
- * Business Card is the all-in-one flagship: $49.99 standard, $56.99 custom.
- * "We design it" adds the $4.99 design labour fee on top of custom.
- * The only discount is the site-wide pre-order window (lib/site.ts).
+ * Pricing: cards are $34.99 standard, $42.99 custom, and "we design it" adds
+ * the $4.99 design labour fee on top of custom. Prices here are the catalog
+ * defaults — the owner can override each product's price live from
+ * /admin-dashboard (see lib/adminStore price overrides). The only automatic
+ * discount is the site-wide pre-order window (lib/site.ts).
  *
- * This is a static catalog, no database. The live stock pool and pre-order
- * flag live in lib/adminStore, managed from /admin-dashboard.
+ * This is a static catalog, no database. The live stock pool, price
+ * overrides, and pre-order flag live in lib/adminStore, managed from
+ * /admin-dashboard.
  */
 
-export type ProductCategory =
-  | "Google Reviews"
-  | "Social Media"
-  | "Menu"
-  | "Website"
-  | "Digital Business Card";
+export type ProductCategory = "Google Reviews" | "Instagram" | "Menu" | "Website";
 
 export type FormFactor = "Card";
 
-/** Standard price for every routing card. */
+/**
+ * Which SVG artwork ProductVisual renders for a product (see
+ * components/ProductVisual). Each product's real card design.
+ */
+export type VisualKind = "google" | "instagram" | "menu" | "website";
+
+/** A physical colourway a product can be printed in (e.g. Google black/white). */
+export interface CardColor {
+  id: string;
+  label: string;
+  /** Hex used for the picker swatch and to tint the product visual. */
+  swatch: string;
+}
+
+/** Standard price for every card. */
 export const STANDARD_PRICE = 34.99;
 /** Added when the customer chooses a custom design ($42.99 total). */
 export const CUSTOM_UPCHARGE = 8;
-/** Digital Business Card (all-in-one flagship) pricing. */
-export const BUSINESS_PRICE = 49.99;
-/** Its custom upcharge ($56.99 total). */
-export const BUSINESS_CUSTOM_UPCHARGE = 7;
 /**
  * Added on top of the custom price when WE design the card for the customer.
  * Covers the design labour.
@@ -75,7 +82,38 @@ export interface Product {
   box: string[];
   /** Two accent colors (main, secondary) used for the product visual. */
   accent: [string, string];
+  /** Which card artwork ProductVisual renders. */
+  visual: VisualKind;
+  /**
+   * Optional physical colourways the buyer can pick (e.g. the Google card in
+   * black or white). First entry is the default. Omit for single-colour cards.
+   */
+  colors?: CardColor[];
   popular?: boolean;
+}
+
+/** A live price override for a product, set from the admin dashboard. */
+export interface PriceOverride {
+  basePrice: number;
+  customUpcharge: number;
+}
+
+/**
+ * Apply an admin price override to a product, returning a product with the
+ * overridden prices (or the original when there's no override). Keeps price
+ * logic identical everywhere — configurator, cards, and the Stripe route all
+ * pass the effective product through configuredUnitPrice.
+ */
+export function withPriceOverride(
+  product: Product,
+  override?: PriceOverride | null,
+): Product {
+  if (!override) return product;
+  return {
+    ...product,
+    basePrice: override.basePrice,
+    customUpcharge: override.customUpcharge,
+  };
 }
 
 const CARD_SPECS = [
@@ -103,6 +141,7 @@ export const products: Product[] = [
     customUpcharge: CUSTOM_UPCHARGE,
     features: [
       "Instant tap-to-review, no app required",
+      "Choose black or white to match your counter",
       "Works with iPhone and Android",
       "Programmed to your exact Google review link before shipping",
       "Waterproof, scratch-resistant matte PVC",
@@ -116,39 +155,46 @@ export const products: Product[] = [
       "Counter-side setup guide with the exact script to use",
       "Adhesive strip for mounting flat on a counter",
     ],
-    accent: ["#F97316", "#FBBF24"],
+    accent: ["#4285F4", "#FBBF24"],
+    visual: "google",
+    colors: [
+      { id: "black", label: "Black", swatch: "#111111" },
+      { id: "white", label: "White", swatch: "#FFFFFF" },
+    ],
     popular: true,
   },
   {
-    id: "social-card",
-    slug: "social-media-card",
-    name: "Social Media Card",
-    category: "Social Media",
+    id: "instagram-card",
+    slug: "instagram-card",
+    name: "Instagram Card",
+    category: "Instagram",
     formFactor: "Card",
-    tagline: "Grow Instagram, TikTok and Facebook in one tap",
+    tagline: "Grow your Instagram in one tap",
     summary:
-      "One tap opens your profile so customers follow you on the spot, not later.",
+      "One tap opens your Instagram profile so customers follow you on the spot, not later.",
     description:
-      "Nobody remembers a handle they heard once, and nobody searches for it when they get home. This card closes that gap. A single tap opens your Instagram, TikTok, or Facebook profile with the follow button right there, or a link hub with all three if you want everything in one place. The follow happens while the customer is still standing in front of you, which is the only moment it reliably happens at all.",
+      "Nobody remembers a handle they heard once, and nobody searches for it when they get home. This card closes that gap. A single tap opens your Instagram profile with the follow button right there. The follow happens while the customer is still standing in front of you, which is the only moment it reliably happens at all. We program the card to your exact profile before it ships, so it works the moment you unbox it.",
     example:
       "A lash tech finishes an appointment and hands over the card with the mirror: “Tap this if you want to see your set on our page this week.” The client follows on the spot to find her photo later. Every appointment becomes a follower, and every follower sees the next month of openings.",
     basePrice: STANDARD_PRICE,
     customUpcharge: CUSTOM_UPCHARGE,
     features: [
-      "Link one profile or a hub with all of them",
+      "Opens your Instagram profile in one tap",
       "Follow happens on the spot, not “later”",
       "Works with iPhone and Android",
+      "Programmed to your exact profile before shipping",
       "Durable matte finish that survives a pocket",
-      "Reprogrammable free when your links change",
+      "Reprogrammable free when your handle changes",
       "Optional QR code printed on the back, free",
     ],
     useCases: ["Creators & influencers", "Pop-up shops", "Events & markets", "Personal brands"],
     specs: CARD_SPECS,
     box: [
-      "1 × NFC card, programmed to your profile or link hub",
+      "1 × NFC card, programmed to your Instagram profile",
       "Quick-start guide with three ways to hand it over naturally",
     ],
-    accent: ["#EC4899", "#8B5CF6"],
+    accent: ["#DD2A7B", "#F58529"],
+    visual: "instagram",
     popular: true,
   },
   {
@@ -182,6 +228,7 @@ export const products: Product[] = [
       "Placement guide for tables, bars, and host stands",
     ],
     accent: ["#10B981", "#84CC16"],
+    visual: "menu",
     popular: true,
   },
   {
@@ -215,39 +262,7 @@ export const products: Product[] = [
       "Adhesive strip for mounting flat on a counter",
     ],
     accent: ["#0EA5E9", "#6366F1"],
-  },
-  {
-    id: "business-card",
-    slug: "digital-business-card",
-    name: "Digital Business Card",
-    category: "Digital Business Card",
-    formFactor: "Card",
-    tagline: "Everything about you, on one card",
-    summary:
-      "The all-in-one: contact details, website, socials, reviews and more in a single tap.",
-    description:
-      "The flagship, and the last business card you will ever print. Tap it to a phone and a branded hub opens with your name, number, email, save-to-contacts button, website, socials, Google reviews, menu, anything you want, in the order you want. Reviews on top during a push, the holiday menu in December, the booking page in slow season. When your details change, update the hub and keep handing over the same card. One card, unlimited shares, always current.",
-    example:
-      "A real estate agent at an open house taps her card to a couple's phone as they leave. Her listing site, cell number, and Instagram land in their contacts before they reach the car. Two weeks later, when they are ready to make an offer, they do not have to remember her name. She is already in the phone.",
-    basePrice: BUSINESS_PRICE,
-    customUpcharge: BUSINESS_CUSTOM_UPCHARGE,
-    features: [
-      "Branded hub: contact, website, socials, reviews and more",
-      "Save-to-contacts in a single button",
-      "Reorder or update your links any time, same card",
-      "Matte PVC, credit-card weight and feel",
-      "Reprogrammable free, forever",
-      "Optional QR code printed on the back, free",
-    ],
-    useCases: ["Sales & real estate", "Consultants", "Full-service businesses", "Executives"],
-    specs: CARD_SPECS,
-    box: [
-      "1 × NFC card, programmed to your personal hub",
-      "Hub setup walkthrough (takes about ten minutes)",
-      "Setup guide for editing your details later",
-    ],
-    accent: ["#3B82F6", "#22D3EE"],
-    popular: true,
+    visual: "website",
   },
 ];
 
@@ -278,8 +293,7 @@ export function getAllSlugs(): string[] {
 
 export const categories: ProductCategory[] = [
   "Google Reviews",
-  "Social Media",
+  "Instagram",
   "Menu",
   "Website",
-  "Digital Business Card",
 ];

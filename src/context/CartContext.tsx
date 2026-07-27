@@ -24,6 +24,8 @@ export interface CartItem {
   designType: DesignType;
   /** Only present when designType === "custom". */
   customMethod?: CustomMethod;
+  /** Physical colourway id for cards with variants (e.g. Google "black"/"white"). */
+  color?: string;
   /** Optional note (design brief or filename reference). */
   note?: string;
   unitPrice: number;
@@ -104,8 +106,9 @@ export function buildCartKey(
   slug: string,
   designType: DesignType,
   customMethod?: CustomMethod,
+  color?: string,
 ) {
-  return [slug, designType, customMethod ?? "none"].join("::");
+  return [slug, designType, customMethod ?? "none", color ?? "default"].join("::");
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -158,7 +161,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
             ...item,
             key:
               item.key ??
-              buildCartKey(item.slug, item.designType, item.customMethod),
+              buildCartKey(
+                item.slug,
+                item.designType,
+                item.customMethod,
+                item.color,
+              ),
           },
         }),
       removeItem: (key) => dispatch({ type: "REMOVE", key }),

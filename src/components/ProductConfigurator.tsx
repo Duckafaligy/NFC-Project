@@ -38,6 +38,7 @@ import { useStoreStatus } from "@/context/StoreStatus";
 import { site } from "@/lib/site";
 import { Button } from "./Button";
 import { StockBar } from "./StockBar";
+import { ProductVisual } from "./ProductVisual";
 
 const inputFocus =
   "focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200";
@@ -49,9 +50,14 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
   const [designType, setDesignType] = useState<DesignType>("standard");
   const [customMethod, setCustomMethod] = useState<CustomMethod>("we-design");
+  const [color, setColor] = useState<string | undefined>(
+    product.colors?.[0]?.id,
+  );
   const [fileName, setFileName] = useState<string>("");
   const [note, setNote] = useState("");
   const [qty, setQty] = useState(1);
+
+  const selectedColorLabel = product.colors?.find((c) => c.id === color)?.label;
 
   // Estimated delivery window, computed client-side after mount so the
   // prerendered HTML never disagrees with the browser's date.
@@ -95,6 +101,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
       name: product.name,
       designType,
       customMethod: designType === "custom" ? customMethod : undefined,
+      color: product.colors ? color : undefined,
       note: noteParts.join(" / ") || undefined,
       unitPrice,
       quantity: qty,
@@ -138,6 +145,47 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
       {/* Availability */}
       <StockBar stock={liveStock} />
+
+      {/* Card colour (only for products with colourways, e.g. Google) */}
+      {product.colors && product.colors.length > 0 && (
+        <div className="mt-6">
+          <p className="text-sm font-bold text-neutral-900">
+            Card colour
+            {selectedColorLabel ? (
+              <span className="font-normal text-neutral-500"> · {selectedColorLabel}</span>
+            ) : null}
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            {product.colors.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setColor(c.id)}
+                aria-pressed={color === c.id}
+                className={cn(
+                  "overflow-hidden rounded-md border-2 p-2 transition-all",
+                  color === c.id
+                    ? "border-neutral-900 bg-neutral-50"
+                    : "border-neutral-200 bg-white hover:border-neutral-400",
+                )}
+              >
+                <ProductVisual
+                  visual={product.visual}
+                  name={`${product.name} ${c.label}`}
+                  color={c.id}
+                  className="aspect-[4/3] rounded-sm"
+                />
+                <p className="mt-2 flex items-center justify-center gap-1.5 text-xs font-bold text-neutral-900">
+                  <span
+                    className="inline-block h-3 w-3 rounded-full border border-neutral-300"
+                    style={{ background: c.swatch }}
+                  />
+                  {c.label}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Design type choice */}
       <div className="mt-6">
@@ -381,7 +429,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
         <div>
           <Truck className="mx-auto h-4 w-4 text-blue-600" />
           <p className="mt-1 text-[11px] leading-tight text-neutral-500">
-            Flat-rate shipping worldwide
+            Flat-rate North America shipping
           </p>
         </div>
         <div>

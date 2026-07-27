@@ -59,6 +59,7 @@ export default function CheckoutPage() {
             productId: i.productId,
             designType: i.designType,
             customMethod: i.customMethod,
+            color: i.color,
             note: i.note,
             quantity: i.quantity,
           })),
@@ -149,8 +150,9 @@ export default function CheckoutPage() {
               <div key={item.key} className="card flex gap-4 p-4">
                 <div className="w-28 flex-shrink-0 overflow-hidden rounded-md">
                   <ProductVisual
+                    visual={product?.visual ?? "google"}
                     name={item.name}
-                    accent={product?.accent ?? ["#F97316", "#FBBF24"]}
+                    color={item.color}
                     className="aspect-square rounded-md"
                   />
                 </div>
@@ -169,6 +171,10 @@ export default function CheckoutPage() {
                             ? "Custom / your artwork"
                             : "Custom / designed by us"
                           : "Standard design"}
+                        {product?.colors?.find((c) => c.id === item.color)
+                          ?.label
+                          ? ` · ${product.colors.find((c) => c.id === item.color)?.label}`
+                          : ""}
                         {" · "}
                         {formatPrice(discounted)} each
                         {hasDiscount && (

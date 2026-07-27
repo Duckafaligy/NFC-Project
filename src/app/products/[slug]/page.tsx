@@ -61,8 +61,9 @@ export default async function ProductPage({
           <Reveal>
             <div className="card overflow-hidden p-3">
               <ProductVisual
+                visual={product.visual}
                 name={product.name}
-                accent={product.accent}
+                color={product.colors?.[0]?.id}
                 featured
                 className="aspect-[4/3.2]"
               />

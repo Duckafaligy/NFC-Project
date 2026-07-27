@@ -85,8 +85,9 @@ export function CartDrawer() {
                   <li key={item.key} className="flex gap-3">
                     <div className="w-20 flex-shrink-0 overflow-hidden rounded-md border border-neutral-200">
                       <ProductVisual
+                        visual={product?.visual ?? "google"}
                         name={item.name}
-                        accent={product?.accent ?? ["#FB923C", "#F472B6"]}
+                        color={item.color}
                         className="aspect-square rounded-none"
                       />
                     </div>
