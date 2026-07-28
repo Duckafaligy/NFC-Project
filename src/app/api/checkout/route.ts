@@ -6,7 +6,7 @@ import { unitAmountCents, discountRate } from "@/lib/pricing";
 import { getShippingZone, shippingCost } from "@/lib/shipping";
 import {
   effectivePreorder,
-  effectiveCardStock,
+  effectiveStock,
   effectivePrices,
 } from "@/lib/adminStore";
 
@@ -45,28 +45,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
   }
 
-  // Live storefront state set from /admin-dashboard. Stock is one shared
-  // pool: every product is the same physical card.
-  const [preorderNow, cardStock, prices] = await Promise.all([
+  // Live storefront state set from /admin-dashboard. Stock is per product now
+  // (each design is its own SKU).
+  const [preorderNow, stock, prices] = await Promise.all([
     effectivePreorder(),
-    effectiveCardStock(),
+    effectiveStock(),
     effectivePrices(),
   ]);
 
+  // Total cards (for shipping tiers) + per-product quantities (for stock).
   const totalCards = items.reduce(
     (sum, item) => sum + Math.max(0, Math.floor(Number(item.quantity)) || 0),
     0,
   );
-  if (totalCards > cardStock) {
-    return NextResponse.json(
-      {
-        error:
-          cardStock <= 0
-            ? "We are out of stock right now. Check back soon."
-            : `Only ${cardStock} card${cardStock === 1 ? "" : "s"} left in stock — your cart has ${totalCards}.`,
-      },
-      { status: 409 },
-    );
+  const qtyByProduct: Record<string, number> = {};
+  for (const item of items) {
+    const q = Math.max(0, Math.floor(Number(item.quantity)) || 0);
+    qtyByProduct[item.productId] = (qtyByProduct[item.productId] ?? 0) + q;
+  }
+  for (const [pid, q] of Object.entries(qtyByProduct)) {
+    const available = stock[pid] ?? 0;
+    if (q > available) {
+      const name = products.find((p) => p.id === pid)?.name ?? "This item";
+      return NextResponse.json(
+        {
+          error:
+            available <= 0
+              ? `${name} is out of stock right now. Check back soon.`
+              : `Only ${available} of “${name}” left in stock — your cart has ${q}.`,
+        },
+        { status: 409 },
+      );
+    }
   }
 
   // Build validated line items with server-side prices.
@@ -158,6 +168,11 @@ export async function POST(request: Request) {
     lines.forEach((line, i) => {
       metadata[`item_${i + 1}`] = line.fulfillmentNote.slice(0, 500);
     });
+    // Compact per-product quantities so the webhook can decrement each SKU.
+    metadata.product_qtys = Object.entries(qtyByProduct)
+      .map(([id, q]) => `${id}:${q}`)
+      .join(",")
+      .slice(0, 500);
     if (preorderNow) {
       metadata.preorder = `yes (${Math.round(discountRate(true) * 100)}% off applied)`;
     }

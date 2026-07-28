@@ -21,8 +21,8 @@ import {
  */
 interface StoreStatus {
   preorder: boolean;
-  /** Shared card pool — every product is the same physical card. */
-  cardStock: number;
+  /** Effective per-product stock (admin overrides merged with defaults). */
+  stock: Record<string, number>;
   /** Effective per-product prices (admin overrides merged with defaults). */
   prices: Record<string, PriceOverride>;
   loaded: boolean;
@@ -35,10 +35,13 @@ const DEFAULT_PRICES: Record<string, PriceOverride> = Object.fromEntries(
     { basePrice: p.basePrice, customUpcharge: p.customUpcharge },
   ]),
 );
+const DEFAULT_STOCK: Record<string, number> = Object.fromEntries(
+  products.map((p) => [p.id, DEFAULT_CARD_STOCK]),
+);
 
 const StoreStatusContext = createContext<StoreStatus>({
   preorder: site.preorder.enabled,
-  cardStock: DEFAULT_CARD_STOCK,
+  stock: DEFAULT_STOCK,
   prices: DEFAULT_PRICES,
   loaded: false,
 });
@@ -46,7 +49,7 @@ const StoreStatusContext = createContext<StoreStatus>({
 export function StoreStatusProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<StoreStatus>({
     preorder: site.preorder.enabled,
-    cardStock: DEFAULT_CARD_STOCK,
+    stock: DEFAULT_STOCK,
     prices: DEFAULT_PRICES,
     loaded: false,
   });
@@ -59,9 +62,10 @@ export function StoreStatusProvider({ children }: { children: ReactNode }) {
         if (cancelled || !data) return;
         setStatus({
           preorder: Boolean(data.preorder),
-          cardStock: Number.isFinite(Number(data.cardStock))
-            ? Math.max(0, Number(data.cardStock))
-            : DEFAULT_CARD_STOCK,
+          stock:
+            data.stock && typeof data.stock === "object"
+              ? { ...DEFAULT_STOCK, ...data.stock }
+              : DEFAULT_STOCK,
           prices:
             data.prices && typeof data.prices === "object"
               ? { ...DEFAULT_PRICES, ...data.prices }

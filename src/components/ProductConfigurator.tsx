@@ -78,8 +78,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
 
   const status = useStoreStatus();
   const preorder = status.preorder;
-  // One shared pool: every product is the same physical card.
-  const liveStock = status.cardStock;
+  // Per-product stock (each design is its own SKU).
+  const liveStock = status.stock[product.id] ?? 0;
   const outOfStock = liveStock <= 0;
 
   // Effective prices honour the owner's live overrides from /admin-dashboard.

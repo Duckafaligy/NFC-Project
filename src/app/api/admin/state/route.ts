@@ -11,7 +11,9 @@ import {
   getOrders,
   persistentStore,
   effectivePrices,
+  effectiveStock,
   sanitizePrices,
+  sanitizeStock,
   type AdminSettings,
 } from "@/lib/adminStore";
 import { DEFAULT_CARD_STOCK, products } from "@/lib/products";
@@ -27,20 +29,23 @@ export async function GET() {
   if (!(await authed())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const [settings, orders, prices] = await Promise.all([
+  const [settings, orders, prices, stock] = await Promise.all([
     getSettings(),
     getOrders(),
     effectivePrices(),
+    effectiveStock(),
   ]);
   const productList = products.map((p) => ({
     id: p.id,
     name: p.name,
     category: p.category,
-    // Effective (current) prices, plus the catalog defaults for a "reset" hint.
+    // Effective (current) prices + stock, plus catalog defaults for a reset hint.
     basePrice: prices[p.id].basePrice,
     customUpcharge: prices[p.id].customUpcharge,
     defaultBasePrice: p.basePrice,
     defaultCustomUpcharge: p.customUpcharge,
+    stock: stock[p.id],
+    defaultStock: DEFAULT_CARD_STOCK,
   }));
   return NextResponse.json({
     settings,
@@ -67,7 +72,7 @@ export async function POST(request: Request) {
   }
   let body: {
     preorder?: boolean | null;
-    cardStock?: unknown;
+    stock?: unknown;
     preorderEndsAt?: unknown;
     prices?: unknown;
   };
@@ -84,15 +89,8 @@ export async function POST(request: Request) {
     next.preorder = body.preorder ?? null;
   }
 
-  if (body.cardStock !== undefined) {
-    const n = Math.floor(Number(body.cardStock));
-    if (!Number.isFinite(n) || n < 0 || n > 100000) {
-      return NextResponse.json(
-        { error: "Invalid stock amount." },
-        { status: 400 },
-      );
-    }
-    next.cardStock = n;
+  if (body.stock !== undefined) {
+    next.stock = sanitizeStock(body.stock);
   }
 
   if (body.preorderEndsAt !== undefined) {

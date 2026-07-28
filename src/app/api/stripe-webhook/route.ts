@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import {
   claimStripeEvent,
-  decrementCardStock,
-  incrementCardStock,
+  decrementStock,
+  incrementStock,
   logOrder,
   markOrderRefunded,
 } from "@/lib/adminStore";
-import { LOW_STOCK } from "@/lib/products";
+import { LOW_STOCK, products } from "@/lib/products";
 import { site } from "@/lib/site";
 import { formatPrice } from "@/lib/utils";
 
@@ -78,6 +78,18 @@ export async function POST(req: Request) {
   return NextResponse.json({ received: true });
 }
 
+/** Parse the compact "id:qty,id:qty" metadata into a {id: qty} map. */
+function parseProductQtys(raw: string | undefined): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!raw) return out;
+  for (const part of raw.split(",")) {
+    const [id, q] = part.split(":");
+    const n = Math.max(0, Math.round(Number(q)));
+    if (id && Number.isFinite(n) && n > 0) out[id] = (out[id] ?? 0) + n;
+  }
+  return out;
+}
+
 async function handlePaidOrder(
   stripe: Stripe,
   session: Stripe.Checkout.Session,
@@ -90,11 +102,13 @@ async function handlePaidOrder(
     0,
   );
 
-  if (quantity > 0) {
-    const { previous, next } = await decrementCardStock(quantity);
+  // Decrement each product's own stock from the compact metadata map.
+  const qtys = parseProductQtys(session.metadata?.product_qtys);
+  for (const [pid, q] of Object.entries(qtys)) {
+    const { previous, next } = await decrementStock(pid, q);
     // Alert exactly once, on the crossing into low territory.
     if (previous > LOW_STOCK && next <= LOW_STOCK) {
-      await sendLowStockAlert(next);
+      await sendLowStockAlert(pid, next);
     }
   }
 
@@ -259,14 +273,11 @@ async function handleRefund(stripe: Stripe, charge: Stripe.Charge) {
   const session = sessions.data[0];
   if (!session) return;
 
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-    limit: 100,
-  });
-  const quantity = lineItems.data.reduce(
-    (sum, li) => sum + (li.quantity ?? 0),
-    0,
-  );
-  if (quantity > 0) await incrementCardStock(quantity);
+  // Restock each product from the order's per-product quantity metadata.
+  const qtys = parseProductQtys(session.metadata?.product_qtys);
+  for (const [pid, q] of Object.entries(qtys)) {
+    await incrementStock(pid, q);
+  }
   await markOrderRefunded(session.id);
 }
 
@@ -275,11 +286,12 @@ async function handleRefund(stripe: Stripe, charge: Stripe.Charge) {
  * LOW_STOCK_ALERT_EMAIL are configured. ALERT_FROM_EMAIL optionally sets a
  * verified sender; Resend's onboarding sender works for testing.
  */
-async function sendLowStockAlert(stock: number) {
+async function sendLowStockAlert(productId: string, stock: number) {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.LOW_STOCK_ALERT_EMAIL;
   if (!apiKey || !to) return;
 
+  const name = products.find((p) => p.id === productId)?.name ?? productId;
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -289,10 +301,10 @@ async function sendLowStockAlert(stock: number) {
     body: JSON.stringify({
       from: process.env.ALERT_FROM_EMAIL ?? "TapLink Stock <onboarding@resend.dev>",
       to: [to],
-      subject: `Low stock: ${stock} card${stock === 1 ? "" : "s"} left`,
+      subject: `Low stock: ${name} — ${stock} left`,
       text:
-        `The shared card pool is down to ${stock}. ` +
-        `Time to order the next print run.\n\n` +
+        `${name} is down to ${stock}. ` +
+        `Time to reorder.\n\n` +
         `Update stock: ${site.url}/admin-dashboard`,
     }),
   });

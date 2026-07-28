@@ -85,6 +85,59 @@ function Stars({ cy, color }: { cy: number; color: string }) {
   );
 }
 
+/** Fork / knife / spoon row, for the menu card. */
+function Utensils({ cx, cy, color }: { cx: number; cy: number; color: string }) {
+  const h = 40;
+  const top = cy - h / 2;
+  const bot = cy + h / 2;
+  const gap = 15;
+  const fx = cx - gap;
+  const kx = cx;
+  const sx = cx + gap;
+  return (
+    <g strokeLinecap="round">
+      {/* Fork */}
+      <g stroke={color} strokeWidth={2.3} fill="none">
+        <line x1={fx - 4} y1={top} x2={fx - 4} y2={top + 11} />
+        <line x1={fx} y1={top} x2={fx} y2={top + 11} />
+        <line x1={fx + 4} y1={top} x2={fx + 4} y2={top + 11} />
+        <line x1={fx} y1={top + 11} x2={fx} y2={bot} />
+      </g>
+      {/* Knife */}
+      <path
+        d={`M${kx - 3} ${top} L${kx + 1.5} ${top} L${kx} ${top + 16} Z`}
+        fill={color}
+      />
+      <line
+        x1={kx}
+        y1={top + 14}
+        x2={kx}
+        y2={bot}
+        stroke={color}
+        strokeWidth={2.3}
+      />
+      {/* Spoon */}
+      <ellipse
+        cx={sx}
+        cy={top + 7}
+        rx={4.5}
+        ry={7}
+        fill="none"
+        stroke={color}
+        strokeWidth={2.1}
+      />
+      <line
+        x1={sx}
+        y1={top + 13}
+        x2={sx}
+        y2={bot}
+        stroke={color}
+        strokeWidth={2.3}
+      />
+    </g>
+  );
+}
+
 const FONT =
   "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
@@ -176,19 +229,20 @@ export function ProductVisual({
     bg = "#0d0d0d";
     face = (
       <>
-        {text("TAP FOR OUR", t + 32, { size: 9, color: "#a7f3d0", weight: 700, spacing: 1 })}
-        {text("Menu", t + 58, { size: 24, color: "#ffffff", weight: 800 })}
-        {/* menu list glyph */}
-        <g>
-          {[0, 1, 2].map((i) => (
-            <g key={i} transform={`translate(${CARD.x + 26} ${t + 92 + i * 20})`}>
-              <circle cx={0} cy={0} r={3.4} fill="#10B981" />
-              <rect x={12} y={-3.5} width={58} height={4} rx={2} fill="#ffffff" opacity={0.85} />
-              <rect x={12} y={4} width={38} height={3} rx={1.5} fill="#ffffff" opacity={0.4} />
-            </g>
-          ))}
-        </g>
-        <NfcWaves cx={CX} cy={t + 172} color="#ffffff" />
+        <Utensils cx={CX} cy={t + 50} color="#ffffff" />
+        {text("TAP TO VIEW OUR", t + 120, {
+          size: 8.5,
+          color: "#ffffff",
+          weight: 700,
+          spacing: 1.5,
+        })}
+        {text("MENU", t + 152, {
+          size: 30,
+          color: "#ffffff",
+          weight: 800,
+          spacing: 1,
+        })}
+        <NfcWaves cx={CARD.x + CARD.w - 26} cy={t + 178} color="#ffffff" />
       </>
     );
   } else {

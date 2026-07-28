@@ -1,23 +1,23 @@
 import { NextResponse } from "next/server";
 import {
   effectivePreorder,
-  effectiveCardStock,
+  effectiveStock,
   effectivePrices,
 } from "@/lib/adminStore";
 
 /**
- * Public storefront status: the pre-order flag, the shared card pool, and the
+ * Public storefront status: the pre-order flag, per-product stock, and the
  * per-product effective prices the site should display right now (admin
  * overrides merged with catalog defaults).
  */
 export async function GET() {
-  const [preorder, cardStock, prices] = await Promise.all([
+  const [preorder, stock, prices] = await Promise.all([
     effectivePreorder(),
-    effectiveCardStock(),
+    effectiveStock(),
     effectivePrices(),
   ]);
   return NextResponse.json(
-    { preorder, cardStock, prices },
+    { preorder, stock, prices },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

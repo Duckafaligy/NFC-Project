@@ -37,7 +37,6 @@ interface OrderRecord {
 interface AdminState {
   settings: {
     preorder: boolean | null;
-    cardStock: number | null;
     preorderEndsAt: number | null;
   };
   defaults: { preorder: boolean; cardStock: number };
@@ -60,6 +59,8 @@ interface ProductPrice {
   customUpcharge: number | null;
   defaultBasePrice: number;
   defaultCustomUpcharge: number | null;
+  stock: number;
+  defaultStock: number;
 }
 
 /** ms epoch -> value for <input type="date"> in the viewer's timezone. */
@@ -94,8 +95,7 @@ export function AdminDashboard() {
   // Dashboard state
   const [preorder, setPreorder] = useState(true);
   const [preorderEnds, setPreorderEnds] = useState("");
-  const [cardStock, setCardStock] = useState(0);
-  const [hasStock, setHasStock] = useState(true);
+  const [stockEdits, setStockEdits] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(0);
   const [syncing, setSyncing] = useState(false);
@@ -117,11 +117,9 @@ export function AdminDashboard() {
     setState(data);
     setPreorder(data.settings.preorder ?? data.defaults.preorder);
     setPreorderEnds(msToDateInput(data.settings.preorderEndsAt));
-    const stock = data.settings.cardStock ?? data.defaults.cardStock;
-    setCardStock(stock);
-    setHasStock(stock > 0);
     const edits: Record<string, { standard: number; custom: number | null }> =
       {};
+    const stocks: Record<string, number> = {};
     for (const p of data.products) {
       edits[p.id] = {
         standard: p.basePrice,
@@ -130,8 +128,10 @@ export function AdminDashboard() {
             ? null
             : Math.round((p.basePrice + p.customUpcharge) * 100) / 100,
       };
+      stocks[p.id] = p.stock;
     }
     setPriceEdits(edits);
+    setStockEdits(stocks);
     setView("dashboard");
   }, []);
 
@@ -205,7 +205,7 @@ export function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           preorder,
-          cardStock: hasStock ? cardStock : 0,
+          stock: stockEdits,
           preorderEndsAt: preorder ? dateInputToMs(preorderEnds) : null,
           prices,
         }),
@@ -486,78 +486,66 @@ export function AdminDashboard() {
         )}
       </div>
 
-      {/* Shared card stock */}
-      <div className="card mt-4 p-6">
-        <div className="flex items-center gap-2">
-          <Package className="h-4 w-4 text-neutral-500" />
-          <p className="text-sm font-bold text-neutral-900">Card stock</p>
-          <p className="ml-auto text-xs text-neutral-400">
-            One pool: every product is the same card, programmed differently
+      {/* Per-product stock */}
+      {state && state.products.length > 0 && (
+        <div className="card mt-4 p-6">
+          <div className="flex items-center gap-2">
+            <Package className="h-4 w-4 text-neutral-500" />
+            <p className="text-sm font-bold text-neutral-900">Stock</p>
+            <p className="ml-auto text-xs text-neutral-400">
+              How many of each you have · set 0 for out of stock
+            </p>
+          </div>
+          <div className="mt-4 space-y-2.5">
+            {state.products.map((p) => {
+              const qty = stockEdits[p.id] ?? p.stock;
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-neutral-900">
+                      {p.name}
+                    </p>
+                    <p className="text-xs text-neutral-400">
+                      {qty <= 0
+                        ? "Out of stock"
+                        : qty <= 10
+                          ? `Low — ${qty} left`
+                          : `${qty} in stock`}
+                    </p>
+                  </div>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100000}
+                    value={qty}
+                    onChange={(e) =>
+                      setStockEdits((prev) => ({
+                        ...prev,
+                        [p.id]: Math.max(
+                          0,
+                          Math.floor(Number(e.target.value) || 0),
+                        ),
+                      }))
+                    }
+                    className="w-24 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-400">
+            {state?.webhookConfigured
+              ? "Paid Stripe orders subtract from each product automatically; full refunds add back. "
+              : "Connect the Stripe webhook (STRIPE_WEBHOOK_SECRET) so paid orders subtract automatically. "}
+            {state?.alertsConfigured
+              ? "You get a low-stock email per product at 10 or fewer."
+              : "Add RESEND_API_KEY + LOW_STOCK_ALERT_EMAIL for low-stock emails."}
           </p>
         </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <button
-            onClick={() => setHasStock(true)}
-            className={`rounded-md border-2 p-4 text-left transition-all ${
-              hasStock
-                ? "border-neutral-900 bg-neutral-50"
-                : "border-neutral-200 bg-white hover:border-neutral-400"
-            }`}
-          >
-            <p className="font-bold text-neutral-900">Has stock</p>
-            <p className="mt-0.5 text-xs text-neutral-500">
-              Cards available to ship
-            </p>
-          </button>
-          <button
-            onClick={() => setHasStock(false)}
-            className={`rounded-md border-2 p-4 text-left transition-all ${
-              !hasStock
-                ? "border-neutral-900 bg-neutral-50"
-                : "border-neutral-200 bg-white hover:border-neutral-400"
-            }`}
-          >
-            <p className="font-bold text-neutral-900">Out of stock</p>
-            <p className="mt-0.5 text-xs text-neutral-500">
-              Shows &ldquo;out of stock&rdquo;, buying disabled
-            </p>
-          </button>
-        </div>
-
-        {hasStock && (
-          <label className="mt-4 block">
-            <span className="text-sm font-bold text-neutral-900">
-              How many cards do we have?
-            </span>
-            <div className="mt-2 flex items-center gap-3">
-              <input
-                type="number"
-                min={0}
-                max={100000}
-                value={cardStock}
-                onChange={(e) =>
-                  setCardStock(
-                    Math.max(0, Math.floor(Number(e.target.value) || 0)),
-                  )
-                }
-                className="w-32 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
-              />
-              <span className="text-xs text-neutral-400">
-                {state?.webhookConfigured
-                  ? "Paid Stripe orders subtract from this automatically; full refunds add back."
-                  : "Connect the Stripe webhook (STRIPE_WEBHOOK_SECRET) and paid orders subtract from this automatically."}
-              </span>
-            </div>
-          </label>
-        )}
-
-        <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-400">
-          {state?.alertsConfigured
-            ? "Low-stock email alert is on: you get an email when the pool drops to 10 or fewer."
-            : "Optional: add RESEND_API_KEY and LOW_STOCK_ALERT_EMAIL env vars to get an email when stock drops to 10."}
-        </p>
-      </div>
+      )}
 
       {/* Product prices */}
       {state && state.products.length > 0 && (

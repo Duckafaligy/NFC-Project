@@ -17,10 +17,10 @@ export interface AdminSettings {
   /** null = follow site.ts default. */
   preorder: boolean | null;
   /**
-   * Shared card pool override (every product is the same physical card).
-   * null = catalog default (DEFAULT_CARD_STOCK).
+   * Per-product stock overrides, keyed by product id (each design is now its
+   * own SKU). Missing product / null = catalog default (DEFAULT_CARD_STOCK).
    */
-  cardStock: number | null;
+  stock: Record<string, number> | null;
   /**
    * Auto-end for the pre-order window (ms epoch). When set and passed,
    * effectivePreorder() reports false without anyone touching the toggle.
@@ -127,11 +127,7 @@ export async function getSettings(): Promise<AdminSettings> {
       const parsed = JSON.parse(raw) as Partial<AdminSettings>;
       return {
         preorder: typeof parsed.preorder === "boolean" ? parsed.preorder : null,
-        cardStock:
-          typeof parsed.cardStock === "number" &&
-          Number.isFinite(parsed.cardStock)
-            ? Math.max(0, Math.round(parsed.cardStock))
-            : null,
+        stock: sanitizeStock(parsed.stock),
         preorderEndsAt:
           typeof parsed.preorderEndsAt === "number" &&
           Number.isFinite(parsed.preorderEndsAt)
@@ -143,8 +139,23 @@ export async function getSettings(): Promise<AdminSettings> {
   } catch {
     // Corrupt value: fall through to defaults.
   }
-  return { preorder: null, cardStock: null, preorderEndsAt: null, prices: null };
+  return { preorder: null, stock: null, preorderEndsAt: null, prices: null };
 }
+
+/** Keep only valid per-product stock counts (non-negative integers). */
+function sanitizeStock(raw: unknown): AdminSettings["stock"] {
+  if (!raw || typeof raw !== "object") return null;
+  const out: Record<string, number> = {};
+  for (const [id, v] of Object.entries(raw as Record<string, unknown>)) {
+    const n = Number(v);
+    if (Number.isFinite(n) && n >= 0 && n <= 100000) {
+      out[id] = Math.round(n);
+    }
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+export { sanitizeStock };
 
 /** A price in dollars, rounded to cents, within a sane 0–100000 range. */
 function cleanPrice(v: unknown): number | undefined {
@@ -219,33 +230,47 @@ export async function effectivePreorder(): Promise<boolean> {
   return on;
 }
 
-/** The shared card pool the storefront should show right now. */
-export async function effectiveCardStock(): Promise<number> {
+/** Per-product stock the storefront should show right now (override ?? default). */
+export async function effectiveStock(): Promise<Record<string, number>> {
   const s = await getSettings();
-  return s.cardStock ?? DEFAULT_CARD_STOCK;
+  const overrides = s.stock ?? {};
+  const out: Record<string, number> = {};
+  for (const p of products) {
+    const o = overrides[p.id];
+    out[p.id] = typeof o === "number" ? o : DEFAULT_CARD_STOCK;
+  }
+  return out;
 }
 
 /**
- * Subtract a paid order's quantity from the shared pool (called by the
- * Stripe webhook). Clamps at zero. Returns before/after so callers can
- * detect the low-stock threshold crossing.
+ * Subtract a paid order's quantity from one product's stock (called by the
+ * Stripe webhook). Clamps at zero. Returns before/after so callers can detect
+ * the low-stock threshold crossing.
  */
-export async function decrementCardStock(
+export async function decrementStock(
+  productId: string,
   quantity: number,
 ): Promise<{ previous: number; next: number }> {
   const s = await getSettings();
-  const previous = s.cardStock ?? DEFAULT_CARD_STOCK;
+  const stock = { ...(s.stock ?? {}) };
+  const previous = typeof stock[productId] === "number" ? stock[productId] : DEFAULT_CARD_STOCK;
   const next = Math.max(0, previous - Math.max(0, Math.round(quantity)));
-  await saveSettings({ ...s, cardStock: next });
+  stock[productId] = next;
+  await saveSettings({ ...s, stock });
   return { previous, next };
 }
 
-/** Add cards back to the pool (full refunds). Caps at a sane maximum. */
-export async function incrementCardStock(quantity: number): Promise<number> {
+/** Add stock back to one product (full refunds). Caps at a sane maximum. */
+export async function incrementStock(
+  productId: string,
+  quantity: number,
+): Promise<number> {
   const s = await getSettings();
-  const current = s.cardStock ?? DEFAULT_CARD_STOCK;
+  const stock = { ...(s.stock ?? {}) };
+  const current = typeof stock[productId] === "number" ? stock[productId] : DEFAULT_CARD_STOCK;
   const next = Math.min(100000, current + Math.max(0, Math.round(quantity)));
-  await saveSettings({ ...s, cardStock: next });
+  stock[productId] = next;
+  await saveSettings({ ...s, stock });
   return next;
 }
 
