@@ -12,8 +12,10 @@ import {
   persistentStore,
   effectivePrices,
   effectiveStock,
+  effectiveProductPreorder,
   sanitizePrices,
   sanitizeStock,
+  sanitizeProductPreorder,
   type AdminSettings,
 } from "@/lib/adminStore";
 import { DEFAULT_CARD_STOCK, products } from "@/lib/products";
@@ -29,11 +31,12 @@ export async function GET() {
   if (!(await authed())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const [settings, orders, prices, stock] = await Promise.all([
+  const [settings, orders, prices, stock, productPreorder] = await Promise.all([
     getSettings(),
     getOrders(),
     effectivePrices(),
     effectiveStock(),
+    effectiveProductPreorder(),
   ]);
   const productList = products.map((p) => ({
     id: p.id,
@@ -46,6 +49,7 @@ export async function GET() {
     defaultCustomUpcharge: p.customUpcharge,
     stock: stock[p.id],
     defaultStock: DEFAULT_CARD_STOCK,
+    preorder: productPreorder[p.id],
   }));
   return NextResponse.json({
     settings,
@@ -73,6 +77,7 @@ export async function POST(request: Request) {
   let body: {
     preorder?: boolean | null;
     stock?: unknown;
+    productPreorder?: unknown;
     preorderEndsAt?: unknown;
     prices?: unknown;
   };
@@ -91,6 +96,10 @@ export async function POST(request: Request) {
 
   if (body.stock !== undefined) {
     next.stock = sanitizeStock(body.stock);
+  }
+
+  if (body.productPreorder !== undefined) {
+    next.productPreorder = sanitizeProductPreorder(body.productPreorder);
   }
 
   if (body.preorderEndsAt !== undefined) {

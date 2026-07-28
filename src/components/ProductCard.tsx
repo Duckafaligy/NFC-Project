@@ -9,7 +9,8 @@ import { useStoreStatus } from "@/context/StoreStatus";
 import { ProductVisual } from "./ProductVisual";
 
 export function ProductCard({ product }: { product: Product }) {
-  const { preorder, prices } = useStoreStatus();
+  const { productPreorder, prices } = useStoreStatus();
+  const preorder = productPreorder[product.id] ?? false;
   const basePrice = prices[product.id]?.basePrice ?? product.basePrice;
   return (
     <Link

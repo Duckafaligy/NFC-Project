@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 import { unitAmountCents, discountRate } from "@/lib/pricing";
 import { getShippingZone, shippingCost } from "@/lib/shipping";
 import {
-  effectivePreorder,
+  effectiveProductPreorder,
   effectiveStock,
   effectivePrices,
 } from "@/lib/adminStore";
@@ -47,8 +47,8 @@ export async function POST(request: Request) {
 
   // Live storefront state set from /admin-dashboard. Stock is per product now
   // (each design is its own SKU).
-  const [preorderNow, stock, prices] = await Promise.all([
-    effectivePreorder(),
+  const [productPreorder, stock, prices] = await Promise.all([
+    effectiveProductPreorder(),
     effectiveStock(),
     effectivePrices(),
   ]);
@@ -119,6 +119,10 @@ export async function POST(request: Request) {
 
     const note = (item.note ?? "").slice(0, 400);
 
+    // Pre-order is per product now — this line gets the discount only if its
+    // own product is on pre-order.
+    const itemPreorder = productPreorder[item.productId] ?? false;
+
     // Full configuration on the line item, so Stripe's payment page and the
     // post-payment invoice both show exactly what was ordered.
     const configParts = [
@@ -126,7 +130,7 @@ export async function POST(request: Request) {
       ...(colorLabel ? [`Colour: ${colorLabel}`] : []),
       designLabel,
       ...(note ? [note] : []),
-      ...(preorderNow
+      ...(itemPreorder
         ? [`Pre-order price (${Math.round(discountRate(true) * 100)}% off)`]
         : []),
     ];
@@ -134,7 +138,7 @@ export async function POST(request: Request) {
     lines.push({
       name: product.name,
       description: configParts.join(" · "),
-      unitCents: unitAmountCents(baseUnit, preorderNow),
+      unitCents: unitAmountCents(baseUnit, itemPreorder),
       quantity,
       fulfillmentNote: `${product.name} x${quantity} | ${designLabel}${colorLabel ? ` | ${colorLabel}` : ""}${note ? ` | ${note}` : ""}`,
     });
@@ -154,6 +158,8 @@ export async function POST(request: Request) {
   const zone = getShippingZone(body.zoneId);
   const shippingAmount = shippingCost(zone, totalCards);
   const currency = site.currency.code.toLowerCase();
+  // Whether any line is on pre-order (for the invoice/metadata wording).
+  const anyPreorder = items.some((i) => productPreorder[i.productId] ?? false);
 
   try {
     const stripe = new Stripe(key);
@@ -173,7 +179,7 @@ export async function POST(request: Request) {
       .map(([id, q]) => `${id}:${q}`)
       .join(",")
       .slice(0, 500);
-    if (preorderNow) {
+    if (anyPreorder) {
       metadata.preorder = `yes (${Math.round(discountRate(true) * 100)}% off applied)`;
     }
 
@@ -218,15 +224,15 @@ export async function POST(request: Request) {
       invoice_creation: {
         enabled: true,
         invoice_data: {
-          description: preorderNow
-            ? `Pre-order: ${Math.round(discountRate(true) * 100)}% off applied. ${site.preorder.shipNote}.`
+          description: anyPreorder
+            ? `Includes pre-order items: ${Math.round(discountRate(true) * 100)}% off applied. ${site.preorder.shipNote}.`
             : "Thank you for your order. Configurations are listed per line item.",
           footer: `${site.guaranteeDays} days of free maintenance on every order: if anything is wrong, we correct it free. Questions: ${site.email}`,
           metadata,
           custom_fields: [
             {
               name: "Order type",
-              value: preorderNow ? "Pre-order" : "Standard",
+              value: anyPreorder ? "Pre-order" : "Standard",
             },
           ],
         },

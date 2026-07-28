@@ -61,6 +61,7 @@ interface ProductPrice {
   defaultCustomUpcharge: number | null;
   stock: number;
   defaultStock: number;
+  preorder: boolean;
 }
 
 /** ms epoch -> value for <input type="date"> in the viewer's timezone. */
@@ -96,6 +97,9 @@ export function AdminDashboard() {
   const [preorder, setPreorder] = useState(true);
   const [preorderEnds, setPreorderEnds] = useState("");
   const [stockEdits, setStockEdits] = useState<Record<string, number>>({});
+  const [preorderEdits, setPreorderEdits] = useState<Record<string, boolean>>(
+    {},
+  );
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(0);
   const [syncing, setSyncing] = useState(false);
@@ -120,6 +124,7 @@ export function AdminDashboard() {
     const edits: Record<string, { standard: number; custom: number | null }> =
       {};
     const stocks: Record<string, number> = {};
+    const preorders: Record<string, boolean> = {};
     for (const p of data.products) {
       edits[p.id] = {
         standard: p.basePrice,
@@ -129,9 +134,11 @@ export function AdminDashboard() {
             : Math.round((p.basePrice + p.customUpcharge) * 100) / 100,
       };
       stocks[p.id] = p.stock;
+      preorders[p.id] = p.preorder;
     }
     setPriceEdits(edits);
     setStockEdits(stocks);
+    setPreorderEdits(preorders);
     setView("dashboard");
   }, []);
 
@@ -206,6 +213,7 @@ export function AdminDashboard() {
         body: JSON.stringify({
           preorder,
           stock: stockEdits,
+          productPreorder: preorderEdits,
           preorderEndsAt: preorder ? dateInputToMs(preorderEnds) : null,
           prices,
         }),
@@ -437,8 +445,9 @@ export function AdminDashboard() {
               Pre-order window
             </p>
             <p className="mt-1 text-sm text-neutral-500">
-              While on, the whole cart is 20% off and buttons say
-              &ldquo;Pre-order&rdquo;. Takes effect immediately.
+              The default pre-order state and 20% discount. Override any product
+              individually in Stock &amp; pre-order below. The auto-end date
+              still switches every pre-order product off.
             </p>
           </div>
           <button
@@ -491,20 +500,23 @@ export function AdminDashboard() {
         <div className="card mt-4 p-6">
           <div className="flex items-center gap-2">
             <Package className="h-4 w-4 text-neutral-500" />
-            <p className="text-sm font-bold text-neutral-900">Stock</p>
+            <p className="text-sm font-bold text-neutral-900">
+              Stock &amp; pre-order
+            </p>
             <p className="ml-auto text-xs text-neutral-400">
-              How many of each you have · set 0 for out of stock
+              Quantity · pre-order per product · 0 = out of stock
             </p>
           </div>
           <div className="mt-4 space-y-2.5">
             {state.products.map((p) => {
               const qty = stockEdits[p.id] ?? p.stock;
+              const po = preorderEdits[p.id] ?? p.preorder;
               return (
                 <div
                   key={p.id}
                   className="flex items-center justify-between gap-3"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-neutral-900">
                       {p.name}
                     </p>
@@ -514,31 +526,50 @@ export function AdminDashboard() {
                         : qty <= 10
                           ? `Low — ${qty} left`
                           : `${qty} in stock`}
+                      {po ? " · pre-order" : ""}
                     </p>
                   </div>
-                  <input
-                    type="number"
-                    min={0}
-                    max={100000}
-                    value={qty}
-                    onChange={(e) =>
-                      setStockEdits((prev) => ({
-                        ...prev,
-                        [p.id]: Math.max(
-                          0,
-                          Math.floor(Number(e.target.value) || 0),
-                        ),
-                      }))
-                    }
-                    className="w-24 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
-                  />
+                  <div className="flex flex-shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPreorderEdits((prev) => ({ ...prev, [p.id]: !po }))
+                      }
+                      aria-pressed={po}
+                      className={`flex items-center gap-1 rounded-md border px-2.5 py-2 text-xs font-bold transition-colors ${
+                        po
+                          ? "border-violet-600 bg-violet-600 text-white"
+                          : "border-neutral-300 bg-white text-neutral-500 hover:border-neutral-400"
+                      }`}
+                    >
+                      <Clock className="h-3.5 w-3.5" /> Pre-order
+                    </button>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100000}
+                      value={qty}
+                      onChange={(e) =>
+                        setStockEdits((prev) => ({
+                          ...prev,
+                          [p.id]: Math.max(
+                            0,
+                            Math.floor(Number(e.target.value) || 0),
+                          ),
+                        }))
+                      }
+                      className="w-20 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+                    />
+                  </div>
                 </div>
               );
             })}
           </div>
           <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-400">
+            Pre-order applies the discount and a &ldquo;Pre-order&rdquo; badge to
+            that product only.{" "}
             {state?.webhookConfigured
-              ? "Paid Stripe orders subtract from each product automatically; full refunds add back. "
+              ? "Paid orders subtract from each product automatically; full refunds add back. "
               : "Connect the Stripe webhook (STRIPE_WEBHOOK_SECRET) so paid orders subtract automatically. "}
             {state?.alertsConfigured
               ? "You get a low-stock email per product at 10 or fewer."

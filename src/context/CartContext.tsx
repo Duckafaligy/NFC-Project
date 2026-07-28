@@ -113,7 +113,7 @@ export function buildCartKey(
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { items: [] });
-  const { preorder } = useStoreStatus();
+  const { productPreorder } = useStoreStatus();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Hydrate from localStorage on mount.
@@ -140,9 +140,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = state.items.reduce((n, i) => n + i.quantity, 0);
-    // Subtotal applies the pre-order discount per line (see lib/pricing).
+    // Subtotal applies each product's own pre-order discount per line.
     const subtotal = state.items.reduce(
-      (sum, i) => sum + lineTotal(i.unitPrice, i.quantity, preorder),
+      (sum, i) =>
+        sum +
+        lineTotal(i.unitPrice, i.quantity, productPreorder[i.productId] ?? false),
       0,
     );
     const compareSubtotal = state.items.reduce(
@@ -177,7 +179,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       openDrawer: () => setDrawerOpen(true),
       closeDrawer: () => setDrawerOpen(false),
     };
-  }, [state.items, drawerOpen, preorder]);
+  }, [state.items, drawerOpen, productPreorder]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

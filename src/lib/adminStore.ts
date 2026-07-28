@@ -22,6 +22,12 @@ export interface AdminSettings {
    */
   stock: Record<string, number> | null;
   /**
+   * Per-product pre-order overrides, keyed by product id. Missing product =
+   * follow the global pre-order flag below. The global auto-end date still
+   * applies to every product that is on pre-order.
+   */
+  productPreorder: Record<string, boolean> | null;
+  /**
    * Auto-end for the pre-order window (ms epoch). When set and passed,
    * effectivePreorder() reports false without anyone touching the toggle.
    * null = stays on until switched off manually.
@@ -128,6 +134,7 @@ export async function getSettings(): Promise<AdminSettings> {
       return {
         preorder: typeof parsed.preorder === "boolean" ? parsed.preorder : null,
         stock: sanitizeStock(parsed.stock),
+        productPreorder: sanitizeProductPreorder(parsed.productPreorder),
         preorderEndsAt:
           typeof parsed.preorderEndsAt === "number" &&
           Number.isFinite(parsed.preorderEndsAt)
@@ -139,8 +146,26 @@ export async function getSettings(): Promise<AdminSettings> {
   } catch {
     // Corrupt value: fall through to defaults.
   }
-  return { preorder: null, stock: null, preorderEndsAt: null, prices: null };
+  return {
+    preorder: null,
+    stock: null,
+    productPreorder: null,
+    preorderEndsAt: null,
+    prices: null,
+  };
 }
+
+/** Keep only boolean per-product pre-order flags. */
+function sanitizeProductPreorder(raw: unknown): AdminSettings["productPreorder"] {
+  if (!raw || typeof raw !== "object") return null;
+  const out: Record<string, boolean> = {};
+  for (const [id, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof v === "boolean") out[id] = v;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+export { sanitizeProductPreorder };
 
 /** Keep only valid per-product stock counts (non-negative integers). */
 function sanitizeStock(raw: unknown): AdminSettings["stock"] {
@@ -228,6 +253,27 @@ export async function effectivePreorder(): Promise<boolean> {
     return false;
   }
   return on;
+}
+
+/**
+ * Per-product pre-order state: each product's own override, or the global
+ * flag when it has none. The global auto-end date switches any on-pre-order
+ * product off once it passes.
+ */
+export async function effectiveProductPreorder(): Promise<
+  Record<string, boolean>
+> {
+  const s = await getSettings();
+  const globalOn = s.preorder ?? site.preorder.enabled;
+  const ended = s.preorderEndsAt !== null && Date.now() >= s.preorderEndsAt;
+  const overrides = s.productPreorder ?? {};
+  const out: Record<string, boolean> = {};
+  for (const p of products) {
+    let on = p.id in overrides ? overrides[p.id] : globalOn;
+    if (on && ended) on = false;
+    out[p.id] = on;
+  }
+  return out;
 }
 
 /** Per-product stock the storefront should show right now (override ?? default). */

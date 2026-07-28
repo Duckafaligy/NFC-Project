@@ -31,7 +31,7 @@ import { getProduct } from "@/lib/products";
 type PayState = "idle" | "loading" | "demo-placed" | "error";
 
 export default function CheckoutPage() {
-  const { preorder } = useStoreStatus();
+  const { productPreorder } = useStoreStatus();
   const { items, itemCount, subtotal, compareSubtotal, setQuantity, removeItem, clear } =
     useCart();
   const [payState, setPayState] = useState<PayState>("idle");
@@ -144,8 +144,9 @@ export default function CheckoutPage() {
         <div className="space-y-4">
           {items.map((item) => {
             const product = getProduct(item.slug);
-            const discounted = unitPriceFor(item.unitPrice, preorder);
-            const hasDiscount = preorder;
+            const itemPreorder = productPreorder[item.productId] ?? false;
+            const discounted = unitPriceFor(item.unitPrice, itemPreorder);
+            const hasDiscount = itemPreorder;
             return (
               <div key={item.key} className="card flex gap-4 p-4">
                 <div className="w-28 flex-shrink-0 overflow-hidden rounded-md">
@@ -219,7 +220,7 @@ export default function CheckoutPage() {
                       </button>
                     </div>
                     <span className="font-bold text-neutral-900">
-                      {formatPrice(lineTotal(item.unitPrice, item.quantity, preorder))}
+                      {formatPrice(lineTotal(item.unitPrice, item.quantity, itemPreorder))}
                     </span>
                   </div>
                 </div>
@@ -268,7 +269,7 @@ export default function CheckoutPage() {
             </div>
 
             <dl className="mt-4 space-y-3 text-sm">
-              {preorder && (
+              {compareSubtotal > subtotal && (
                 <>
                   <div className="flex justify-between text-neutral-600">
                     <dt>Full price</dt>

@@ -20,7 +20,10 @@ import {
  * first client paint), then refreshes from /api/store-status on mount.
  */
 interface StoreStatus {
+  /** Global pre-order window state (for the banner / popup). */
   preorder: boolean;
+  /** Per-product pre-order state (drives each product's badge + discount). */
+  productPreorder: Record<string, boolean>;
   /** Effective per-product stock (admin overrides merged with defaults). */
   stock: Record<string, number>;
   /** Effective per-product prices (admin overrides merged with defaults). */
@@ -38,9 +41,13 @@ const DEFAULT_PRICES: Record<string, PriceOverride> = Object.fromEntries(
 const DEFAULT_STOCK: Record<string, number> = Object.fromEntries(
   products.map((p) => [p.id, DEFAULT_CARD_STOCK]),
 );
+const DEFAULT_PRODUCT_PREORDER: Record<string, boolean> = Object.fromEntries(
+  products.map((p) => [p.id, site.preorder.enabled]),
+);
 
 const StoreStatusContext = createContext<StoreStatus>({
   preorder: site.preorder.enabled,
+  productPreorder: DEFAULT_PRODUCT_PREORDER,
   stock: DEFAULT_STOCK,
   prices: DEFAULT_PRICES,
   loaded: false,
@@ -49,6 +56,7 @@ const StoreStatusContext = createContext<StoreStatus>({
 export function StoreStatusProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<StoreStatus>({
     preorder: site.preorder.enabled,
+    productPreorder: DEFAULT_PRODUCT_PREORDER,
     stock: DEFAULT_STOCK,
     prices: DEFAULT_PRICES,
     loaded: false,
@@ -62,6 +70,10 @@ export function StoreStatusProvider({ children }: { children: ReactNode }) {
         if (cancelled || !data) return;
         setStatus({
           preorder: Boolean(data.preorder),
+          productPreorder:
+            data.productPreorder && typeof data.productPreorder === "object"
+              ? { ...DEFAULT_PRODUCT_PREORDER, ...data.productPreorder }
+              : DEFAULT_PRODUCT_PREORDER,
           stock:
             data.stock && typeof data.stock === "object"
               ? { ...DEFAULT_STOCK, ...data.stock }

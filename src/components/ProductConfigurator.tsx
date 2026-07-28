@@ -77,7 +77,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
   }, []);
 
   const status = useStoreStatus();
-  const preorder = status.preorder;
+  const preorder = status.productPreorder[product.id] ?? false;
   // Per-product stock (each design is its own SKU).
   const liveStock = status.stock[product.id] ?? 0;
   const outOfStock = liveStock <= 0;
