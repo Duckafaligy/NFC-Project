@@ -83,24 +83,29 @@ export function ProductConfigurator({ product }: { product: Product }) {
   const outOfStock = liveStock <= 0;
 
   // Effective prices honour the owner's live overrides from /admin-dashboard.
-  const override = status.prices[product.id];
-  const basePrice = override?.basePrice ?? product.basePrice;
-  const customUpcharge = override?.customUpcharge ?? product.customUpcharge;
+  // status.prices already holds the merged effective value (customUpcharge may
+  // be null, meaning the product isn't customizable).
+  const priced = status.prices[product.id];
+  const basePrice = priced?.basePrice ?? product.basePrice;
+  const customUpcharge = priced ? priced.customUpcharge : product.customUpcharge;
+  const customizable = customUpcharge != null;
+  // If the product isn't customizable, everything runs as a standard order.
+  const activeDesign: DesignType = customizable ? designType : "standard";
 
   const unitPrice = useMemo(
     () =>
       configuredUnitPrice(
         { ...product, basePrice, customUpcharge },
-        designType,
+        activeDesign,
         customMethod,
       ),
-    [product, basePrice, customUpcharge, designType, customMethod],
+    [product, basePrice, customUpcharge, activeDesign, customMethod],
   );
   const payNow = unitPriceFor(unitPrice, preorder);
 
   function handleAdd(goToCheckout: boolean) {
     const noteParts: string[] = [];
-    if (designType === "custom") {
+    if (activeDesign === "custom") {
       if (customMethod === "upload" && fileName)
         noteParts.push(`Uploaded artwork: ${fileName}`);
       if (customMethod === "we-design") noteParts.push("Wants us to design it");
@@ -111,8 +116,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      designType,
-      customMethod: designType === "custom" ? customMethod : undefined,
+      designType: activeDesign,
+      customMethod: activeDesign === "custom" ? customMethod : undefined,
       color: product.colors ? color : undefined,
       note: noteParts.join(" / ") || undefined,
       unitPrice,
@@ -199,7 +204,8 @@ export function ProductConfigurator({ product }: { product: Product }) {
         </div>
       )}
 
-      {/* Design type choice */}
+      {/* Design type choice (only when the product is customizable) */}
+      {customizable && (
       <div className="mt-6">
         <p className="text-sm font-bold text-neutral-900">Choose your design</p>
         <div className="mt-3 grid grid-cols-2 gap-3">
@@ -230,14 +236,15 @@ export function ProductConfigurator({ product }: { product: Product }) {
             <PenTool className="h-5 w-5 text-neutral-900" />
             <p className="mt-2 font-bold text-neutral-900">Custom</p>
             <p className="mt-0.5 text-xs text-neutral-500">
-              Your brand · from {formatPrice(basePrice + customUpcharge)}
+              Your brand · from {formatPrice(basePrice + (customUpcharge ?? 0))}
             </p>
           </button>
         </div>
       </div>
+      )}
 
       {/* Custom sub-options */}
-      {designType === "custom" && (
+      {customizable && designType === "custom" && (
         <div className="mt-4 space-y-4 rounded-md bg-neutral-50 p-4">
           <p className="text-sm font-bold text-neutral-900">
             How should we handle the design?

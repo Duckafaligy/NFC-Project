@@ -73,8 +73,13 @@ export interface Product {
   example: string;
   /** Base price for a standard (non-custom) design. */
   basePrice: number;
-  /** Additional cost when the customer chooses a custom design. */
-  customUpcharge: number;
+  /**
+   * Extra cost for a custom (own-branding) design. `null` means the product
+   * is NOT customizable — the custom option is hidden entirely. The owner can
+   * turn custom on/off per product from /admin-dashboard by setting or
+   * clearing its custom price.
+   */
+  customUpcharge: number | null;
   features: string[];
   useCases: string[];
   specs: { label: string; value: string }[];
@@ -95,7 +100,13 @@ export interface Product {
 /** A live price override for a product, set from the admin dashboard. */
 export interface PriceOverride {
   basePrice: number;
-  customUpcharge: number;
+  /** null = custom option disabled for this product. */
+  customUpcharge: number | null;
+}
+
+/** Whether a product offers a custom (own-branding) option right now. */
+export function isCustomizable(customUpcharge: number | null): boolean {
+  return customUpcharge != null;
 }
 
 /**
@@ -138,7 +149,9 @@ export const products: Product[] = [
     example:
       "A two-chair barbershop keeps one card taped flat next to the card reader. After each cut, one line: “Mind leaving us a quick review? Tap your phone here.” At 15 customers a day, even two yeses a day is around 50 new reviews a month. That moves a 4.2-star page with 30 reviews into a 4.7-star page with hundreds, and that is the difference customers see when they search “barber near me.”",
     basePrice: STANDARD_PRICE,
-    customUpcharge: CUSTOM_UPCHARGE,
+    // Not customizable by default (sourced ready-made). Turn on from the
+    // dashboard by setting a custom price.
+    customUpcharge: null,
     features: [
       "Instant tap-to-review, no app required",
       "Choose black or white to match your counter",
@@ -177,7 +190,9 @@ export const products: Product[] = [
     example:
       "A lash tech finishes an appointment and hands over the card with the mirror: “Tap this if you want to see your set on our page this week.” The client follows on the spot to find her photo later. Every appointment becomes a follower, and every follower sees the next month of openings.",
     basePrice: STANDARD_PRICE,
-    customUpcharge: CUSTOM_UPCHARGE,
+    // Not customizable by default (sourced ready-made). Turn on from the
+    // dashboard by setting a custom price.
+    customUpcharge: null,
     features: [
       "Opens your Instagram profile in one tap",
       "Follow happens on the spot, not “later”",
@@ -276,7 +291,8 @@ export function configuredUnitPrice(
   customMethod?: "upload" | "we-design",
 ): number {
   let price = product.basePrice;
-  if (designType === "custom") {
+  // Custom only applies when the product is customizable (has a custom price).
+  if (designType === "custom" && product.customUpcharge != null) {
     price += product.customUpcharge;
     if (customMethod === "we-design") price += DESIGN_LABOUR_FEE;
   }

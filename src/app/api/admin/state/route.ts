@@ -118,10 +118,12 @@ export async function POST(request: Request) {
     for (const p of products) {
       const patch = sanitized[p.id];
       if (!patch) continue;
-      const entry: { basePrice?: number; customUpcharge?: number } = {};
+      const entry: { basePrice?: number; customUpcharge?: number | null } = {};
       if (patch.basePrice !== undefined && patch.basePrice !== p.basePrice) {
         entry.basePrice = patch.basePrice;
       }
+      // customUpcharge may be null (custom disabled); store only if it differs
+      // from the catalog default.
       if (
         patch.customUpcharge !== undefined &&
         patch.customUpcharge !== p.customUpcharge

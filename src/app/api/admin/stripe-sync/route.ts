@@ -5,8 +5,10 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/adminAuth";
 import {
   products,
   configuredUnitPrice,
+  withPriceOverride,
   type Product,
 } from "@/lib/products";
+import { effectivePrices } from "@/lib/adminStore";
 import { site } from "@/lib/site";
 
 /**
@@ -35,23 +37,29 @@ interface PriceVariant {
 
 function variantsFor(product: Product): PriceVariant[] {
   const cents = (d: number) => Math.round(d * 100);
-  return [
+  const variants: PriceVariant[] = [
     {
       suffix: "standard",
       label: "Standard design",
       amountCents: cents(configuredUnitPrice(product, "standard")),
     },
-    {
-      suffix: "custom-upload",
-      label: "Custom design (customer artwork)",
-      amountCents: cents(configuredUnitPrice(product, "custom", "upload")),
-    },
-    {
-      suffix: "custom-we-design",
-      label: "Custom design (designed by us)",
-      amountCents: cents(configuredUnitPrice(product, "custom", "we-design")),
-    },
   ];
+  // Only sync custom prices when the product actually offers custom.
+  if (product.customUpcharge != null) {
+    variants.push(
+      {
+        suffix: "custom-upload",
+        label: "Custom design (customer artwork)",
+        amountCents: cents(configuredUnitPrice(product, "custom", "upload")),
+      },
+      {
+        suffix: "custom-we-design",
+        label: "Custom design (designed by us)",
+        amountCents: cents(configuredUnitPrice(product, "custom", "we-design")),
+      },
+    );
+  }
+  return variants;
 }
 
 export async function POST() {
@@ -70,6 +78,8 @@ export async function POST() {
 
   const stripe = new Stripe(key);
   const currency = site.currency.code.toLowerCase();
+  // Sync the live (admin-overridden) prices, not just the catalog defaults.
+  const prices = await effectivePrices();
   let productsCreated = 0;
   let productsUpdated = 0;
   let pricesCreated = 0;
@@ -113,7 +123,9 @@ export async function POST() {
       });
 
       let defaultPriceId: string | null = null;
-      for (const variant of variantsFor(product)) {
+      for (const variant of variantsFor(
+        withPriceOverride(product, prices[product.id]),
+      )) {
         const lookupKey = `${stripeId}-${variant.suffix}`;
         const match = existing.data.find((p) => p.lookup_key === lookupKey);
 

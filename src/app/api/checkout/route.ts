@@ -85,11 +85,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid item in cart" }, { status: 400 });
     }
 
-    const isCustom = item.designType === "custom";
+    const effProduct = withPriceOverride(product, prices[product.id]);
+    // Custom only counts when the product actually offers it right now.
+    const isCustom =
+      item.designType === "custom" && effProduct.customUpcharge != null;
     // Charge the live (admin-overridden) price, never a client-sent one.
     const baseUnit = configuredUnitPrice(
-      withPriceOverride(product, prices[product.id]),
-      item.designType,
+      effProduct,
+      isCustom ? "custom" : "standard",
       item.customMethod,
     );
 

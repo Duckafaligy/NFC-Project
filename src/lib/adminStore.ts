@@ -30,9 +30,13 @@ export interface AdminSettings {
   /**
    * Per-product price overrides set from the dashboard, keyed by product id.
    * Only the fields present override the catalog default (lib/products).
+   * A `customUpcharge` of null explicitly disables the custom option.
    * null / missing product = use the catalog price.
    */
-  prices: Record<string, { basePrice?: number; customUpcharge?: number }> | null;
+  prices: Record<
+    string,
+    { basePrice?: number; customUpcharge?: number | null }
+  > | null;
 }
 
 /** One fulfilled Stripe order, logged by the webhook for the dashboard. */
@@ -159,10 +163,15 @@ function sanitizePrices(
     if (!patch || typeof patch !== "object") continue;
     const p = patch as { basePrice?: unknown; customUpcharge?: unknown };
     const basePrice = cleanPrice(p.basePrice);
-    const customUpcharge = cleanPrice(p.customUpcharge);
-    const entry: { basePrice?: number; customUpcharge?: number } = {};
+    const entry: { basePrice?: number; customUpcharge?: number | null } = {};
     if (basePrice !== undefined) entry.basePrice = basePrice;
-    if (customUpcharge !== undefined) entry.customUpcharge = customUpcharge;
+    // null explicitly disables custom; a number sets the upcharge.
+    if (p.customUpcharge === null) {
+      entry.customUpcharge = null;
+    } else {
+      const c = cleanPrice(p.customUpcharge);
+      if (c !== undefined) entry.customUpcharge = c;
+    }
     if (Object.keys(entry).length) out[id] = entry;
   }
   return Object.keys(out).length ? out : null;
@@ -181,12 +190,13 @@ export async function effectivePrices(): Promise<Record<string, PriceOverride>> 
   const out: Record<string, PriceOverride> = {};
   for (const p of products) {
     const o = overrides[p.id];
+    // customUpcharge override may be null (custom disabled), so detect the
+    // key's presence rather than checking for a number.
+    const hasCustom =
+      o != null && Object.prototype.hasOwnProperty.call(o, "customUpcharge");
     out[p.id] = {
       basePrice: typeof o?.basePrice === "number" ? o.basePrice : p.basePrice,
-      customUpcharge:
-        typeof o?.customUpcharge === "number"
-          ? o.customUpcharge
-          : p.customUpcharge,
+      customUpcharge: hasCustom ? (o.customUpcharge ?? null) : p.customUpcharge,
     };
   }
   return out;

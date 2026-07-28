@@ -56,9 +56,10 @@ interface ProductPrice {
   name: string;
   category: string;
   basePrice: number;
-  customUpcharge: number;
+  /** null = custom option disabled for this product. */
+  customUpcharge: number | null;
   defaultBasePrice: number;
-  defaultCustomUpcharge: number;
+  defaultCustomUpcharge: number | null;
 }
 
 /** ms epoch -> value for <input type="date"> in the viewer's timezone. */
@@ -103,7 +104,7 @@ export function AdminDashboard() {
   // Per-product price editor: standard = base price, custom = price with the
   // customer's own branding (base + upcharge). Both entered in dollars.
   const [priceEdits, setPriceEdits] = useState<
-    Record<string, { standard: number; custom: number }>
+    Record<string, { standard: number; custom: number | null }>
   >({});
 
   const loadState = useCallback(async () => {
@@ -119,11 +120,15 @@ export function AdminDashboard() {
     const stock = data.settings.cardStock ?? data.defaults.cardStock;
     setCardStock(stock);
     setHasStock(stock > 0);
-    const edits: Record<string, { standard: number; custom: number }> = {};
+    const edits: Record<string, { standard: number; custom: number | null }> =
+      {};
     for (const p of data.products) {
       edits[p.id] = {
         standard: p.basePrice,
-        custom: Math.round((p.basePrice + p.customUpcharge) * 100) / 100,
+        custom:
+          p.customUpcharge == null
+            ? null
+            : Math.round((p.basePrice + p.customUpcharge) * 100) / 100,
       };
     }
     setPriceEdits(edits);
@@ -179,17 +184,20 @@ export function AdminDashboard() {
     setSaving(true);
     try {
       // Convert the editor's standard/custom dollars into base + upcharge.
-      const prices: Record<string, { basePrice: number; customUpcharge: number }> =
-        {};
+      const prices: Record<
+        string,
+        { basePrice: number; customUpcharge: number | null }
+      > = {};
       for (const p of state?.products ?? []) {
         const e = priceEdits[p.id];
         if (!e) continue;
         prices[p.id] = {
           basePrice: e.standard,
-          customUpcharge: Math.max(
-            0,
-            Math.round((e.custom - e.standard) * 100) / 100,
-          ),
+          // Empty custom price = custom option disabled.
+          customUpcharge:
+            e.custom == null
+              ? null
+              : Math.max(0, Math.round((e.custom - e.standard) * 100) / 100),
         };
       }
       await fetch("/api/admin/state", {
@@ -570,13 +578,22 @@ export function AdminDashboard() {
             {state.products.map((p) => {
               const e = priceEdits[p.id] ?? {
                 standard: p.basePrice,
-                custom: p.basePrice + p.customUpcharge,
+                custom:
+                  p.customUpcharge == null
+                    ? null
+                    : p.basePrice + p.customUpcharge,
               };
+              const effUpcharge =
+                e.custom == null
+                  ? null
+                  : Math.round((e.custom - e.standard) * 100) / 100;
               const edited =
                 e.standard !== p.defaultBasePrice ||
-                Math.round((e.custom - e.standard) * 100) / 100 !==
-                  p.defaultCustomUpcharge;
-              const setField = (field: "standard" | "custom", value: number) =>
+                effUpcharge !== p.defaultCustomUpcharge;
+              const setField = (
+                field: "standard" | "custom",
+                value: number | null,
+              ) =>
                 setPriceEdits((prev) => ({
                   ...prev,
                   [p.id]: { ...e, [field]: value },
@@ -592,13 +609,14 @@ export function AdminDashboard() {
                     </p>
                     <p className="text-xs text-neutral-400">
                       {p.category}
+                      {e.custom == null ? " · not customizable" : ""}
                       {edited ? " · edited" : ""}
                     </p>
                   </div>
                   {(["standard", "custom"] as const).map((field) => (
                     <label key={field} className="block">
                       <span className="mb-1 block text-xs text-neutral-400 sm:hidden">
-                        {field === "standard" ? "Standard" : "Custom"}
+                        {field === "standard" ? "Standard" : "Custom (blank = off)"}
                       </span>
                       <div className="flex items-center rounded-md border border-neutral-300 pl-2 focus-within:border-neutral-500 focus-within:ring-2 focus-within:ring-neutral-200">
                         <span className="text-xs text-neutral-400">$</span>
@@ -606,13 +624,16 @@ export function AdminDashboard() {
                           type="number"
                           min={0}
                           step="0.01"
-                          value={e[field]}
-                          onChange={(ev) =>
-                            setField(
-                              field,
-                              Math.max(0, Number(ev.target.value) || 0),
-                            )
-                          }
+                          value={e[field] ?? ""}
+                          placeholder={field === "custom" ? "Off" : undefined}
+                          onChange={(ev) => {
+                            const raw = ev.target.value;
+                            if (field === "custom" && raw === "") {
+                              setField("custom", null);
+                            } else {
+                              setField(field, Math.max(0, Number(raw) || 0));
+                            }
+                          }}
                           className="w-full rounded-md bg-transparent px-1.5 py-2 text-right text-sm font-semibold text-neutral-900 focus:outline-none"
                         />
                       </div>
@@ -624,9 +645,10 @@ export function AdminDashboard() {
           </div>
           <p className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-400">
             &ldquo;Standard&rdquo; is the base price; &ldquo;Custom&rdquo; is the
-            price with the customer&apos;s own branding. The &ldquo;we design
-            it&rdquo; fee is added on top of custom automatically. Changes go
-            live on Save.
+            price with the customer&apos;s own branding. Leave a product&apos;s
+            Custom price blank to remove the custom option entirely (it sells as
+            standard only). The &ldquo;we design it&rdquo; fee is added on top of
+            custom automatically. Changes go live on Save.
           </p>
         </div>
       )}
