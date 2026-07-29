@@ -11,14 +11,17 @@ import { site } from "@/lib/site";
  * Pre-order information modal for the homepage. Appears once the visitor has
  * scrolled a little (so it reads as contextual, not an instant interruption),
  * dims + lightly blurs the page behind it, and stays dismissed after closing.
- * Only shows while the pre-order window is actually open (StoreStatus).
+ *
+ * Shows whenever AT LEAST ONE product is on pre-order — pre-order is set per
+ * product now, so the global flag alone isn't the right signal.
  */
 const DISMISS_KEY = "taplink-preorder-info-dismissed";
 /** Show after this much of the viewport has been scrolled past. */
 const SCROLL_TRIGGER_PX = 500;
 
 export function PreorderPopup() {
-  const { preorder, loaded } = useStoreStatus();
+  const { productPreorder, loaded } = useStoreStatus();
+  const preorder = Object.values(productPreorder).some(Boolean);
   // Assume dismissed until storage is read, so nothing flashes on load.
   const [dismissed, setDismissed] = useState(true);
   const [open, setOpen] = useState(false);
@@ -74,6 +77,10 @@ export function PreorderPopup() {
   if (!loaded || !preorder || dismissed) return null;
 
   const pct = Math.round(discountRate(true) * 100);
+  // Keep the wording honest: only say "whole cart" when every product is on
+  // pre-order, otherwise say it applies to the pre-order items.
+  const ids = Object.keys(productPreorder);
+  const allOnPreorder = ids.length > 0 && ids.every((id) => productPreorder[id]);
 
   return (
     <div
@@ -115,10 +122,12 @@ export function PreorderPopup() {
           id="preorder-modal-title"
           className="mt-2 font-display text-3xl font-extrabold text-neutral-900"
         >
-          {pct}% off your whole cart
+          {pct}% off {allOnPreorder ? "your whole cart" : "pre-order cards"}
         </h2>
         <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-neutral-600">
-          The discount is applied automatically at checkout — no code needed.{" "}
+          {allOnPreorder
+            ? "The discount is applied automatically at checkout — no code needed."
+            : "Cards marked “Pre-order” are discounted automatically at checkout — no code needed."}{" "}
           {site.preorder.shipNote}. Ships across Canada &amp; the US.
         </p>
 
