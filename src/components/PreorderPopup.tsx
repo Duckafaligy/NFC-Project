@@ -16,8 +16,11 @@ import { site } from "@/lib/site";
  * product now, so the global flag alone isn't the right signal.
  */
 const DISMISS_KEY = "taplink-preorder-info-dismissed";
-/** Show after this much of the viewport has been scrolled past. */
-const SCROLL_TRIGGER_PX = 500;
+/**
+ * Wait until the visitor is past the scroll-scrubbed hero (a ~3.2-3.6x
+ * viewport track) so the modal never interrupts that animation mid-play.
+ */
+const HERO_VIEWPORTS = 3.6;
 
 export function PreorderPopup() {
   const { productPreorder, loaded } = useStoreStatus();
@@ -49,7 +52,7 @@ export function PreorderPopup() {
   useEffect(() => {
     if (!loaded || !preorder || dismissed) return;
     function onScroll() {
-      if (window.scrollY > SCROLL_TRIGGER_PX) {
+      if (window.scrollY > window.innerHeight * HERO_VIEWPORTS) {
         setOpen(true);
         window.removeEventListener("scroll", onScroll);
       }
@@ -94,37 +97,38 @@ export function PreorderPopup() {
       {/* Backdrop: subtle dim + light blur so the page stays visible behind. */}
       <div
         onClick={close}
-        className="absolute inset-0 bg-neutral-900/25 backdrop-blur-[3px]"
+        className="absolute inset-0 bg-neutral-950/45 backdrop-blur-[4px]"
         aria-hidden
       />
 
+      {/* Dark surface to match the homepage this appears on. */}
       <div
-        className={`card relative w-full max-w-md p-7 text-center shadow-lift transition-all duration-300 sm:p-9 ${
+        className={`relative w-full max-w-md rounded-2xl border border-white/10 bg-neutral-900 p-7 text-center shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] transition-all duration-300 sm:p-9 ${
           open ? "translate-y-0 scale-100" : "translate-y-3 scale-[0.98]"
         }`}
       >
         <button
           onClick={close}
           aria-label="Close"
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
         >
-          <X className="h-4.5 w-4.5" />
+          <X className="h-[1.15rem] w-[1.15rem]" />
         </button>
 
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-md bg-violet-600 text-white">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-[#2E7DFF] text-white">
           <BadgePercent className="h-7 w-7" />
         </span>
 
-        <p className="mt-5 text-xs font-bold uppercase tracking-wider text-violet-600">
+        <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[#7FB0FF]">
           Pre-order is open
         </p>
         <h2
           id="preorder-modal-title"
-          className="mt-2 font-display text-3xl font-extrabold text-neutral-900"
+          className="mt-2 font-display text-3xl font-extrabold text-white"
         >
           {pct}% off {allOnPreorder ? "your whole cart" : "pre-order cards"}
         </h2>
-        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-neutral-600">
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-neutral-400">
           {allOnPreorder
             ? "The discount is applied automatically at checkout — no code needed."
             : "Cards marked “Pre-order” are discounted automatically at checkout — no code needed."}{" "}
@@ -135,13 +139,13 @@ export function PreorderPopup() {
           <Link
             href="/products"
             onClick={close}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-neutral-900 px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-neutral-700"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-white px-6 py-3.5 text-base font-bold text-neutral-950 transition-transform hover:scale-[1.02]"
           >
             Shop the pre-order <ArrowRight className="h-5 w-5" />
           </Link>
           <button
             onClick={close}
-            className="w-full py-2 text-sm font-semibold text-neutral-500 transition-colors hover:text-neutral-900"
+            className="w-full py-2 text-sm font-semibold text-neutral-500 transition-colors hover:text-white"
           >
             Keep browsing
           </button>

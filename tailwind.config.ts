@@ -34,10 +34,16 @@ const config: Config = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        // Progress rail fill for the interactive "How it works" steps.
+        grow: {
+          "0%": { width: "0%" },
+          "100%": { width: "100%" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
         marquee: "marquee 36s linear infinite",
+        grow: "grow 3.6s linear forwards",
       },
     },
   },
