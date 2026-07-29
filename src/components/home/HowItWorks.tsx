@@ -8,8 +8,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Three-step explainer that plays itself: the active step advances on a timer
- * and can be driven manually by clicking a step. Each step gets its own
- * looping visual rather than a static icon on its own.
+ * and can be driven manually by clicking a step. The timer progress shows as a
+ * left-edge accent bar that fills top-to-bottom — clear of the card's own
+ * border, so it stays readable (a hairline rail on the border did not).
  */
 const STEPS = [
   {
@@ -24,12 +25,12 @@ const STEPS = [
   },
   {
     icon: Zap,
-    title: "Your profile opens",
-    body: "Your review page, socials, menu or contact card opens right there — ready to follow, save or post.",
+    title: "Your review page opens",
+    body: "Your Google review page or Instagram profile opens right there — ready to post or follow before they walk away.",
   },
 ];
 
-const STEP_MS = 3600;
+const STEP_MS = 4200;
 
 export function HowItWorks() {
   const [active, setActive] = useState(0);
@@ -50,7 +51,7 @@ export function HowItWorks() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
           How it works
         </p>
-        <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl text-balance">
+        <h2 className="mt-3 max-w-2xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
           Three seconds, start to finish
         </h2>
       </Reveal>
@@ -70,12 +71,24 @@ export function HowItWorks() {
                   onClick={() => setActive(i)}
                   aria-pressed={on}
                   className={cn(
-                    "group relative w-full overflow-hidden rounded-xl border p-5 text-left transition-all duration-300 sm:p-6",
+                    "group relative w-full overflow-hidden rounded-xl border pl-6 pr-5 py-5 text-left transition-all duration-300 sm:pl-7 sm:pr-6 sm:py-6",
                     on
-                      ? "border-[#2E7DFF]/40 bg-[#2E7DFF]/[0.06]"
+                      ? "border-[#2E7DFF]/40 bg-[#2E7DFF]/[0.05] shadow-soft"
                       : "border-neutral-200 bg-white hover:border-neutral-300",
                   )}
                 >
+                  {/* Timer progress: a left accent bar that fills downward. */}
+                  <span className="absolute inset-y-0 left-0 w-[3px] overflow-hidden rounded-l-xl bg-neutral-200">
+                    <span
+                      key={`${i}-${active}-${paused}`}
+                      className={cn(
+                        "block w-full bg-[#2E7DFF]",
+                        on && !paused && "animate-[growY_4.2s_linear_forwards]",
+                      )}
+                      style={{ height: on && paused ? "100%" : on ? undefined : "0%" }}
+                    />
+                  </span>
+
                   <div className="flex items-start gap-4">
                     <span
                       className={cn(
@@ -92,7 +105,7 @@ export function HowItWorks() {
                         <span
                           className={cn(
                             "font-mono text-xs font-bold transition-colors",
-                            on ? "text-[#2E7DFF]" : "text-neutral-600",
+                            on ? "text-[#2E7DFF]" : "text-neutral-400",
                           )}
                         >
                           0{i + 1}
@@ -111,18 +124,6 @@ export function HowItWorks() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Progress rail for the active step */}
-                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-neutral-100">
-                    <span
-                      key={`${i}-${active}-${paused}`}
-                      className={cn(
-                        "block h-full bg-[#2E7DFF]",
-                        on && !paused ? "animate-[grow_3.6s_linear_forwards]" : "",
-                      )}
-                      style={{ width: on && paused ? "100%" : undefined }}
-                    />
-                  </span>
                 </button>
               </Reveal>
             );
@@ -131,7 +132,7 @@ export function HowItWorks() {
 
         {/* Visual */}
         <Reveal className="order-1 lg:order-2" delay={0.1}>
-          <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+          <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-900">
             <Image
               src="/images/hero/tap-phone.webp"
               alt="A phone being tapped with an NFC card, blue contactless waves radiating from the tap point"
@@ -140,20 +141,20 @@ export function HowItWorks() {
               sizes="(max-width: 1024px) 100vw, 600px"
               className="h-full w-full object-cover"
             />
-            {/* Step-synced caption */}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-transparent p-5 sm:p-6">
+            {/* Step-synced caption sits over the dark photo, so it stays light. */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-5 sm:p-6">
               <div className="flex items-center gap-2">
                 {STEPS.map((_, i) => (
                   <span
                     key={i}
                     className={cn(
                       "h-1 rounded-full transition-all duration-500",
-                      i === active ? "w-8 bg-[#2E7DFF]" : "w-4 bg-neutral-300",
+                      i === active ? "w-8 bg-[#2E7DFF]" : "w-4 bg-white/40",
                     )}
                   />
                 ))}
               </div>
-              <p className="mt-3 font-display text-lg font-bold text-neutral-900">
+              <p className="mt-3 font-display text-lg font-bold text-white">
                 {STEPS[active].title}
               </p>
             </div>

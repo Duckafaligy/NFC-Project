@@ -8,13 +8,8 @@ import { useCart } from "@/context/CartContext";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/products", label: "Products" },
-];
-
-/** Homepage nav: just the store. */
-const homeLinks = [{ href: "/products", label: "Products" }];
+/** One nav item everywhere: the store. */
+const links = [{ href: "/products", label: "Products" }];
 
 export function Navbar() {
   const pathname = usePathname();
@@ -34,7 +29,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [homePage]);
 
-  const navLinks = homePage ? homeLinks : links;
 
   return (
     <header
@@ -67,7 +61,7 @@ export function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
-          {navLinks.map((l) => {
+          {links.map((l) => {
             const active = !homePage && pathname === l.href;
             return (
               <Link
@@ -93,7 +87,7 @@ export function Navbar() {
               href="/products"
               className="hidden rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-neutral-700 sm:block"
             >
-              Design Yours
+              Check it out
             </Link>
           )}
           <button
@@ -128,7 +122,7 @@ export function Navbar() {
             "border-t border-neutral-200 bg-white px-4 py-3 md:hidden",
           )}
         >
-          {navLinks.map((l) => (
+          {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -146,7 +140,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className="mt-2 block rounded-md bg-neutral-900 px-4 py-3 text-center text-sm font-bold text-white"
             >
-              Design Yours
+              Check it out
             </Link>
           )}
         </div>

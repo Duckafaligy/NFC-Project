@@ -12,6 +12,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
  * face-on, then tilts in to "tap" the phone, which fades up to meet it. It's
  * a short film you scrub by scrolling rather than an autoplaying loop.
  *
+ * Deliberately headline-only: no body copy competing with the animation.
  * Respects prefers-reduced-motion by holding a clean static composition.
  */
 export function HeroScrub() {
@@ -41,10 +42,10 @@ export function HeroScrub() {
   const glowOpacity = useTransform(scrollYProgress, [0.68, 0.9, 1], [0, 0.85, 0.6]);
   const glowScale = useTransform(scrollYProgress, [0.68, 1], [0.5, 1.25]);
 
-  // --- copy: headline holds, then hands off to the payoff line
+  // --- headline hands off to the payoff line
   const copyOneOpacity = useTransform(scrollYProgress, [0, 0.34, 0.46], [1, 1, 0]);
   const copyOneY = useTransform(scrollYProgress, [0, 0.46], [0, -40]);
-  const copyTwoOpacity = useTransform(scrollYProgress, [0.52, 0.68, 0.95, 1], [0, 1, 1, 1]);
+  const copyTwoOpacity = useTransform(scrollYProgress, [0.52, 0.68], [0, 1]);
   const copyTwoY = useTransform(scrollYProgress, [0.52, 0.68], [40, 0]);
   const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
 
@@ -77,79 +78,60 @@ export function HeroScrub() {
         />
 
         <div className="relative mx-auto grid w-full max-w-7xl gap-4 px-4 sm:gap-8 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8">
-          {/* ---------- Copy ---------- */}
+          {/* ---------- Copy: headline only ---------- */}
           <div className="relative z-10 flex flex-col justify-center">
-            {/* The two copy frames occupy the same grid cell and crossfade. */}
-            <div className="grid min-h-[15rem] grid-cols-1 grid-rows-1 sm:min-h-[20rem] lg:min-h-[24rem]">
-            <motion.div
-              style={reduce ? undefined : { opacity: copyOneOpacity, y: copyOneY }}
-              className="col-start-1 row-start-1 self-center"
-            >
-              <span className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9] shadow-soft">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2E7DFF] opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2E7DFF]" />
+            <div className="grid min-h-[11rem] grid-cols-1 grid-rows-1 sm:min-h-[15rem] lg:min-h-[18rem]">
+              <motion.div
+                style={reduce ? undefined : { opacity: copyOneOpacity, y: copyOneY }}
+                className="col-start-1 row-start-1 self-center"
+              >
+                <span className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9] shadow-soft">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2E7DFF] opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2E7DFF]" />
+                  </span>
+                  Tap-to-review NFC cards
                 </span>
-                Personalized NFC cards
-              </span>
-              <h1 className="mt-4 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight text-neutral-900 sm:mt-5 sm:text-6xl lg:text-7xl">
-                One tap.
-                <br />
-                <span className="bg-gradient-to-r from-neutral-900 via-[#2E7DFF] to-[#7FB0FF] bg-clip-text text-transparent">
-                  Everything shared.
+                <h1 className="mt-4 font-display text-[2.4rem] font-extrabold leading-[1.03] tracking-tight text-neutral-900 sm:mt-6 sm:text-6xl lg:text-7xl">
+                  One tap.
+                  <br />
+                  <span className="bg-gradient-to-r from-neutral-900 via-[#2E7DFF] to-[#7FB0FF] bg-clip-text text-transparent">
+                    More reviews.
+                  </span>
+                </h1>
+              </motion.div>
+
+              <motion.div
+                style={
+                  reduce ? { opacity: 0 } : { opacity: copyTwoOpacity, y: copyTwoY }
+                }
+                className="col-start-1 row-start-1 self-center"
+              >
+                <span className="inline-flex items-center gap-2 rounded-md border border-[#2E7DFF]/30 bg-[#2E7DFF]/[0.08] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
+                  Instant, every time
                 </span>
-              </h1>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-600 sm:mt-5 sm:text-lg">
-                A premium card designed around your name, your brand, your
-                links. Tap it to any phone and your profile opens instantly —
-                no app, no typing, nothing to hand back.
-              </p>
-            </motion.div>
-
-            <motion.div
-              style={reduce ? { opacity: 0 } : { opacity: copyTwoOpacity, y: copyTwoY }}
-              className="col-start-1 row-start-1 self-center"
-            >
-              <span className="inline-flex items-center gap-2 rounded-md border border-[#2E7DFF]/30 bg-[#2E7DFF]/[0.08] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
-                Instant, every time
-              </span>
-              <h2 className="mt-4 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight text-neutral-900 sm:mt-5 sm:text-5xl lg:text-6xl">
-                They tap.
-                <br />
-                <span className="text-[#2E7DFF]">You&apos;re already saved.</span>
-              </h2>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-600 sm:mt-5 sm:text-lg">
-                Reviews, socials, menu, contact details — whatever you point it
-                at opens the moment the card touches their phone. Change the
-                destination anytime; the card never needs reprinting.
-              </p>
-            </motion.div>
-
+                <h2 className="mt-4 font-display text-[2.4rem] font-extrabold leading-[1.03] tracking-tight text-neutral-900 sm:mt-6 sm:text-6xl lg:text-7xl">
+                  They tap.
+                  <br />
+                  <span className="text-[#2E7DFF]">You&apos;re on their screen.</span>
+                </h2>
+              </motion.div>
             </div>
 
-            <div className="relative z-10 mt-5 flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <div className="relative z-10 mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href="/products"
-                className="group inline-flex items-center gap-2 rounded-md bg-neutral-900 px-6 py-3.5 text-sm font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.99] sm:px-7 sm:py-4 sm:text-base"
+                className="group inline-flex items-center gap-2 rounded-md bg-neutral-900 px-7 py-4 text-base font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.99]"
               >
-                Design Your Card
+                Check it out
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                href="#how-it-works"
-                className="inline-flex items-center gap-2 rounded-md border border-neutral-300 px-6 py-3.5 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 sm:px-7 sm:py-4 sm:text-base"
-              >
-                See how it works
               </Link>
             </div>
           </div>
 
           {/* ---------- Stage ---------- */}
-          <div className="relative flex h-[15rem] items-center justify-center sm:h-[24rem] lg:h-[34rem]">
-            <div
-              className="relative h-full w-full"
-              style={{ perspective: "1400px" }}
-            >
+          <div className="relative flex h-[17rem] items-center justify-center sm:h-[24rem] lg:h-[34rem]">
+            <div className="relative h-full w-full" style={{ perspective: "1400px" }}>
               {/* Phone */}
               <motion.div
                 style={
@@ -210,21 +192,17 @@ export function HeroScrub() {
                 }
                 className="absolute inset-0 flex items-center justify-center [transform-style:preserve-3d]"
               >
-                {/* The product shot lives in a floating glass tile, so the
-                    studio plate reads as a deliberate surface rather than a
-                    stray square as the stage rotates. */}
-                {/* Bounded by the stage height so it never overflows on
-                    short mobile viewports. */}
-                <div className="relative aspect-square h-[92%] max-h-[28rem] w-auto max-w-[92%] overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] ring-1 ring-inset ring-white/[0.06] sm:rounded-[2rem]">
+                {/* The product shot lives in a floating tile, so the studio
+                    plate reads as a deliberate surface as the stage rotates. */}
+                <div className="relative aspect-square h-[92%] max-h-[28rem] w-auto max-w-[92%] overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.45)] ring-1 ring-inset ring-white/[0.06] sm:rounded-[2rem]">
                   <Image
                     src="/images/hero/card-hero.webp"
-                    alt="Premium matte black NFC card with an embossed five-star review motif"
+                    alt="Premium matte black NFC review card"
                     fill
                     priority
                     sizes="(max-width: 1024px) 90vw, 448px"
                     className="object-cover"
                   />
-                  {/* Glass sheen */}
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-white/[0.07] via-transparent to-transparent"

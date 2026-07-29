@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Check, Minus, Star } from "lucide-react";
+import { ArrowRight, Check, Clock, Minus, Star, X } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { ProductVisual } from "@/components/ProductVisual";
 import { useStoreStatus } from "@/context/StoreStatus";
@@ -11,34 +11,39 @@ import { formatPrice, cn } from "@/lib/utils";
 import { site } from "@/lib/site";
 
 /* ------------------------------------------------------------------ */
-/* Comparison strip                                                    */
+/* Comparison                                                          */
 /* ------------------------------------------------------------------ */
 
-const ROWS: { label: string; generic: string | false; ours: string }[] = [
+const ROWS: { label: string; detail: string; generic: string | false; ours: string }[] = [
   {
-    label: "Programmed to your link",
+    label: "Arrives programmed",
+    detail: "Your link is written to the chip before it ships",
     generic: false,
-    ours: "Ready the moment you unbox it",
+    ours: "Works out of the box",
   },
   {
-    label: "Purpose-built review design",
+    label: "The ask is printed on it",
+    detail: "Customers know what to do without being told",
     generic: "Blank card",
-    ours: "The ask is printed on it",
+    ours: "Review prompt + stars",
   },
   {
-    label: "Double-sided colour",
+    label: "Two colours in one card",
+    detail: "White on one face, black on the other",
     generic: "One side only",
-    ours: "White and black in one card",
+    ours: "Flip to match your counter",
   },
   {
-    label: "Change the destination later",
+    label: "Change where it points",
+    detail: "New review link, new profile, same card",
     generic: false,
     ours: "Any time, no reprint",
   },
   {
     label: "Support after you buy",
+    detail: "If it stops scanning we make it right",
     generic: "None",
-    ours: `${site.guaranteeDays} days of free maintenance`,
+    ours: `${site.guaranteeDays} days free maintenance`,
   },
 ];
 
@@ -46,70 +51,77 @@ export function ComparisonStrip() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
       <Reveal>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
-          The difference
-        </p>
-        <h2 className="mt-3 max-w-2xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
-          Why ours costs more than a blank tag
-        </h2>
-        <p className="mt-4 max-w-xl text-base text-neutral-600">
-          You can buy an unbranded NFC card anywhere. What you can&apos;t buy is
-          one that already asks for the review, arrives programmed to your link,
-          and is backed by someone who fixes it if it breaks.
-        </p>
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
+            The difference
+          </p>
+          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+            Why ours costs more than a blank tag
+          </h2>
+          <p className="mt-4 text-base text-neutral-600">
+            Anyone can sell you an unbranded chip. Here&apos;s what you get
+            instead.
+          </p>
+        </div>
       </Reveal>
 
       <Reveal delay={0.1}>
-        <div className="mt-10 overflow-hidden rounded-2xl border border-neutral-200">
-          <div className="grid grid-cols-[1.4fr_1fr_1.3fr] gap-px bg-neutral-200 text-sm">
-            <div className="bg-white p-4 sm:p-5" />
-            <div className="bg-white p-4 text-center sm:p-5">
-              <p className="font-bold text-neutral-500">Generic NFC card</p>
-            </div>
-            <div className="bg-[#2E7DFF]/[0.07] p-4 text-center sm:p-5">
-              <p className="font-display font-extrabold text-neutral-900">
-                {site.name} card
-              </p>
-            </div>
-
-            {ROWS.map((r) => (
-              <RowCells key={r.label} {...r} />
-            ))}
+        <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-soft">
+          {/* Header */}
+          <div className="grid grid-cols-[1fr_5.5rem_7.5rem] items-center gap-3 border-b border-neutral-200 bg-neutral-50 px-5 py-4 sm:grid-cols-[1fr_9rem_11rem] sm:px-7">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+              What you get
+            </span>
+            <span className="text-center text-xs font-bold uppercase tracking-wider text-neutral-400">
+              Generic
+            </span>
+            <span className="rounded-md bg-[#2E7DFF] px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wider text-white">
+              {site.name}
+            </span>
           </div>
+
+          {/* Rows */}
+          <ul className="divide-y divide-neutral-100">
+            {ROWS.map((r) => (
+              <li
+                key={r.label}
+                className="grid grid-cols-[1fr_5.5rem_7.5rem] items-center gap-3 px-5 py-4 transition-colors hover:bg-neutral-50/70 sm:grid-cols-[1fr_9rem_11rem] sm:px-7 sm:py-5"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-neutral-900">{r.label}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
+                    {r.detail}
+                  </p>
+                </div>
+
+                <div className="flex justify-center">
+                  {r.generic === false ? (
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
+                      <X className="h-4 w-4" strokeWidth={2.5} />
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-center text-xs font-semibold text-neutral-400">
+                      <Minus className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span className="hidden sm:inline">{r.generic}</span>
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2E7DFF]/[0.07] px-2 py-2">
+                  <Check
+                    className="h-4 w-4 flex-shrink-0 text-[#2E7DFF]"
+                    strokeWidth={3}
+                  />
+                  <span className="text-center text-[11px] font-bold leading-tight text-neutral-900 sm:text-xs">
+                    {r.ours}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </Reveal>
     </section>
-  );
-}
-
-function RowCells({
-  label,
-  generic,
-  ours,
-}: {
-  label: string;
-  generic: string | false;
-  ours: string;
-}) {
-  return (
-    <>
-      <div className="bg-white p-4 font-medium text-neutral-700 sm:p-5">
-        {label}
-      </div>
-      <div className="flex items-center justify-center bg-white p-4 text-center sm:p-5">
-        {generic === false ? (
-          <span className="inline-flex items-center gap-1.5 text-neutral-400">
-            <Minus className="h-4 w-4" /> No
-          </span>
-        ) : (
-          <span className="text-neutral-500">{generic}</span>
-        )}
-      </div>
-      <div className="flex items-center justify-center gap-2 bg-[#2E7DFF]/[0.07] p-4 text-center sm:p-5">
-        <Check className="h-4 w-4 flex-shrink-0 text-[#2E7DFF]" strokeWidth={3} />
-        <span className="font-semibold text-neutral-900">{ours}</span>
-      </div>
-    </>
   );
 }
 
@@ -120,7 +132,6 @@ function RowCells({
 export function PricingTiers() {
   const { prices, productPreorder } = useStoreStatus();
   const pct = Math.round(discountRate(true) * 100);
-  const anyPreorder = Object.values(productPreorder).some(Boolean);
 
   return (
     <section
@@ -129,21 +140,21 @@ export function PricingTiers() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="text-center">
+          <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
               Pricing
             </p>
-            <h2 className="mx-auto mt-3 max-w-2xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+            <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
               Buy it once. Own it forever.
             </h2>
-            <p className="mx-auto mt-4 max-w-lg text-base text-neutral-600">
-              No subscription, no per-tap fee. Prices in {site.currency.code}.
-              {anyPreorder ? ` Pre-order takes ${pct}% off at checkout.` : ""}
+            <p className="mt-4 text-base text-neutral-600">
+              No subscription and no per-tap fee. All prices in{" "}
+              {site.currency.code}.
             </p>
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
           {products.map((p, i) => {
             const base = prices[p.id]?.basePrice ?? p.basePrice;
             const onPreorder = productPreorder[p.id] ?? false;
@@ -153,19 +164,28 @@ export function PricingTiers() {
               <Reveal key={p.id} delay={i * 0.08}>
                 <div
                   className={cn(
-                    "relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white p-7 sm:p-8",
+                    "relative flex h-full flex-col rounded-2xl border bg-white p-6 sm:p-7",
                     featured
                       ? "border-[#2E7DFF]/50 shadow-lift"
                       : "border-neutral-200 shadow-soft",
                   )}
                 >
-                  {featured && (
-                    <span className="absolute left-5 top-5 z-10 rounded-md bg-[#2E7DFF] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-soft">
-                      Best seller
-                    </span>
-                  )}
+                  {/* Badges live in their own row, so nothing overlaps or clips. */}
+                  <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
+                    {featured && (
+                      <span className="rounded-md bg-[#2E7DFF] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
+                        Best seller
+                      </span>
+                    )}
+                    {onPreorder && (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-violet-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-violet-700">
+                        <Clock className="h-3 w-3" />
+                        Pre-order · {pct}% off
+                      </span>
+                    )}
+                  </div>
 
-                  <div className="mx-auto w-full max-w-[13rem]">
+                  <div className="mx-auto mt-3 w-full max-w-[12rem]">
                     <ProductVisual
                       visual={p.visual}
                       name={p.name}
@@ -176,27 +196,33 @@ export function PricingTiers() {
                   <h3 className="mt-5 font-display text-xl font-extrabold text-neutral-900">
                     {p.name}
                   </h3>
-                  <p className="mt-1 text-sm text-neutral-500">{p.tagline}</p>
-
-                  <div className="mt-5 flex items-baseline gap-2">
-                    <span className="font-display text-4xl font-extrabold text-neutral-900">
-                      {formatPrice(pay)}
-                    </span>
-                    {onPreorder && (
-                      <span className="text-base text-neutral-400 line-through">
-                        {formatPrice(base)}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-neutral-400">
-                    each · {p.formFactor}
+                  <p className="mt-1 text-sm leading-relaxed text-neutral-500">
+                    {p.tagline}
                   </p>
+
+                  {/* Price: stacked so a long compare-at never gets clipped. */}
+                  <div className="mt-5">
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <span className="font-display text-[2.5rem] font-extrabold leading-none tracking-tight text-neutral-900">
+                        {formatPrice(pay)}
+                      </span>
+                      {onPreorder && (
+                        <span className="text-lg font-semibold text-neutral-400 line-through">
+                          {formatPrice(base)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                      each · {p.formFactor}
+                      {onPreorder ? " · pre-order price" : ""}
+                    </p>
+                  </div>
 
                   <ul className="mt-6 flex-1 space-y-2.5 border-t border-neutral-200 pt-6">
                     {p.features.slice(0, 4).map((f) => (
                       <li
                         key={f}
-                        className="flex items-start gap-2.5 text-sm text-neutral-600"
+                        className="flex items-start gap-2.5 text-sm leading-relaxed text-neutral-600"
                       >
                         <Check
                           className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#2E7DFF]"
@@ -216,7 +242,7 @@ export function PricingTiers() {
                         : "border border-neutral-300 text-neutral-900 hover:border-neutral-500",
                     )}
                   >
-                    Design Your Card
+                    Check it out
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </div>
@@ -226,15 +252,15 @@ export function PricingTiers() {
         </div>
 
         <Reveal delay={0.24}>
-          <p className="mt-8 text-center text-sm text-neutral-500">
-            Ordering for several locations?{" "}
+          <p className="mt-10 text-center text-sm text-neutral-500">
+            Kitting out several locations?{" "}
             <a
               href={`mailto:${site.email}?subject=Bulk%20order%20enquiry`}
-              className="font-semibold text-neutral-900 underline"
+              className="font-semibold text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900"
             >
-              Talk to us about bulk
+              Ask about bulk
             </a>{" "}
-            — shipping drops per card as the quantity climbs.
+            — shipping per card drops as the quantity climbs.
           </p>
         </Reveal>
       </div>
@@ -249,20 +275,17 @@ export function PricingTiers() {
 const QUOTES = [
   {
     quote:
-      "We went from asking for reviews and being ignored to 40-odd new ones in two months. The card sits by the till and people just tap it.",
-    name: "Sample business",
-    role: "Barbershop, 2 chairs",
+      "The card sits by the till and people just tap it. We went from being ignored when we asked to a steady trickle of new reviews every week.",
+    role: "Barbershop · 2 chairs",
   },
   {
     quote:
       "I hand it over at the end of every appointment. Clients follow on the spot instead of saying they'll look us up later.",
-    name: "Sample business",
     role: "Lash & brow studio",
   },
   {
     quote:
       "The stand sits beside the card reader and does the asking for us. Nobody on the team has to remember a script.",
-    name: "Sample business",
     role: "Neighbourhood café",
   },
 ];
@@ -274,15 +297,15 @@ export function SocialProof() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
-              As seen tapping in
+              Where it goes
             </p>
             <h2 className="mt-3 max-w-xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
               Counters, chairs and tables
             </h2>
           </div>
           <p className="max-w-xs text-sm text-neutral-500">
-            Illustrative examples of how the cards get used day to day — not
-            real customer testimonials.
+            Illustrative examples of how the cards get used day to day. Real
+            customer reviews will replace these as they come in.
           </p>
         </div>
       </Reveal>
@@ -299,9 +322,16 @@ export function SocialProof() {
               <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-neutral-600">
                 “{q.quote}”
               </blockquote>
-              <figcaption className="mt-5 border-t border-neutral-200 pt-4">
-                <p className="text-sm font-bold text-neutral-900">{q.name}</p>
-                <p className="text-xs text-neutral-500">{q.role}</p>
+              <figcaption className="mt-5 flex items-center gap-3 border-t border-neutral-200 pt-4">
+                <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-bold text-neutral-400">
+                  ?
+                </span>
+                <div>
+                  <p className="text-sm font-bold text-neutral-500">
+                    Unknown user
+                  </p>
+                  <p className="text-xs text-neutral-400">{q.role}</p>
+                </div>
               </figcaption>
             </figure>
           </Reveal>
@@ -319,37 +349,70 @@ export function FinalCTA() {
   return (
     <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
       <Reveal>
-        <div className="relative overflow-hidden rounded-2xl bg-neutral-900 px-6 py-20 text-center sm:px-10">
+        <div className="relative overflow-hidden rounded-3xl bg-neutral-900 px-6 py-16 sm:px-12 sm:py-20">
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[30rem] w-[52rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-[100px]"
+            className="pointer-events-none absolute -right-24 -top-24 h-[28rem] w-[28rem] rounded-full opacity-70 blur-[100px]"
             style={{
               background:
-                "radial-gradient(ellipse, rgba(46,125,255,0.45) 0%, rgba(46,125,255,0) 70%)",
+                "radial-gradient(circle, rgba(46,125,255,0.55) 0%, rgba(46,125,255,0) 70%)",
             }}
           />
-          <div className="relative">
-            <h2 className="mx-auto max-w-2xl text-balance font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl">
-              Put your card on the counter this week
-            </h2>
-            <p className="mx-auto mt-5 max-w-lg text-base text-neutral-300 sm:text-lg">
-              Pick a design, send us your link, and we&apos;ll have it
-              programmed and on its way. Ships across Canada &amp; the US.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/products"
-                className="group inline-flex items-center gap-2 rounded-md bg-white px-8 py-4 text-base font-bold text-neutral-900 transition-transform hover:scale-[1.02] active:scale-[0.99]"
-              >
-                Design Your Card
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                href="/#pricing"
-                className="inline-flex items-center gap-2 rounded-md border border-white/25 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                See pricing
-              </Link>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.15]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)",
+              backgroundSize: "56px 56px",
+              maskImage:
+                "radial-gradient(ellipse at 30% 50%, black 10%, transparent 70%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse at 30% 50%, black 10%, transparent 70%)",
+            }}
+          />
+
+          <div className="relative grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#9CC3FF]">
+                Ready in days, not weeks
+              </span>
+              <h2 className="mt-5 text-balance font-display text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl">
+                Get it on your counter this week
+              </h2>
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-300">
+                Pick a product, send us your review link or profile, and
+                we&apos;ll program it and ship it. Canada in 3–5 business days,
+                the US in 5–10.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center gap-2 rounded-md bg-white px-7 py-4 text-base font-bold text-neutral-900 transition-transform hover:scale-[1.02] active:scale-[0.99]"
+                >
+                  Check it out
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                <span className="text-sm text-neutral-400">
+                  {site.guaranteeDays} days of free maintenance included
+                </span>
+              </div>
+            </div>
+
+            {/* Product line-up, small */}
+            <div className="hidden grid-cols-3 gap-3 lg:grid">
+              {products.map((p) => (
+                <div
+                  key={p.id}
+                  className="rounded-xl border border-white/10 bg-white/[0.04] p-2"
+                >
+                  <ProductVisual
+                    visual={p.visual}
+                    name={p.name}
+                    className="rounded-lg bg-white"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
