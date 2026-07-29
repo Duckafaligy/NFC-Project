@@ -1,24 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BadgePercent, X } from "lucide-react";
 import { useStoreStatus } from "@/context/StoreStatus";
 import { discountRate } from "@/lib/pricing";
+import { site } from "@/lib/site";
 
 /**
- * A small, dismissible information tab on the homepage that surfaces the live
- * pre-order offer (20% off the whole cart). Only appears while the pre-order
- * window is actually open (StoreStatus), slides in after a short delay so it
- * isn't jarring, and stays dismissed once closed.
+ * Pre-order information modal for the homepage. Appears once the visitor has
+ * scrolled a little (so it reads as contextual, not an instant interruption),
+ * dims + lightly blurs the page behind it, and stays dismissed after closing.
+ * Only shows while the pre-order window is actually open (StoreStatus).
  */
 const DISMISS_KEY = "taplink-preorder-info-dismissed";
+/** Show after this much of the viewport has been scrolled past. */
+const SCROLL_TRIGGER_PX = 500;
 
 export function PreorderPopup() {
   const { preorder, loaded } = useStoreStatus();
-  // Assume dismissed until we've read storage, so nothing flashes on load.
+  // Assume dismissed until storage is read, so nothing flashes on load.
   const [dismissed, setDismissed] = useState(true);
-  const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -28,22 +31,45 @@ export function PreorderPopup() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!loaded || !preorder || dismissed) return;
-    const t = setTimeout(() => setShow(true), 1400);
-    return () => clearTimeout(t);
-  }, [loaded, preorder, dismissed]);
-
-  function close() {
-    setShow(false);
+  const close = useCallback(() => {
+    setOpen(false);
     try {
       localStorage.setItem(DISMISS_KEY, "1");
     } catch {
       // ignore
     }
-    // Unmount after the slide-out finishes so it's gone for the rest of the visit.
-    setTimeout(() => setDismissed(true), 500);
-  }
+    // Unmount after the fade-out so it's gone for the rest of the visit.
+    setTimeout(() => setDismissed(true), 250);
+  }, []);
+
+  // Open once the visitor scrolls past the trigger point.
+  useEffect(() => {
+    if (!loaded || !preorder || dismissed) return;
+    function onScroll() {
+      if (window.scrollY > SCROLL_TRIGGER_PX) {
+        setOpen(true);
+        window.removeEventListener("scroll", onScroll);
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // in case the page is already scrolled (e.g. back navigation)
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [loaded, preorder, dismissed]);
+
+  // Escape to close, and lock background scroll while open.
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") close();
+    }
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, close]);
 
   if (!loaded || !preorder || dismissed) return null;
 
@@ -51,42 +77,65 @@ export function PreorderPopup() {
 
   return (
     <div
-      role="status"
-      aria-live="polite"
-      className={`fixed bottom-4 left-4 z-[55] w-[calc(100%-2rem)] max-w-sm transition-all duration-500 ${
-        show
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none translate-y-6 opacity-0"
+      className={`fixed inset-0 z-[80] flex items-center justify-center p-4 transition-opacity duration-300 ${
+        open ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="preorder-modal-title"
     >
-      <div className="card relative border-violet-200 p-4 shadow-lift">
+      {/* Backdrop: subtle dim + light blur so the page stays visible behind. */}
+      <div
+        onClick={close}
+        className="absolute inset-0 bg-neutral-900/25 backdrop-blur-[3px]"
+        aria-hidden
+      />
+
+      <div
+        className={`card relative w-full max-w-md p-7 text-center shadow-lift transition-all duration-300 sm:p-9 ${
+          open ? "translate-y-0 scale-100" : "translate-y-3 scale-[0.98]"
+        }`}
+      >
         <button
           onClick={close}
-          aria-label="Dismiss"
-          className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900"
+          aria-label="Close"
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4.5 w-4.5" />
         </button>
-        <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md bg-violet-600 text-white">
-            <BadgePercent className="h-5 w-5" />
-          </span>
-          <div className="pr-5">
-            <p className="text-sm font-extrabold text-neutral-900">
-              Pre-order is open — {pct}% off
-            </p>
-            <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
-              {pct}% comes off your whole cart at checkout, no code needed. Ships
-              across Canada &amp; the US.
-            </p>
-            <Link
-              href="/products"
-              onClick={close}
-              className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-violet-700 hover:text-violet-900"
-            >
-              Shop the pre-order <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-md bg-violet-600 text-white">
+          <BadgePercent className="h-7 w-7" />
+        </span>
+
+        <p className="mt-5 text-xs font-bold uppercase tracking-wider text-violet-600">
+          Pre-order is open
+        </p>
+        <h2
+          id="preorder-modal-title"
+          className="mt-2 font-display text-3xl font-extrabold text-neutral-900"
+        >
+          {pct}% off your whole cart
+        </h2>
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-neutral-600">
+          The discount is applied automatically at checkout — no code needed.{" "}
+          {site.preorder.shipNote}. Ships across Canada &amp; the US.
+        </p>
+
+        <div className="mt-7 flex flex-col gap-2.5">
+          <Link
+            href="/products"
+            onClick={close}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-neutral-900 px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-neutral-700"
+          >
+            Shop the pre-order <ArrowRight className="h-5 w-5" />
+          </Link>
+          <button
+            onClick={close}
+            className="w-full py-2 text-sm font-semibold text-neutral-500 transition-colors hover:text-neutral-900"
+          >
+            Keep browsing
+          </button>
         </div>
       </div>
     </div>

@@ -44,7 +44,6 @@ interface AdminState {
   orders: OrderRecord[];
   persistentStore: boolean;
   defaultPassword: boolean;
-  alertsConfigured: boolean;
   webhookConfigured: boolean;
   stripeConfigured: boolean;
   stripeLiveMode: boolean;
@@ -400,13 +399,6 @@ export function AdminDashboard() {
                   ? "Settings and orders survive redeploys."
                   : "Not connected — settings reset on redeploy.",
               },
-              {
-                ok: state.alertsConfigured,
-                label: "Low-stock email alert",
-                hint: state.alertsConfigured
-                  ? "Emails you at 10 cards or fewer."
-                  : "Optional — RESEND_API_KEY + LOW_STOCK_ALERT_EMAIL.",
-              },
             ].map((c) => (
               <li
                 key={c.label}
@@ -569,11 +561,8 @@ export function AdminDashboard() {
             Pre-order applies the discount and a &ldquo;Pre-order&rdquo; badge to
             that product only.{" "}
             {state?.webhookConfigured
-              ? "Paid orders subtract from each product automatically; full refunds add back. "
-              : "Connect the Stripe webhook (STRIPE_WEBHOOK_SECRET) so paid orders subtract automatically. "}
-            {state?.alertsConfigured
-              ? "You get a low-stock email per product at 10 or fewer."
-              : "Add RESEND_API_KEY + LOW_STOCK_ALERT_EMAIL for low-stock emails."}
+              ? "Paid orders subtract from each product automatically; full refunds add back."
+              : "Connect the Stripe webhook (STRIPE_WEBHOOK_SECRET) so paid orders subtract automatically."}
           </p>
         </div>
       )}

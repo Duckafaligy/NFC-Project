@@ -65,8 +65,6 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for the `/api/stripe-webhook` endpoint (events: `checkout.session.completed`, `charge.refunded`). Paid orders subtract from the shared pool, full refunds add back, orders get logged for the dashboard. |
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
-| `RESEND_API_KEY` + `LOW_STOCK_ALERT_EMAIL` | Optional | Low-stock alert: emails you (via Resend) when the card pool crosses down through 10. `ALERT_FROM_EMAIL` optionally sets a verified sender. |
-| `ORDER_FROM_EMAIL` | Optional | Verified Resend sender for the branded order-confirmation/invoice email customers get after paying (falls back to `ALERT_FROM_EMAIL`, then Resend's onboarding sender — which can only deliver to your own Resend account email until you verify a domain). |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -85,17 +83,16 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 3. You're redirected to `/checkout/success`, which fetches the order and
    shows an **on-page invoice**: line items, discount, shipping, total, plus
    **View invoice** / **Download PDF** buttons (Stripe-hosted invoice).
-4. If the webhook is connected, stock drops in /admin-dashboard, the order
-   appears under **Recent orders**, and (with `RESEND_API_KEY`) the customer
-   gets the branded invoice email.
+4. If the webhook is connected, stock drops in /admin-dashboard and the order
+   appears under **Recent orders**.
 5. Refund the payment in the Stripe dashboard → stock goes back up and the
    order is flagged **Refunded**.
 
 **Invoices:** every paid order creates a Stripe invoice automatically
-(`invoice_creation` on the Checkout Session). The success page displays it,
-the webhook emails it via Resend, and you can additionally have Stripe email
-its own copy: Stripe Dashboard → **Settings → Emails** → enable "Email
-finalized invoices to customers".
+(`invoice_creation` on the Checkout Session) and the success page displays it
+with **View invoice** / **Download PDF** links. The site sends no email of its
+own — to have Stripe email the invoice, enable Stripe Dashboard → **Settings →
+Emails** → "Email finalized invoices to customers".
 
 **Syncing the catalog into Stripe:** /admin-dashboard has a **Sync products
 to Stripe** button (`/api/admin/stripe-sync`). It creates/updates one Stripe
