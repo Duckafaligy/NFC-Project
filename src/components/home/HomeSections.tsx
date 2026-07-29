@@ -31,7 +31,7 @@ const ROWS: { label: string; detail: string; generic: string | false; ours: stri
     label: "Two colours in one card",
     detail: "White on one face, black on the other",
     generic: "One side only",
-    ours: "Flip to match your counter",
+    ours: "Both, in one card",
   },
   {
     label: "Change where it points",
@@ -43,7 +43,7 @@ const ROWS: { label: string; detail: string; generic: string | false; ours: stri
     label: "Support after you buy",
     detail: "If it stops scanning we make it right",
     generic: "None",
-    ours: `${site.guaranteeDays} days free maintenance`,
+    ours: `${site.guaranteeDays}-day guarantee`,
   },
 ];
 
@@ -66,59 +66,62 @@ export function ComparisonStrip() {
       </Reveal>
 
       <Reveal delay={0.1}>
-        <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-soft">
-          {/* Header */}
-          <div className="grid grid-cols-[1fr_5.5rem_7.5rem] items-center gap-3 border-b border-neutral-200 bg-neutral-50 px-5 py-4 sm:grid-cols-[1fr_9rem_11rem] sm:px-7">
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
-              What you get
-            </span>
-            <span className="text-center text-xs font-bold uppercase tracking-wider text-neutral-400">
-              Generic
-            </span>
-            <span className="rounded-md bg-[#2E7DFF] px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wider text-white">
-              {site.name}
-            </span>
-          </div>
-
-          {/* Rows */}
-          <ul className="divide-y divide-neutral-100">
-            {ROWS.map((r) => (
-              <li
-                key={r.label}
-                className="grid grid-cols-[1fr_5.5rem_7.5rem] items-center gap-3 px-5 py-4 transition-colors hover:bg-neutral-50/70 sm:grid-cols-[1fr_9rem_11rem] sm:px-7 sm:py-5"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-neutral-900">{r.label}</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
-                    {r.detail}
-                  </p>
-                </div>
-
-                <div className="flex justify-center">
-                  {r.generic === false ? (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
-                      <X className="h-4 w-4" strokeWidth={2.5} />
+        {/* Fully outlined table: a 1px grid drawn with divide-* so every cell
+            reads as a real table cell instead of floating text. */}
+        <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-neutral-300 bg-white shadow-soft">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="divide-x divide-neutral-300 border-b border-neutral-300 bg-neutral-50">
+                <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500 sm:px-6">
+                  What you get
+                </th>
+                <th className="w-[6rem] px-2 py-4 text-center text-xs font-bold uppercase tracking-wider text-neutral-500 sm:w-[9rem] sm:px-4">
+                  Generic
+                </th>
+                <th className="w-[8rem] bg-[#2E7DFF]/[0.06] px-2 py-4 text-center text-xs font-bold uppercase tracking-wider text-[#1B5FD9] sm:w-[13rem] sm:px-4">
+                  {site.name}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-300">
+              {ROWS.map((r) => (
+                <tr
+                  key={r.label}
+                  className="divide-x divide-neutral-300 transition-colors hover:bg-neutral-50/60"
+                >
+                  <td className="px-4 py-4 align-middle sm:px-6">
+                    <p className="text-sm font-bold text-neutral-900">{r.label}</p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
+                      {r.detail}
+                    </p>
+                  </td>
+                  <td className="px-2 py-4 text-center align-middle sm:px-4">
+                    {r.generic === false ? (
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
+                        <X className="h-4 w-4" strokeWidth={2.5} />
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-neutral-400">
+                        <Minus className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span className="hidden sm:inline">{r.generic}</span>
+                      </span>
+                    )}
+                  </td>
+                  <td className="bg-[#2E7DFF]/[0.06] px-2 py-4 align-middle sm:px-4">
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Check
+                        className="h-4 w-4 flex-shrink-0 text-[#2E7DFF]"
+                        strokeWidth={3}
+                      />
+                      <span className="text-center text-[11px] font-bold leading-tight text-neutral-900 sm:text-xs">
+                        {r.ours}
+                      </span>
                     </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-center text-xs font-semibold text-neutral-400">
-                      <Minus className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span className="hidden sm:inline">{r.generic}</span>
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2E7DFF]/[0.07] px-2 py-2">
-                  <Check
-                    className="h-4 w-4 flex-shrink-0 text-[#2E7DFF]"
-                    strokeWidth={3}
-                  />
-                  <span className="text-center text-[11px] font-bold leading-tight text-neutral-900 sm:text-xs">
-                    {r.ours}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </Reveal>
     </section>

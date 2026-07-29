@@ -34,16 +34,6 @@ const config: Config = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
-        // Progress rail fill for the interactive "How it works" steps.
-        grow: {
-          "0%": { width: "0%" },
-          "100%": { width: "100%" },
-        },
-        // Vertical variant, for the left-edge step timer.
-        growY: {
-          "0%": { height: "0%" },
-          "100%": { height: "100%" },
-        },
         // Slide crossfade for the product gallery.
         fadeIn: {
           "0%": { opacity: "0", transform: "translateY(8px)" },
@@ -53,8 +43,6 @@ const config: Config = {
       animation: {
         float: "float 6s ease-in-out infinite",
         marquee: "marquee 36s linear infinite",
-        grow: "grow 3.6s linear forwards",
-        growY: "growY 4.2s linear forwards",
       },
     },
   },

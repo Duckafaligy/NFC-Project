@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useReducedMotion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { ProductVisual } from "@/components/ProductVisual";
+import { useAutoAdvance } from "@/components/home/useAutoAdvance";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +19,8 @@ interface Slide {
   id: string;
   slug: string;
   name: string;
+  /** Short label for the tab rail under the stage. */
+  tab: string;
   badge: string;
   headline: string;
   body: string;
@@ -28,6 +32,7 @@ const SLIDES: Slide[] = [
     id: "review-card",
     slug: "google-review-card",
     name: "Google Review Card",
+    tab: "Google",
     badge: "Double-sided",
     headline: "The review ask, already made",
     body: "Sits flat by the register with the prompt facing the customer. They tap, your Google review page opens, and they post while the receipt prints — no app, no QR code to line up. White on one face and black on the other, so it suits a bright counter or a dark one without ordering twice.",
@@ -42,6 +47,7 @@ const SLIDES: Slide[] = [
     id: "instagram-card",
     slug: "instagram-card",
     name: "Instagram Card",
+    tab: "Instagram",
     badge: "Gradient print",
     headline: "Followers before they leave",
     body: "Nobody searches for a handle they heard once. Hand this over at the end of an appointment and their phone opens your profile with the follow button right there — while you are still standing in front of them. That is the only moment it reliably happens.",
@@ -56,6 +62,7 @@ const SLIDES: Slide[] = [
     id: "acrylic-stand",
     slug: "acrylic-review-stand",
     name: "Acrylic Review Stand",
+    tab: "Acrylic",
     badge: "Cast acrylic",
     headline: "Asks for you when you're slammed",
     body: "A card works when you remember to hand it over. The stand works through a rush. It sits upright beside the terminal with the prompt facing out, so customers read it while their payment processes. Weighted base, wipes clean at close.",
@@ -71,18 +78,22 @@ const SLIDES: Slide[] = [
 const SLIDE_MS = 6000;
 
 export function DesignShowcase() {
-  const [i, setI] = useState(0);
+  const reduced = useReducedMotion();
   const [paused, setPaused] = useState(false);
-  const go = (n: number) => setI((p) => (p + n + SLIDES.length) % SLIDES.length);
+  const {
+    index: i,
+    select,
+    next,
+    prev,
+    bindBar,
+  } = useAutoAdvance({
+    count: SLIDES.length,
+    durationMs: SLIDE_MS,
+    paused,
+    enabled: !reduced,
+  });
   const s = SLIDES[i];
   const product = products.find((p) => p.id === s.id);
-
-  // Auto-advance, pausing on hover/focus so reading is never interrupted.
-  useEffect(() => {
-    if (paused) return;
-    const t = setTimeout(() => setI((p) => (p + 1) % SLIDES.length), SLIDE_MS);
-    return () => clearTimeout(t);
-  }, [i, paused]);
 
   return (
     <section
@@ -133,44 +144,54 @@ export function DesignShowcase() {
                 </div>
               </div>
 
-              {/* Controls */}
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              {/* Controls: one named tab per product, each on its own rail.
+                  Fixed widths, so nothing reflows as the slide changes. */}
+              <div className="mt-5 flex items-end gap-4 sm:gap-6">
+                <div className="flex min-w-0 flex-1 gap-2 sm:gap-4">
                   {SLIDES.map((sl, n) => (
                     <button
                       key={sl.id}
-                      onClick={() => setI(n)}
+                      onClick={() => select(n)}
                       aria-label={`Show ${sl.name}`}
                       aria-current={n === i}
-                      className="group relative h-1.5 overflow-hidden rounded-full bg-neutral-300 transition-all"
-                      style={{ width: n === i ? "2.25rem" : "0.75rem" }}
+                      className="group min-w-0 flex-1 text-left"
                     >
-                      {n === i && (
+                      <span
+                        className={cn(
+                          "block truncate text-[11px] font-bold uppercase tracking-wider transition-colors sm:text-xs",
+                          n === i
+                            ? "text-neutral-900"
+                            : "text-neutral-400 group-hover:text-neutral-600",
+                        )}
+                      >
+                        {sl.tab}
+                      </span>
+                      <span className="mt-2 block h-[3px] w-full overflow-hidden rounded-full bg-neutral-200 transition-colors group-hover:bg-neutral-300">
                         <span
-                          key={`${n}-${paused}`}
-                          className={cn(
-                            "absolute inset-y-0 left-0 bg-[#2E7DFF]",
-                            paused ? "w-full" : "animate-[grow_6s_linear_forwards]",
-                          )}
+                          ref={bindBar(n)}
+                          style={{ transform: "scaleX(0)" }}
+                          className="block h-full w-full origin-left rounded-full bg-[#2E7DFF]"
                         />
-                      )}
+                      </span>
                     </button>
                   ))}
                 </div>
-                <div className="flex gap-2">
+                {/* Arrows are desktop-only — on mobile the tabs are the
+                    control and the row needs the full width. */}
+                <div className="hidden flex-shrink-0 gap-2 sm:flex">
                   <button
-                    onClick={() => go(-1)}
+                    onClick={prev}
                     aria-label="Previous product"
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300 bg-white text-neutral-700 transition-colors hover:border-neutral-500 hover:text-neutral-900"
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-300 bg-white text-neutral-700 transition-colors hover:border-neutral-500 hover:text-neutral-900"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => go(1)}
+                    onClick={next}
                     aria-label="Next product"
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300 bg-white text-neutral-700 transition-colors hover:border-neutral-500 hover:text-neutral-900"
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-300 bg-white text-neutral-700 transition-colors hover:border-neutral-500 hover:text-neutral-900"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>

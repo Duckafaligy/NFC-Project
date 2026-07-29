@@ -81,15 +81,6 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* High-contrast primary CTA (homepage only). */}
-          {homePage && (
-            <Link
-              href="/products"
-              className="hidden rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-neutral-700 sm:block"
-            >
-              Check it out
-            </Link>
-          )}
           <button
             onClick={openDrawer}
             className={cn(
@@ -134,15 +125,6 @@ export function Navbar() {
               {l.label}
             </Link>
           ))}
-          {homePage && (
-            <Link
-              href="/products"
-              onClick={() => setOpen(false)}
-              className="mt-2 block rounded-md bg-neutral-900 px-4 py-3 text-center text-sm font-bold text-white"
-            >
-              Check it out
-            </Link>
-          )}
         </div>
       )}
     </header>
