@@ -13,12 +13,8 @@ const links = [
   { href: "/products", label: "Products" },
 ];
 
-/** Homepage-only nav links (the dark landing page sections). */
-const homeLinks = [
-  { href: "/#how-it-works", label: "How It Works" },
-  { href: "/#designs", label: "Designs" },
-  { href: "/#pricing", label: "Pricing" },
-];
+/** Homepage nav: just the store. */
+const homeLinks = [{ href: "/products", label: "Products" }];
 
 export function Navbar() {
   const pathname = usePathname();

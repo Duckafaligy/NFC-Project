@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
@@ -14,67 +13,31 @@ import { cn } from "@/lib/utils";
  * business ordering it — this shows the range: routing designs (rendered from
  * the real catalog artwork) alongside premium finishes.
  */
-type Slide =
-  | {
-      kind: "visual";
-      visual: VisualKind;
-      color?: string;
-      name: string;
-      finish: string;
-      note: string;
-    }
-  | {
-      kind: "photo";
-      src: string;
-      name: string;
-      finish: string;
-      note: string;
-    };
+interface Slide {
+  visual: VisualKind;
+  name: string;
+  finish: string;
+  note: string;
+}
 
 const SLIDES: Slide[] = [
   {
-    kind: "visual",
     visual: "google",
-    color: "black",
-    name: "Google review",
-    finish: "Matte black",
-    note: "Your review link, your logo, your counter.",
+    name: "Google review card",
+    finish: "Double-sided",
+    note: "White on one face, black on the other — flip it to match your counter. Tap opens your review page.",
   },
   {
-    kind: "visual",
-    visual: "google",
-    color: "white",
-    name: "Google review",
-    finish: "Arctic white",
-    note: "The same card in a lighter colourway.",
-  },
-  {
-    kind: "photo",
-    src: "/images/hero/finish-metal.webp",
-    name: "Signature",
-    finish: "Brushed metal",
-    note: "Anodised steel with a laser-etched name plate.",
-  },
-  {
-    kind: "visual",
     visual: "instagram",
-    name: "Instagram",
+    name: "Instagram card",
     finish: "Gradient print",
-    note: "Your handle, opened with the follow button ready.",
+    note: "Your handle, opened with the follow button ready before they walk away.",
   },
   {
-    kind: "photo",
-    src: "/images/hero/finish-holo.webp",
-    name: "Prism",
-    finish: "Holographic",
-    note: "Iridescent foil that shifts as it catches the light.",
-  },
-  {
-    kind: "visual",
-    visual: "menu",
-    name: "Menu",
-    finish: "Matte black",
-    note: "Table-ready, pointed at your live menu.",
+    visual: "acrylic",
+    name: "Acrylic review stand",
+    finish: "Cast acrylic",
+    note: "Sits upright by the register on a weighted base, so the ask is always visible.",
   },
 ];
 
@@ -98,9 +61,9 @@ export function DesignShowcase() {
               Not a blank card with a chip in it
             </h2>
             <p className="max-w-md text-base leading-relaxed text-neutral-400">
-              Every card is laid out around one business or one person — your
-              name, your colours, your finish. Pick a look, send us your
-              details, and we build the artwork before it prints.
+              Three products, each set up for one business: the review card, the
+              Instagram card, and the acrylic stand. Send us your link and we
+              program it before it ships.
             </p>
           </div>
         </Reveal>
@@ -119,22 +82,11 @@ export function DesignShowcase() {
                   }}
                 />
                 <div className="relative mx-auto aspect-[4/3] w-full max-w-lg">
-                  {s.kind === "visual" ? (
-                    <ProductVisual
-                      visual={s.visual}
-                      color={s.color}
-                      name={`${s.name} card`}
-                      className="h-full w-full rounded-xl bg-transparent"
-                    />
-                  ) : (
-                    <Image
-                      src={s.src}
-                      alt={`${s.finish} NFC card`}
-                      fill
-                      sizes="(max-width: 1024px) 90vw, 520px"
-                      className="object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.6)]"
-                    />
-                  )}
+                  <ProductVisual
+                    visual={s.visual}
+                    name={s.name}
+                    className="h-full w-full rounded-xl bg-transparent"
+                  />
                 </div>
               </div>
 
@@ -186,10 +138,10 @@ export function DesignShowcase() {
 
               <ul className="mt-8 space-y-3 border-t border-white/10 pt-8">
                 {[
-                  "Your logo, name and colours laid out by us",
-                  "Matte, metal and holographic finishes",
-                  "Digital proof to approve before anything prints",
-                  "Re-point the card any time, no reprint",
+                  "Programmed to your link before it ships",
+                  "Cards are double-sided — white and black in one",
+                  "Portrait format, built for a counter",
+                  "Re-point it any time, no reprint",
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm text-neutral-300">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#2E7DFF]" />

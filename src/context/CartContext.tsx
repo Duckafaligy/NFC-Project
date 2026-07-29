@@ -24,8 +24,6 @@ export interface CartItem {
   designType: DesignType;
   /** Only present when designType === "custom". */
   customMethod?: CustomMethod;
-  /** Physical colourway id for cards with variants (e.g. Google "black"/"white"). */
-  color?: string;
   /** Optional note (design brief or filename reference). */
   note?: string;
   unitPrice: number;
@@ -43,10 +41,10 @@ type CartAction =
   | { type: "CLEAR" }
   | { type: "HYDRATE"; items: CartItem[] };
 
-// v3: catalog restructured to five card products (shared stock, new
-// business-card pricing). Bumping the key drops carts saved under the old
-// catalog so removed products and stale prices can't reach checkout.
-const STORAGE_KEY = "taplink-cart-v3";
+// v4: catalog cut to three products (Google review card, Instagram card,
+// acrylic stand) and card colourways removed. Bumping the key drops carts
+// saved under the old catalog so removed products can't reach checkout.
+const STORAGE_KEY = "taplink-cart-v4";
 
 function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -106,9 +104,8 @@ export function buildCartKey(
   slug: string,
   designType: DesignType,
   customMethod?: CustomMethod,
-  color?: string,
 ) {
-  return [slug, designType, customMethod ?? "none", color ?? "default"].join("::");
+  return [slug, designType, customMethod ?? "none"].join("::");
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -163,12 +160,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             ...item,
             key:
               item.key ??
-              buildCartKey(
-                item.slug,
-                item.designType,
-                item.customMethod,
-                item.color,
-              ),
+              buildCartKey(item.slug, item.designType, item.customMethod),
           },
         }),
       removeItem: (key) => dispatch({ type: "REMOVE", key }),

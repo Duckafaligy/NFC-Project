@@ -18,8 +18,9 @@ export default function ProductsPage() {
             Pick the card for your counter
           </h1>
           <p className="mt-4 text-lg text-neutral-600">
-            Pick a clean standard design or add your own branding. Every card is
-            programmed to your link before it ships.
+            Three ways to get the ask in front of a customer. Every one is
+            programmed to your link before it ships — the cards are
+            double-sided, white on one face and black on the other.
           </p>
         </div>
       </Reveal>

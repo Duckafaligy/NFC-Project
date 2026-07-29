@@ -13,17 +13,15 @@ const columns = [
     title: "Shop",
     links: [
       { href: "/products", label: "All products" },
-      { href: "/products/google-review-card", label: "Google review cards" },
-      { href: "/products/instagram-card", label: "Instagram cards" },
-      { href: "/products/menu-card", label: "Menu cards" },
-      { href: "/products/website-card", label: "Website cards" },
+      { href: "/products/google-review-card", label: "Google review card" },
+      { href: "/products/instagram-card", label: "Instagram card" },
+      { href: "/products/acrylic-review-stand", label: "Acrylic review stand" },
     ],
   },
   {
     title: "Company",
     links: [
-      { href: "/#how-it-works", label: "How it works" },
-      { href: "/#pricing", label: "Pricing" },
+      { href: "/products", label: "Products" },
       { href: "/legal/shipping", label: "Shipping" },
       { href: "/legal/returns", label: "Maintenance" },
     ],

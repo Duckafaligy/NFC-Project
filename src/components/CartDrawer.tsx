@@ -87,7 +87,6 @@ export function CartDrawer() {
                       <ProductVisual
                         visual={product?.visual ?? "google"}
                         name={item.name}
-                        color={item.color}
                         className="aspect-square rounded-none"
                       />
                     </div>

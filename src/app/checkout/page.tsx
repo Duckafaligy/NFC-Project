@@ -59,7 +59,6 @@ export default function CheckoutPage() {
             productId: i.productId,
             designType: i.designType,
             customMethod: i.customMethod,
-            color: i.color,
             note: i.note,
             quantity: i.quantity,
           })),
@@ -153,7 +152,6 @@ export default function CheckoutPage() {
                   <ProductVisual
                     visual={product?.visual ?? "google"}
                     name={item.name}
-                    color={item.color}
                     className="aspect-square rounded-md"
                   />
                 </div>
@@ -172,10 +170,6 @@ export default function CheckoutPage() {
                             ? "Custom / your artwork"
                             : "Custom / designed by us"
                           : "Standard design"}
-                        {product?.colors?.find((c) => c.id === item.color)
-                          ?.label
-                          ? ` · ${product.colors.find((c) => c.id === item.color)?.label}`
-                          : ""}
                         {" · "}
                         {formatPrice(discounted)} each
                         {hasDiscount && (

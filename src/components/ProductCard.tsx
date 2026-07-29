@@ -23,11 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
         </span>
       )}
       <div className="p-3 pb-0">
-        <ProductVisual
-          visual={product.visual}
-          name={product.name}
-          color={product.colors?.[0]?.id}
-        />
+        <ProductVisual visual={product.visual} name={product.name} />
       </div>
 
       <div className="flex flex-1 flex-col p-5">

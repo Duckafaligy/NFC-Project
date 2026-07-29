@@ -1,10 +1,10 @@
 /**
  * Product catalog (single source of truth).
  *
- * Every product is the SAME physical NFC card, just programmed (routed)
- * differently: Google reviews, Instagram, menu, or website. Because of that,
- * stock is one shared pool of cards (CARD_STOCK below), not a per-product
- * count.
+ * Three real products: the Google review card, the Instagram card (both
+ * portrait NFC cards, not horizontal business cards), and the acrylic review
+ * stand. The cards are double-sided — white on one face, black on the other —
+ * so there is no colour option to pick; you get both by flipping it.
  *
  * Pricing: cards are $34.99 standard, $42.99 custom, and "we design it" adds
  * the $4.99 design labour fee on top of custom. Prices here are the catalog
@@ -17,26 +17,20 @@
  * /admin-dashboard.
  */
 
-export type ProductCategory = "Google Reviews" | "Instagram" | "Menu" | "Website";
+export type ProductCategory = "Google Reviews" | "Instagram" | "Review Stand";
 
-export type FormFactor = "Card";
+export type FormFactor = "Card" | "Stand";
 
 /**
  * Which SVG artwork ProductVisual renders for a product (see
  * components/ProductVisual). Each product's real card design.
  */
-export type VisualKind = "google" | "instagram" | "menu" | "website";
+export type VisualKind = "google" | "instagram" | "acrylic";
 
-/** A physical colourway a product can be printed in (e.g. Google black/white). */
-export interface CardColor {
-  id: string;
-  label: string;
-  /** Hex used for the picker swatch and to tint the product visual. */
-  swatch: string;
-}
-
-/** Standard price for every card. */
+/** Standard price for the NFC cards. */
 export const STANDARD_PRICE = 34.99;
+/** The acrylic review stand sits above the cards. */
+export const STAND_PRICE = 44.99;
 /** Added when the customer chooses a custom design ($42.99 total). */
 export const CUSTOM_UPCHARGE = 8;
 /**
@@ -46,8 +40,7 @@ export const CUSTOM_UPCHARGE = 8;
 export const DESIGN_LABOUR_FEE = 4.99;
 
 /**
- * Shared stock default: all five products draw from ONE pool because they
- * are the same physical card. The live number is managed from
+ * Default per-product stock. The live number is managed from
  * /admin-dashboard (lib/adminStore) and decremented automatically by the
  * Stripe webhook when an order is paid; this constant is only the fallback
  * before any admin value exists.
@@ -87,13 +80,8 @@ export interface Product {
   box: string[];
   /** Two accent colors (main, secondary) used for the product visual. */
   accent: [string, string];
-  /** Which card artwork ProductVisual renders. */
+  /** Which artwork ProductVisual renders. */
   visual: VisualKind;
-  /**
-   * Optional physical colourways the buyer can pick (e.g. the Google card in
-   * black or white). First entry is the default. Omit for single-colour cards.
-   */
-  colors?: CardColor[];
   popular?: boolean;
 }
 
@@ -128,11 +116,22 @@ export function withPriceOverride(
 }
 
 const CARD_SPECS = [
-  { label: "Material", value: "Matte PVC" },
-  { label: "Size", value: "85.6 × 54 mm (credit card)" },
+  { label: "Material", value: "Matte PVC, double-sided" },
+  { label: "Size", value: "54 × 85.6 mm (portrait card)" },
   { label: "Chip", value: "NTAG215 (504 bytes)" },
   { label: "Tap range", value: "Up to 4 cm" },
 ];
+
+const STAND_SPECS = [
+  { label: "Material", value: "Cast acrylic on a weighted base" },
+  { label: "Size", value: "120 × 140 mm display face" },
+  { label: "Chip", value: "NTAG215 (504 bytes)" },
+  { label: "Tap range", value: "Up to 4 cm" },
+];
+
+/** Every card is white on one face and black on the other — flip to switch. */
+const REVERSIBLE_NOTE =
+  "White on one side, black on the other. Flip it to match your counter — there is no colour to choose, you get both.";
 
 export const products: Product[] = [
   {
@@ -143,9 +142,11 @@ export const products: Product[] = [
     formFactor: "Card",
     tagline: "Turn happy customers into 5-star reviews",
     summary:
-      "Sits by your register. Customers tap their phone and land on your Google review page. No app, no typing.",
+      "A portrait tap card for your counter. Customers tap their phone and land on your Google review page. White one side, black the other.",
     description:
-      "The best moment to ask for a review is right after you hand back the card reader. The customer is happy, their phone is already in their hand, and the memory is fresh. This card makes that ask take one sentence. They tap their phone to it, your Google review page opens, and they post while the receipt prints. We program the card to your exact review link before it ships, so it works the moment you unbox it. More reviews push you up in Google Maps results and win over the customer who is comparing you to the shop down the street.",
+      "The best moment to ask for a review is right after you hand back the card reader. The customer is happy, their phone is already in their hand, and the memory is fresh. This card makes that ask take one sentence. They tap their phone to it, your Google review page opens, and they post while the receipt prints. " +
+      REVERSIBLE_NOTE +
+      " We program the card to your exact review link before it ships, so it works the moment you unbox it.",
     example:
       "A two-chair barbershop keeps one card taped flat next to the card reader. After each cut, one line: “Mind leaving us a quick review? Tap your phone here.” At 15 customers a day, even two yeses a day is around 50 new reviews a month. That moves a 4.2-star page with 30 reviews into a 4.7-star page with hundreds, and that is the difference customers see when they search “barber near me.”",
     basePrice: STANDARD_PRICE,
@@ -154,26 +155,21 @@ export const products: Product[] = [
     customUpcharge: null,
     features: [
       "Instant tap-to-review, no app required",
-      "Choose black or white to match your counter",
+      "Double-sided: white one face, black the other",
       "Works with iPhone and Android",
       "Programmed to your exact Google review link before shipping",
       "Waterproof, scratch-resistant matte PVC",
       "Reprogrammable free if your link ever changes",
-      "Optional QR code printed on the back, free",
     ],
     useCases: ["Restaurants & cafés", "Salons & barbershops", "Contractors", "Retail counters"],
     specs: CARD_SPECS,
     box: [
-      "1 × NFC card, programmed to your Google review link",
+      "1 × portrait NFC card, programmed to your Google review link",
       "Counter-side setup guide with the exact script to use",
       "Adhesive strip for mounting flat on a counter",
     ],
     accent: ["#4285F4", "#FBBF24"],
     visual: "google",
-    colors: [
-      { id: "black", label: "Black", swatch: "#111111" },
-      { id: "white", label: "White", swatch: "#FFFFFF" },
-    ],
     popular: true,
   },
   {
@@ -184,7 +180,7 @@ export const products: Product[] = [
     formFactor: "Card",
     tagline: "Grow your Instagram in one tap",
     summary:
-      "One tap opens your Instagram profile so customers follow you on the spot, not later.",
+      "A portrait tap card in the Instagram gradient. One tap opens your profile so customers follow you on the spot, not later.",
     description:
       "Nobody remembers a handle they heard once, and nobody searches for it when they get home. This card closes that gap. A single tap opens your Instagram profile with the follow button right there. The follow happens while the customer is still standing in front of you, which is the only moment it reliably happens at all. We program the card to your exact profile before it ships, so it works the moment you unbox it.",
     example:
@@ -200,12 +196,11 @@ export const products: Product[] = [
       "Programmed to your exact profile before shipping",
       "Durable matte finish that survives a pocket",
       "Reprogrammable free when your handle changes",
-      "Optional QR code printed on the back, free",
     ],
     useCases: ["Creators & influencers", "Pop-up shops", "Events & markets", "Personal brands"],
     specs: CARD_SPECS,
     box: [
-      "1 × NFC card, programmed to your Instagram profile",
+      "1 × portrait NFC card, programmed to your Instagram profile",
       "Quick-start guide with three ways to hand it over naturally",
     ],
     accent: ["#DD2A7B", "#F58529"],
@@ -213,71 +208,37 @@ export const products: Product[] = [
     popular: true,
   },
   {
-    id: "menu-card",
-    slug: "menu-card",
-    name: "Menu Card",
-    category: "Menu",
-    formFactor: "Card",
-    tagline: "Your menu, one tap away",
+    id: "acrylic-stand",
+    slug: "acrylic-review-stand",
+    name: "Acrylic Review Stand",
+    category: "Review Stand",
+    formFactor: "Stand",
+    tagline: "The ask, sitting on your counter all day",
     summary:
-      "A tap card for tables and counters that opens your digital menu instantly.",
+      "A weighted acrylic stand that holds the review prompt upright by your register — impossible to miss, nothing to hand over.",
     description:
-      "Give guests your menu without printing a single page. The card sits on tables, the counter, or the host stand, and a tap opens your up-to-date digital menu. Raise a price, 86 a dish, add a special: edit the menu once online and every table is current instantly. No reprinting, no laminating, no sticky paper menus that need replacing every month.",
+      "A card works when you remember to hand it over. A stand works even when you are slammed. This one sits upright next to your register with the review prompt facing the customer, so the ask is already made before you say a word. Tap the face and your Google review page opens. Cast acrylic on a weighted base, so it stays put through a shift and wipes clean at close.",
     example:
-      "A brunch spot changes its specials every Saturday morning. The owner edits one Google Doc at 7am, and by open, every table's card points to the new list. The old routine was printing, cutting, and swapping 40 paper inserts. The new routine is typing.",
-    basePrice: STANDARD_PRICE,
-    customUpcharge: CUSTOM_UPCHARGE,
+      "A busy café stopped asking out loud entirely. The stand sits beside the tap terminal and customers read it while their card processes — a slow, steady trickle of reviews from a counter nobody has to manage.",
+    basePrice: STAND_PRICE,
+    customUpcharge: null,
     features: [
-      "Opens your digital menu instantly",
-      "Update the menu online, every table is current",
-      "Waterproof matte PVC that survives table wipes",
-      "Works with iPhone and Android",
-      "Reprogrammable free if your menu link changes",
-      "Optional QR code printed on the back, free",
+      "Sits upright — the prompt is always visible",
+      "Weighted base, stays put on a busy counter",
+      "Tap the face to open your Google review page",
+      "Cast acrylic, wipes clean",
+      "Programmed to your review link before shipping",
+      "Reprogrammable free if your link ever changes",
     ],
-    useCases: ["Restaurants", "Cafés & bars", "Food trucks", "Hotels"],
-    specs: CARD_SPECS,
+    useCases: ["Cafés & bars", "Restaurants", "Reception desks", "Checkout counters"],
+    specs: STAND_SPECS,
     box: [
-      "1 × NFC card, programmed to your menu link",
-      "Adhesive strip for mounting flat on tables or counters",
-      "Placement guide for tables, bars, and host stands",
+      "1 × acrylic review stand, programmed to your Google review link",
+      "Weighted base",
+      "Placement guide for counters and reception desks",
     ],
-    accent: ["#10B981", "#84CC16"],
-    visual: "menu",
-    popular: true,
-  },
-  {
-    id: "website-card",
-    slug: "website-card",
-    name: "Website Card",
-    category: "Website",
-    formFactor: "Card",
-    tagline: "Your website, opened in one tap",
-    summary:
-      "One tap sends customers straight to your website, booking page, or online store.",
-    description:
-      "Your website only works if people actually get there, and “just search for us” loses most of them on the way. This card removes the trip. A tap opens your homepage, booking calendar, or online store directly on the customer's phone while they are standing in front of you. Point it at whatever page earns you money: bookings during the week, the shop before the holidays, the waitlist when you are slammed. Change the destination any time without touching the card.",
-    example:
-      "A tattoo artist keeps the card at the front desk. Walk-ins who can't be fitted in today tap it and land on the booking calendar, and the artist watches the empty Tuesday slots fill themselves. Before the card, “book online later” converted almost nobody. Now the booking happens in the shop.",
-    basePrice: STANDARD_PRICE,
-    customUpcharge: CUSTOM_UPCHARGE,
-    features: [
-      "Routes to any page: homepage, booking, or store",
-      "Change the destination any time, same card",
-      "Works with iPhone and Android",
-      "Waterproof, scratch-resistant matte PVC",
-      "Reprogrammable free, forever",
-      "Optional QR code printed on the back, free",
-    ],
-    useCases: ["Bookings & appointments", "Online stores", "Portfolios", "Waitlists & signups"],
-    specs: CARD_SPECS,
-    box: [
-      "1 × NFC card, programmed to your website or booking page",
-      "Setup guide for changing the destination later",
-      "Adhesive strip for mounting flat on a counter",
-    ],
-    accent: ["#0EA5E9", "#6366F1"],
-    visual: "website",
+    accent: ["#38BDF8", "#A5F3FC"],
+    visual: "acrylic",
   },
 ];
 
@@ -310,6 +271,5 @@ export function getAllSlugs(): string[] {
 export const categories: ProductCategory[] = [
   "Google Reviews",
   "Instagram",
-  "Menu",
-  "Website",
+  "Review Stand",
 ];
