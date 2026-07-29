@@ -49,7 +49,7 @@ export function DesignShowcase() {
   return (
     <section
       id="designs"
-      className="relative scroll-mt-20 border-y border-white/5 bg-white/[0.015] py-24 lg:py-32"
+      className="relative scroll-mt-20 border-y border-neutral-200 bg-neutral-50 py-24 lg:py-32"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
@@ -57,10 +57,10 @@ export function DesignShowcase() {
             Designed for you
           </p>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
-            <h2 className="max-w-2xl font-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl text-balance">
+            <h2 className="max-w-2xl font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl text-balance">
               Not a blank card with a chip in it
             </h2>
-            <p className="max-w-md text-base leading-relaxed text-neutral-400">
+            <p className="max-w-md text-base leading-relaxed text-neutral-600">
               Three products, each set up for one business: the review card, the
               Instagram card, and the acrylic stand. Send us your link and we
               program it before it ships.
@@ -72,7 +72,7 @@ export function DesignShowcase() {
           <div className="mt-12 grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
             {/* Stage */}
             <div className="relative">
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent p-6 sm:p-10">
+              <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-b from-white/[0.06] to-transparent p-6 sm:p-10">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-50 blur-[90px]"
@@ -100,7 +100,7 @@ export function DesignShowcase() {
                       aria-label={`Design ${n + 1}`}
                       className={cn(
                         "h-1.5 rounded-full transition-all",
-                        n === i ? "w-7 bg-[#2E7DFF]" : "w-3 bg-white/20 hover:bg-white/40",
+                        n === i ? "w-7 bg-[#2E7DFF]" : "w-3 bg-neutral-300 hover:bg-neutral-400",
                       )}
                     />
                   ))}
@@ -109,14 +109,14 @@ export function DesignShowcase() {
                   <button
                     onClick={() => go(-1)}
                     aria-label="Previous design"
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 text-white transition-colors hover:bg-white/10"
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300 text-neutral-700 transition-colors hover:border-neutral-500 hover:text-neutral-900"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => go(1)}
                     aria-label="Next design"
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 text-white transition-colors hover:bg-white/10"
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300 text-neutral-700 transition-colors hover:border-neutral-500 hover:text-neutral-900"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -126,24 +126,24 @@ export function DesignShowcase() {
 
             {/* Detail */}
             <div className="flex flex-col justify-center">
-              <span className="inline-flex w-fit rounded-md border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#7FB0FF]">
+              <span className="inline-flex w-fit rounded-md border border-neutral-300 bg-neutral-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
                 {s.finish}
               </span>
-              <h3 className="mt-4 font-display text-3xl font-extrabold text-white sm:text-4xl">
+              <h3 className="mt-4 font-display text-3xl font-extrabold text-neutral-900 sm:text-4xl">
                 {s.name}
               </h3>
-              <p className="mt-3 text-base leading-relaxed text-neutral-400">
+              <p className="mt-3 text-base leading-relaxed text-neutral-600">
                 {s.note}
               </p>
 
-              <ul className="mt-8 space-y-3 border-t border-white/10 pt-8">
+              <ul className="mt-8 space-y-3 border-t border-neutral-200 pt-8">
                 {[
                   "Programmed to your link before it ships",
                   "Cards are double-sided — white and black in one",
                   "Portrait format, built for a counter",
                   "Re-point it any time, no reprint",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-sm text-neutral-300">
+                  <li key={f} className="flex items-start gap-3 text-sm text-neutral-700">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#2E7DFF]" />
                     {f}
                   </li>
@@ -152,7 +152,7 @@ export function DesignShowcase() {
 
               <Link
                 href="/products"
-                className="group mt-8 inline-flex w-fit items-center gap-2 rounded-md bg-white px-6 py-3.5 text-base font-bold text-neutral-950 transition-transform hover:scale-[1.02]"
+                className="group mt-8 inline-flex w-fit items-center gap-2 rounded-md bg-neutral-900 px-6 py-3.5 text-base font-bold text-white transition-transform hover:scale-[1.02]"
               >
                 Design Your Card
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />

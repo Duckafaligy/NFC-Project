@@ -10,14 +10,13 @@ import {
 import { PreorderPopup } from "@/components/PreorderPopup";
 
 /**
- * Homepage — a dark, premium landing page for the personalized NFC card
- * brand. Deliberately its own aesthetic: the rest of the store (catalog,
- * product pages, checkout) stays on the light theme. The header adapts to
- * this page automatically (see components/Navbar).
+ * Homepage — a light, premium landing page for the NFC card brand, matching
+ * the rest of the store. The header rides transparent over the hero and
+ * solidifies on scroll (see components/Navbar).
  */
 export default function HomePage() {
   return (
-    <div className="bg-neutral-950">
+    <div className="bg-white">
       {/* Live pre-order info modal (only while a product is on pre-order) */}
       <PreorderPopup />
 

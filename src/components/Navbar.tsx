@@ -22,30 +22,30 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // The homepage is a dark landing page: the header rides transparent over
-  // the hero and solidifies into a dark bar once you scroll past it.
-  const darkPage = pathname === "/";
+  // On the homepage the header rides transparent over the hero and
+  // solidifies into a light bar once you scroll past it.
+  const homePage = pathname === "/";
 
   useEffect(() => {
-    if (!darkPage) return;
+    if (!homePage) return;
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [darkPage]);
+  }, [homePage]);
 
-  // Transparent over the hero -> solid dark; other pages keep the light bar.
-  const solid = !darkPage || scrolled;
-  const navLinks = darkPage ? homeLinks : links;
+  const navLinks = homePage ? homeLinks : links;
 
   return (
     <header
       className={cn(
         "top-0 z-50 transition-colors duration-300",
-        darkPage ? "fixed inset-x-0" : "sticky border-b border-neutral-200 bg-cream/90 backdrop-blur-xl",
-        darkPage &&
+        homePage
+          ? "fixed inset-x-0"
+          : "sticky border-b border-neutral-200 bg-cream/90 backdrop-blur-xl",
+        homePage &&
           (scrolled
-            ? "border-b border-white/10 bg-neutral-950/85 backdrop-blur-xl"
+            ? "border-b border-neutral-200 bg-white/90 backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"),
       )}
     >
@@ -53,14 +53,12 @@ export function Navbar() {
         <Link
           href="/"
           className={cn(
-            "flex items-center gap-2 font-display text-lg font-extrabold",
-            darkPage ? "text-white" : "text-neutral-900",
+            "flex items-center gap-2 font-display text-lg font-extrabold text-neutral-900",
           )}
         >
           <span
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-md",
-              darkPage ? "bg-[#2E7DFF]" : "bg-orange-600",
+              "flex h-9 w-9 items-center justify-center rounded-md bg-[#2E7DFF]",
             )}
           >
             <Nfc className="h-5 w-5 text-white" strokeWidth={2.5} />
@@ -70,18 +68,16 @@ export function Navbar() {
 
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((l) => {
-            const active = !darkPage && pathname === l.href;
+            const active = !homePage && pathname === l.href;
             return (
               <Link
                 key={l.href}
                 href={l.href}
                 className={cn(
                   "rounded-md px-4 py-2 text-sm font-semibold transition-colors",
-                  darkPage
-                    ? "text-neutral-300 hover:text-white"
-                    : active
-                      ? "bg-white text-neutral-900 shadow-soft"
-                      : "text-neutral-500 hover:bg-white hover:text-neutral-900",
+                  active
+                    ? "bg-white text-neutral-900 shadow-soft"
+                    : "text-neutral-600 hover:text-neutral-900",
                 )}
               >
                 {l.label}
@@ -92,10 +88,10 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           {/* High-contrast primary CTA (homepage only). */}
-          {darkPage && (
+          {homePage && (
             <Link
               href="/products"
-              className="hidden rounded-md bg-white px-4 py-2.5 text-sm font-bold text-neutral-950 transition-colors hover:bg-neutral-200 sm:block"
+              className="hidden rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-neutral-700 sm:block"
             >
               Design Yours
             </Link>
@@ -103,10 +99,7 @@ export function Navbar() {
           <button
             onClick={openDrawer}
             className={cn(
-              "relative flex h-10 w-10 items-center justify-center rounded-md border transition-all",
-              darkPage
-                ? "border-white/15 bg-white/5 text-white hover:bg-white/10"
-                : "border-neutral-200 bg-white text-neutral-700 shadow-soft hover:shadow-lift",
+              "relative flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-700 shadow-soft transition-all hover:shadow-lift",
             )}
             aria-label="Open cart"
           >
@@ -119,10 +112,7 @@ export function Navbar() {
           </button>
           <button
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-md border md:hidden",
-              darkPage
-                ? "border-white/15 bg-white/5 text-white"
-                : "border-neutral-200 bg-white text-neutral-700",
+              "flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-700 md:hidden",
             )}
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
@@ -135,10 +125,7 @@ export function Navbar() {
       {open && (
         <div
           className={cn(
-            "px-4 py-3 md:hidden",
-            darkPage
-              ? "border-t border-white/10 bg-neutral-950/95 backdrop-blur-xl"
-              : "border-t border-neutral-200 bg-cream",
+            "border-t border-neutral-200 bg-white px-4 py-3 md:hidden",
           )}
         >
           {navLinks.map((l) => (
@@ -147,20 +134,17 @@ export function Navbar() {
               href={l.href}
               onClick={() => setOpen(false)}
               className={cn(
-                "block rounded-md px-4 py-3 text-sm font-semibold",
-                darkPage
-                  ? "text-neutral-200 hover:bg-white/5"
-                  : "text-neutral-700 hover:bg-white",
+                "block rounded-md px-4 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-50",
               )}
             >
               {l.label}
             </Link>
           ))}
-          {darkPage && (
+          {homePage && (
             <Link
               href="/products"
               onClick={() => setOpen(false)}
-              className="mt-2 block rounded-md bg-white px-4 py-3 text-center text-sm font-bold text-neutral-950"
+              className="mt-2 block rounded-md bg-neutral-900 px-4 py-3 text-center text-sm font-bold text-white"
             >
               Design Yours
             </Link>

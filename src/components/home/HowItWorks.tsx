@@ -50,7 +50,7 @@ export function HowItWorks() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
           How it works
         </p>
-        <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl text-balance">
+        <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl text-balance">
           Three seconds, start to finish
         </h2>
       </Reveal>
@@ -72,8 +72,8 @@ export function HowItWorks() {
                   className={cn(
                     "group relative w-full overflow-hidden rounded-xl border p-5 text-left transition-all duration-300 sm:p-6",
                     on
-                      ? "border-[#2E7DFF]/40 bg-white/[0.06]"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/20",
+                      ? "border-[#2E7DFF]/40 bg-[#2E7DFF]/[0.06]"
+                      : "border-neutral-200 bg-white hover:border-neutral-300",
                   )}
                 >
                   <div className="flex items-start gap-4">
@@ -82,7 +82,7 @@ export function HowItWorks() {
                         "flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg transition-colors duration-300",
                         on
                           ? "bg-[#2E7DFF] text-white"
-                          : "bg-white/5 text-neutral-400 group-hover:text-white",
+                          : "bg-neutral-100 text-neutral-500 group-hover:text-neutral-900",
                       )}
                     >
                       <s.icon className="h-5 w-5" strokeWidth={2.2} />
@@ -97,14 +97,14 @@ export function HowItWorks() {
                         >
                           0{i + 1}
                         </span>
-                        <h3 className="font-display text-lg font-bold text-white">
+                        <h3 className="font-display text-lg font-bold text-neutral-900">
                           {s.title}
                         </h3>
                       </div>
                       <p
                         className={cn(
                           "mt-1.5 text-sm leading-relaxed transition-colors",
-                          on ? "text-neutral-300" : "text-neutral-500",
+                          on ? "text-neutral-700" : "text-neutral-500",
                         )}
                       >
                         {s.body}
@@ -113,7 +113,7 @@ export function HowItWorks() {
                   </div>
 
                   {/* Progress rail for the active step */}
-                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/5">
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-neutral-100">
                     <span
                       key={`${i}-${active}-${paused}`}
                       className={cn(
@@ -131,7 +131,7 @@ export function HowItWorks() {
 
         {/* Visual */}
         <Reveal className="order-1 lg:order-2" delay={0.1}>
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+          <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
             <Image
               src="/images/hero/tap-phone.webp"
               alt="A phone being tapped with an NFC card, blue contactless waves radiating from the tap point"
@@ -148,12 +148,12 @@ export function HowItWorks() {
                     key={i}
                     className={cn(
                       "h-1 rounded-full transition-all duration-500",
-                      i === active ? "w-8 bg-[#2E7DFF]" : "w-4 bg-white/25",
+                      i === active ? "w-8 bg-[#2E7DFF]" : "w-4 bg-neutral-300",
                     )}
                   />
                 ))}
               </div>
-              <p className="mt-3 font-display text-lg font-bold text-white">
+              <p className="mt-3 font-display text-lg font-bold text-neutral-900">
                 {STEPS[active].title}
               </p>
             </div>

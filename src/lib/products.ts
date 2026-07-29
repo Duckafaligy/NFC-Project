@@ -30,7 +30,7 @@ export type VisualKind = "google" | "instagram" | "acrylic";
 /** Standard price for the NFC cards. */
 export const STANDARD_PRICE = 34.99;
 /** The acrylic review stand sits above the cards. */
-export const STAND_PRICE = 44.99;
+export const STAND_PRICE = 15;
 /** Added when the customer chooses a custom design ($42.99 total). */
 export const CUSTOM_UPCHARGE = 8;
 /**

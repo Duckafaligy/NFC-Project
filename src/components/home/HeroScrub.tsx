@@ -55,10 +55,10 @@ export function HeroScrub() {
         {/* Ambient blue bloom behind the stage */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[46rem] w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40 blur-[120px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[46rem] w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.18] blur-[120px]"
           style={{
             background:
-              "radial-gradient(circle, rgba(46,125,255,0.55) 0%, rgba(46,125,255,0) 65%)",
+              "radial-gradient(circle, rgba(46,125,255,0.9) 0%, rgba(46,125,255,0) 65%)",
           }}
         />
         {/* Fine grid texture */}
@@ -67,7 +67,7 @@ export function HeroScrub() {
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)",
+              "linear-gradient(rgba(23,23,23,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(23,23,23,0.05) 1px, transparent 1px)",
             backgroundSize: "64px 64px",
             maskImage:
               "radial-gradient(ellipse at center, black 20%, transparent 72%)",
@@ -85,21 +85,21 @@ export function HeroScrub() {
               style={reduce ? undefined : { opacity: copyOneOpacity, y: copyOneY }}
               className="col-start-1 row-start-1 self-center"
             >
-              <span className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#7FB0FF] backdrop-blur">
+              <span className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9] shadow-soft">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2E7DFF] opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2E7DFF]" />
                 </span>
                 Personalized NFC cards
               </span>
-              <h1 className="mt-4 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight text-white sm:mt-5 sm:text-6xl lg:text-7xl">
+              <h1 className="mt-4 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight text-neutral-900 sm:mt-5 sm:text-6xl lg:text-7xl">
                 One tap.
                 <br />
-                <span className="bg-gradient-to-r from-white via-[#9CC3FF] to-[#2E7DFF] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-neutral-900 via-[#2E7DFF] to-[#7FB0FF] bg-clip-text text-transparent">
                   Everything shared.
                 </span>
               </h1>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-400 sm:mt-5 sm:text-lg">
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-600 sm:mt-5 sm:text-lg">
                 A premium card designed around your name, your brand, your
                 links. Tap it to any phone and your profile opens instantly —
                 no app, no typing, nothing to hand back.
@@ -110,15 +110,15 @@ export function HeroScrub() {
               style={reduce ? { opacity: 0 } : { opacity: copyTwoOpacity, y: copyTwoY }}
               className="col-start-1 row-start-1 self-center"
             >
-              <span className="inline-flex items-center gap-2 rounded-md border border-[#2E7DFF]/30 bg-[#2E7DFF]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#7FB0FF] backdrop-blur">
+              <span className="inline-flex items-center gap-2 rounded-md border border-[#2E7DFF]/30 bg-[#2E7DFF]/[0.08] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
                 Instant, every time
               </span>
-              <h2 className="mt-4 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight text-white sm:mt-5 sm:text-5xl lg:text-6xl">
+              <h2 className="mt-4 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight text-neutral-900 sm:mt-5 sm:text-5xl lg:text-6xl">
                 They tap.
                 <br />
                 <span className="text-[#2E7DFF]">You&apos;re already saved.</span>
               </h2>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-400 sm:mt-5 sm:text-lg">
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-600 sm:mt-5 sm:text-lg">
                 Reviews, socials, menu, contact details — whatever you point it
                 at opens the moment the card touches their phone. Change the
                 destination anytime; the card never needs reprinting.
@@ -130,14 +130,14 @@ export function HeroScrub() {
             <div className="relative z-10 mt-5 flex flex-wrap items-center gap-2.5 sm:gap-3">
               <Link
                 href="/products"
-                className="group inline-flex items-center gap-2 rounded-md bg-white px-6 py-3.5 text-sm font-bold text-neutral-950 transition-transform hover:scale-[1.02] active:scale-[0.99] sm:px-7 sm:py-4 sm:text-base"
+                className="group inline-flex items-center gap-2 rounded-md bg-neutral-900 px-6 py-3.5 text-sm font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.99] sm:px-7 sm:py-4 sm:text-base"
               >
                 Design Your Card
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
                 href="#how-it-works"
-                className="inline-flex items-center gap-2 rounded-md border border-white/20 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/5 sm:px-7 sm:py-4 sm:text-base"
+                className="inline-flex items-center gap-2 rounded-md border border-neutral-300 px-6 py-3.5 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 sm:px-7 sm:py-4 sm:text-base"
               >
                 See how it works
               </Link>
@@ -164,12 +164,12 @@ export function HeroScrub() {
                 }
                 className="absolute inset-0 flex items-center justify-center"
               >
-                <div className="relative h-[78%] w-[42%] rounded-[1.75rem] border border-white/15 bg-gradient-to-b from-neutral-800 to-neutral-900 p-1.5 shadow-2xl">
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-[1.4rem] bg-neutral-950 px-3">
-                    <div className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-white/20" />
-                    <div className="h-9 w-9 rounded-full bg-[#2E7DFF]/20 ring-1 ring-[#2E7DFF]/40" />
-                    <div className="h-1.5 w-14 rounded-full bg-white/25" />
-                    <div className="h-1.5 w-10 rounded-full bg-white/10" />
+                <div className="relative h-[78%] w-[42%] rounded-[1.75rem] border border-neutral-300 bg-gradient-to-b from-neutral-200 to-neutral-300 p-1.5 shadow-lift">
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-[1.4rem] bg-white px-3">
+                    <div className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-neutral-300" />
+                    <div className="h-9 w-9 rounded-full bg-[#2E7DFF]/15 ring-1 ring-[#2E7DFF]/40" />
+                    <div className="h-1.5 w-14 rounded-full bg-neutral-300" />
+                    <div className="h-1.5 w-10 rounded-full bg-neutral-200" />
                     <div className="mt-1 h-5 w-16 rounded-md bg-[#2E7DFF]" />
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export function HeroScrub() {
         {/* Scroll cue */}
         <motion.div
           style={reduce ? { opacity: 1 } : { opacity: cueOpacity }}
-          className="pointer-events-none absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-neutral-500"
+          className="pointer-events-none absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-neutral-400"
         >
           <span className="text-[11px] font-bold uppercase tracking-[0.2em]">
             Scroll
