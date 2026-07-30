@@ -5,11 +5,17 @@ import { cn } from "@/lib/utils";
 import type { VisualKind } from "@/lib/products";
 
 /**
- * SVG "product photos" drawn to match the real products: the Google review
- * card (shown as its two faces — white on one side, black on the other, since
- * that is how it actually ships), the Instagram gradient card, and the acrylic
- * review stand. All portrait, matching the physical cards. Pure vector, so it
- * stays crisp at any size with no image files.
+ * SVG renditions of the real products, drawn from the actual card artwork in
+ * public/images/products/ref-*.png:
+ *
+ *  - Google review card — "Review Us On / Google", the four-colour G, the
+ *    NFC hand-and-phone mark, then five stars along the bottom. Shipped
+ *    double-sided, so both faces are shown.
+ *  - Instagram card — "TAP TO FOLLOW US ON", the outlined camera glyph and
+ *    the script wordmark on the orange-to-purple gradient.
+ *  - Acrylic review stand — the white Google face on a frosted panel.
+ *
+ * Vector rather than photographs, so the artwork stays sharp at any size.
  */
 interface ProductVisualProps {
   visual: VisualKind;
@@ -21,7 +27,10 @@ interface ProductVisualProps {
 
 const VB = { w: 320, h: 240 };
 
-// --- geometry helpers ---
+/** Card proportions taken from the reference art (167 x 251). */
+const CARD = { w: 100, h: 150 };
+
+// --- geometry helpers. Angles are clock-style: 0 = top, clockwise. ---
 function polar(cx: number, cy: number, r: number, deg: number) {
   const a = ((deg - 90) * Math.PI) / 180;
   return [cx + r * Math.cos(a), cy + r * Math.sin(a)] as const;
@@ -30,9 +39,7 @@ function arc(cx: number, cy: number, r: number, start: number, end: number) {
   const [x1, y1] = polar(cx, cy, r, start);
   const [x2, y2] = polar(cx, cy, r, end);
   const large = end - start <= 180 ? 0 : 1;
-  return `M${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(
-    2,
-  )} ${y2.toFixed(2)}`;
+  return `M${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
 }
 
 const STAR =
@@ -40,43 +47,152 @@ const STAR =
 
 const FONT =
   "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+const SCRIPT =
+  "'Segoe Script', 'Bradley Hand', 'Brush Script MT', 'Snell Roundhand', cursive";
 
-/** The four-colour Google "G" mark (a simplified, recognizable rendition). */
+/**
+ * The four-colour Google "G". The ring is broken by a notch on the right,
+ * where the blue crossbar runs back to the centre — that gap is what makes
+ * the mark read as a G rather than an O.
+ */
 function GoogleG({ cx, cy, r, w }: { cx: number; cy: number; r: number; w: number }) {
+  // The bar's top edge meets the ring at this angle, so the blue arc starts
+  // flush with it and the notch above stays clean.
+  const half = (Math.asin(Math.min(1, w / 2 / r)) * 180) / Math.PI;
+  const barTop = 90 - half;
   return (
-    <g fill="none" strokeWidth={w}>
-      <path d={arc(cx, cy, r, -2, 58)} stroke="#EA4335" />
-      <path d={arc(cx, cy, r, 92, 178)} stroke="#4285F4" />
-      <path d={arc(cx, cy, r, 178, 262)} stroke="#34A853" />
-      <path d={arc(cx, cy, r, 262, 358)} stroke="#FBBC05" />
-      <line x1={cx} y1={cy} x2={cx + r} y2={cy} stroke="#4285F4" strokeWidth={w} />
+    <g>
+      <g fill="none" strokeWidth={w}>
+        {/* Red runs from the upper left, over the top, and stops short of the
+            bar — that white gap is what makes it a G. */}
+        <path d={arc(cx, cy, r, 295, 360 + 60)} stroke="#EA4335" />
+        <path d={arc(cx, cy, r, barTop, 145)} stroke="#4285F4" />
+        <path d={arc(cx, cy, r, 145, 225)} stroke="#34A853" />
+        <path d={arc(cx, cy, r, 225, 295)} stroke="#FBBC05" />
+      </g>
+      {/* Crossbar, running from the centre out to the ring. */}
+      <rect x={cx - w * 0.1} y={cy - w / 2} width={r + w * 0.6} height={w} fill="#4285F4" />
     </g>
   );
 }
 
-function NfcWaves({
+/**
+ * Signal arcs, used by both NFC marks. `dir` 1 bulges right (arcs radiating
+ * away from something on the left), -1 bulges left.
+ */
+function Waves({
+  x,
+  cy,
+  color,
+  s,
+  dir = 1,
+}: {
+  x: number;
+  cy: number;
+  color: string;
+  s: number;
+  dir?: 1 | -1;
+}) {
+  return (
+    <g fill="none" stroke={color} strokeWidth={1.15 * s} strokeLinecap="round">
+      {[
+        [3.2, 2.6],
+        [5.8, 4.6],
+        [8.4, 6.6],
+      ].map(([r, h], i) => {
+        const px = x + dir * (8.4 - r) * s;
+        return (
+          <path
+            key={i}
+            d={`M${px} ${cy - h * s} A ${r * s} ${r * s} 0 0 ${dir === 1 ? 1 : 0} ${px} ${cy + h * s}`}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
+/**
+ * The contactless marks printed on the cards. The Google cards use a phone
+ * with signal arcs and "NFC" set above it; the Instagram card sets "NFC"
+ * beside the arcs instead.
+ */
+function NfcMark({
   cx,
   cy,
   color,
   s = 1,
+  variant = "phone",
 }: {
   cx: number;
   cy: number;
   color: string;
   s?: number;
+  variant?: "phone" | "inline";
 }) {
+  if (variant === "inline") {
+    return (
+      <g>
+        <text
+          x={cx - 1 * s}
+          y={cy + 2.4 * s}
+          textAnchor="end"
+          fontFamily={FONT}
+          fontSize={7 * s}
+          fontWeight={700}
+          fill={color}
+          letterSpacing={0.3 * s}
+        >
+          NFC
+        </text>
+        <Waves x={cx + 1.5 * s} cy={cy} color={color} s={s} />
+      </g>
+    );
+  }
   return (
-    <g fill="none" stroke={color} strokeWidth={1.6 * s} strokeLinecap="round">
-      <path d={`M${cx - 2 * s} ${cy - 5 * s} A ${7 * s} ${7 * s} 0 0 1 ${cx - 2 * s} ${cy + 5 * s}`} />
-      <path d={`M${cx + 1 * s} ${cy - 8 * s} A ${11 * s} ${11 * s} 0 0 1 ${cx + 1 * s} ${cy + 8 * s}`} />
-      <path d={`M${cx + 4 * s} ${cy - 11 * s} A ${15 * s} ${15 * s} 0 0 1 ${cx + 4 * s} ${cy + 11 * s}`} />
+    <g>
+      <text
+        x={cx + 8.5 * s}
+        y={cy + 0.5 * s}
+        textAnchor="start"
+        fontFamily={FONT}
+        fontSize={5.5 * s}
+        fontWeight={700}
+        fill={color}
+        letterSpacing={0.2 * s}
+      >
+        NFC
+      </text>
+      {/* Phone */}
+      <rect
+        x={cx - 0.5 * s}
+        y={cy - 2.5 * s}
+        width={7.5 * s}
+        height={11.5 * s}
+        rx={1.4 * s}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.15 * s}
+      />
+      <g transform={`translate(0 ${1.6 * s})`}>
+        <Waves x={cx - 2.5 * s} cy={cy} color={color} s={s} dir={-1} />
+      </g>
     </g>
   );
 }
 
-function Stars({ cx, cy, color, s = 1 }: { cx: number; cy: number; color: string; s?: number }) {
-  const size = 15 * s;
-  const gap = 3 * s;
+function Stars({
+  cx,
+  cy,
+  color,
+  size,
+}: {
+  cx: number;
+  cy: number;
+  color: string;
+  size: number;
+}) {
+  const gap = size * 0.16;
   const total = 5 * size + 4 * gap;
   const startX = cx - total / 2;
   return (
@@ -102,6 +218,7 @@ function label(
     weight?: number;
     spacing?: number;
     italic?: boolean;
+    font?: string;
   },
 ) {
   return (
@@ -109,7 +226,7 @@ function label(
       x={cx}
       y={y}
       textAnchor="middle"
-      fontFamily={FONT}
+      fontFamily={opts.font ?? FONT}
       fontSize={opts.size}
       fontWeight={opts.weight ?? 700}
       fill={opts.color}
@@ -121,7 +238,10 @@ function label(
   );
 }
 
-/** The Google review face, drawn at any position/scale. */
+/**
+ * The printed Google face. `top` is the card's top edge and `s` scales the
+ * 100 x 150 reference layout.
+ */
 function GoogleFace({
   cx,
   top,
@@ -133,14 +253,22 @@ function GoogleFace({
   s: number;
   dark: boolean;
 }) {
-  const fg = dark ? "#ffffff" : "#202124";
+  const fg = dark ? "#ffffff" : "#111111";
   return (
     <>
-      {label("Review Us On", cx, top + 30 * s, { size: 11 * s, color: fg, weight: 600 })}
-      {label("Google", cx, top + 52 * s, { size: 21 * s, color: fg, weight: 700 })}
-      <GoogleG cx={cx} cy={top + 104 * s} r={26 * s} w={10 * s} />
-      <NfcWaves cx={cx} cy={top + 146 * s} color={fg} s={s} />
-      <Stars cx={cx} cy={top + 164 * s} color="#FBBF24" s={s} />
+      {label("Review Us  On", cx, top + 27 * s, {
+        size: 11.5 * s,
+        color: fg,
+        weight: 700,
+      })}
+      {label("Google", cx, top + 51 * s, {
+        size: 25 * s,
+        color: fg,
+        weight: 500,
+      })}
+      <GoogleG cx={cx} cy={top + 82 * s} r={21.5 * s} w={11 * s} />
+      <NfcMark cx={cx} cy={top + 118 * s} color={fg} s={s} />
+      <Stars cx={cx} cy={top + 132 * s} color="#F5A623" size={13 * s} />
     </>
   );
 }
@@ -159,12 +287,13 @@ export function ProductVisual({
   let body: React.ReactNode = null;
 
   if (visual === "google") {
-    // Both faces, side by side: white on one side, black on the other.
-    const w = 100;
-    const h = 156;
-    const gap = 22;
-    const y = 46;
-    const s = w / 128; // scale relative to the single-card reference
+    // Both faces side by side — the card ships white on one side, black on
+    // the other, so showing one face alone misrepresents it.
+    const s = 1;
+    const w = CARD.w * s;
+    const h = CARD.h * s;
+    const gap = 24;
+    const y = 50;
     const leftCx = VB.w / 2 - gap / 2 - w / 2;
     const rightCx = VB.w / 2 + gap / 2 + w / 2;
     const faces: { cx: number; dark: boolean; tag: string }[] = [
@@ -186,9 +315,11 @@ export function ProductVisual({
               y={y}
               width={w}
               height={h}
-              rx={11}
-              fill={f.dark ? "#0d0d0d" : "#ffffff"}
-              stroke={f.dark ? "#2a2a2a" : "#e5e5e5"}
+              rx={9}
+              fill={f.dark ? "#0a0a0a" : "#ffffff"}
+              // The white card carries a fine rose keyline; the black one
+              // needs a neutral edge to separate it from a dark backdrop.
+              stroke={f.dark ? "#2a2a2a" : "#E9A8A8"}
               strokeWidth={1}
               filter={`url(#${shadowId})`}
             />
@@ -198,57 +329,81 @@ export function ProductVisual({
       </>
     );
   } else if (visual === "instagram") {
-    const w = 128;
-    const h = 200;
+    const s = 1.28;
+    const w = CARD.w * s;
+    const h = CARD.h * s;
     const x = (VB.w - w) / 2;
-    const y = 20;
+    const y = (VB.h - h) / 2;
     const cx = VB.w / 2;
+    const gs = 44 * s; // glyph box
     body = (
-      <g transform={`rotate(-4 ${cx} ${y + h / 2})`}>
+      <>
         <rect
           x={x}
           y={y}
           width={w}
           height={h}
-          rx={14}
+          rx={10 * s}
           fill={`url(#${gradId})`}
           filter={`url(#${shadowId})`}
         />
-        {label("TAP TO FOLLOW US ON", cx, y + 32, {
-          size: 8,
+        {label("TAP TO FOLLOW US ON", cx, y + 23 * s, {
+          size: 6.3 * s,
           color: "#ffffff",
           weight: 700,
-          spacing: 1,
+          spacing: 0.45 * s,
         })}
-        <g fill="none" stroke="#ffffff" strokeWidth={5.5}>
-          <rect x={cx - 27} y={y + 52} width={54} height={54} rx={16} ry={16} />
-          <circle cx={cx} cy={y + 79} r={13} />
-          <circle cx={cx + 15} cy={y + 66} r={2.6} fill="#ffffff" stroke="none" />
+        {/* Outlined camera glyph */}
+        <g fill="none" stroke="#ffffff" strokeWidth={4.2 * s}>
+          <rect
+            x={cx - gs / 2}
+            y={y + 38 * s}
+            width={gs}
+            height={gs}
+            rx={13 * s}
+            ry={13 * s}
+          />
+          <circle cx={cx} cy={y + 38 * s + gs / 2} r={10.5 * s} />
+          <circle
+            cx={cx + 13 * s}
+            cy={y + 49 * s}
+            r={2.4 * s}
+            fill="#ffffff"
+            stroke="none"
+          />
         </g>
-        {label("Instagram", cx, y + 140, {
-          size: 21,
+        {label("Instagram", cx, y + 111 * s, {
+          size: 23 * s,
           color: "#ffffff",
-          weight: 700,
+          weight: 600,
           italic: true,
+          font: SCRIPT,
         })}
-        <NfcWaves cx={cx} cy={y + 172} color="#ffffff" />
-      </g>
+        <NfcMark
+          cx={cx}
+          cy={y + 130 * s}
+          color="#ffffff"
+          s={s * 0.95}
+          variant="inline"
+        />
+      </>
     );
   } else {
-    // Acrylic review stand: a frosted panel angled on a weighted base.
-    const w = 132;
-    const h = 152;
+    // Acrylic review stand: the printed white face behind cast acrylic,
+    // standing on a weighted base.
+    const s = 0.95;
+    const w = CARD.w * s + 20;
+    const h = CARD.h * s + 14;
     const cx = VB.w / 2;
-    const y = 34;
-    const s = w / 128;
+    const y = 26;
     body = (
       <>
         {/* Base */}
-        <ellipse cx={cx} cy={y + h + 26} rx={78} ry={9} fill="#000000" opacity={0.28} />
+        <ellipse cx={cx} cy={y + h + 26} rx={76} ry={9} fill="#000000" opacity={0.25} />
         <rect
-          x={cx - 62}
+          x={cx - 60}
           y={y + h + 8}
-          width={124}
+          width={120}
           height={16}
           rx={5}
           fill="#1c1c1f"
@@ -267,9 +422,8 @@ export function ProductVisual({
           strokeWidth={1.5}
           filter={`url(#${shadowId})`}
         />
-        {/* Printed face, inset so the star row clears the panel edge */}
-        <GoogleFace cx={cx} top={y + 4} s={s * 0.78} dark={false} />
-        {/* Edge highlight so it reads as acrylic, not paper */}
+        <GoogleFace cx={cx} top={y + 7} s={s} dark={false} />
+        {/* Inner keyline, so it reads as acrylic rather than paper */}
         <rect
           x={cx - w / 2 + 3}
           y={y + 3}
@@ -301,11 +455,14 @@ export function ProductVisual({
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>
-            <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#F58529" />
-              <stop offset="35%" stopColor="#DD2A7B" />
-              <stop offset="70%" stopColor="#8134AF" />
-              <stop offset="100%" stopColor="#515BD4" />
+            {/* Orange at the bottom-left running to purple at the top-right,
+                matching the printed gradient. */}
+            <linearGradient id={gradId} x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0%" stopColor="#F4693C" />
+              <stop offset="26%" stopColor="#E93E62" />
+              <stop offset="56%" stopColor="#DD2A7B" />
+              <stop offset="80%" stopColor="#C13584" />
+              <stop offset="100%" stopColor="#9B3FB0" />
             </linearGradient>
             <linearGradient id={acrylicId} x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="0.97" />
