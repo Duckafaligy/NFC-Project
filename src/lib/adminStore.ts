@@ -46,6 +46,21 @@ export interface AdminSettings {
 }
 
 /** One fulfilled Stripe order, logged by the webhook for the dashboard. */
+/** Where an order physically goes. Everything needed to print a label. */
+export interface ShipTo {
+  /** Recipient name as given at checkout (may differ from the payer). */
+  name: string | null;
+  phone: string | null;
+  line1: string | null;
+  line2: string | null;
+  city: string | null;
+  /** State / province. */
+  state: string | null;
+  postalCode: string | null;
+  /** ISO 3166-1 alpha-2. */
+  country: string | null;
+}
+
 export interface OrderRecord {
   /** Stripe checkout session id. */
   id: string;
@@ -60,6 +75,14 @@ export interface OrderRecord {
   items: string[];
   preorder: boolean;
   refunded?: boolean;
+  /** Delivery address + contact. Absent on orders logged before this existed. */
+  shipTo?: ShipTo;
+  /** Dollars charged for shipping, and which rate was applied. */
+  shippingPaid?: number;
+  shippingMethod?: string | null;
+  /** Set once you've dispatched it, from the dashboard. */
+  fulfilledAt?: number;
+  trackingNumber?: string | null;
 }
 
 export interface AttemptRecord {
@@ -376,6 +399,32 @@ export async function markOrderRefunded(sessionId: string): Promise<void> {
     return o;
   });
   if (changed) await kvSet(ORDERS_KEY, JSON.stringify(next));
+}
+
+/**
+ * Mark an order dispatched (or undo it). `tracking` is stored as given so it
+ * can be pasted straight into a carrier's site; it is never used as a link.
+ */
+export async function setOrderFulfilled(
+  sessionId: string,
+  fulfilled: boolean,
+  tracking?: string | null,
+): Promise<boolean> {
+  const orders = await getOrders();
+  let changed = false;
+  const next = orders.map((o) => {
+    if (o.id !== sessionId) return o;
+    changed = true;
+    return fulfilled
+      ? {
+          ...o,
+          fulfilledAt: o.fulfilledAt ?? Date.now(),
+          trackingNumber: (tracking ?? "").trim().slice(0, 64) || null,
+        }
+      : { ...o, fulfilledAt: undefined, trackingNumber: null };
+  });
+  if (changed) await kvSet(ORDERS_KEY, JSON.stringify(next));
+  return changed;
 }
 
 export async function getAttempts(ip: string): Promise<AttemptRecord> {

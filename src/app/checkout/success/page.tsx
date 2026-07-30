@@ -40,6 +40,11 @@ interface OrderSummary {
   amountShipping: number;
   amountTotal: number;
   preorder: boolean;
+  shipping: {
+    name: string | null;
+    address: string;
+    method: string | null;
+  } | null;
   lines: OrderLine[];
   invoice: {
     number: string | null;
@@ -198,13 +203,31 @@ function SuccessContent() {
                   </div>
                 )}
                 <div className="flex justify-between text-neutral-600">
-                  <dt>Shipping</dt>
+                  <dt>{order?.shipping?.method ?? "Shipping"}</dt>
                   <dd>
                     {(order?.amountShipping ?? 0) === 0
                       ? "Free"
                       : formatPrice(order?.amountShipping ?? 0)}
                   </dd>
                 </div>
+                {/* Confirm the address back to the buyer while it can still
+                    be corrected by replying to the order. */}
+                {order?.shipping?.address && (
+                  <div className="border-t border-neutral-200 pt-3 text-neutral-600">
+                    <dt className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+                      Delivering to
+                    </dt>
+                    <dd className="mt-1 leading-relaxed">
+                      {order.shipping.name && (
+                        <span className="font-semibold text-neutral-900">
+                          {order.shipping.name}
+                          <br />
+                        </span>
+                      )}
+                      {order.shipping.address}
+                    </dd>
+                  </div>
+                )}
                 <div className="flex justify-between border-t border-neutral-200 pt-2 text-base font-extrabold text-neutral-900">
                   <dt>Total paid</dt>
                   {/* formatPrice already renders the currency (e.g. "CA$42.98"). */}

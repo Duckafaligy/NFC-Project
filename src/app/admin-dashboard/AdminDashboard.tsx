@@ -12,6 +12,7 @@ import {
   Package,
   ReceiptText,
   ShieldAlert,
+  Truck,
 } from "lucide-react";
 import { Button } from "@/components/Button";
 
@@ -23,6 +24,17 @@ import { Button } from "@/components/Button";
  * the storefront immediately (stock bars, buy buttons, checkout pricing).
  */
 
+interface ShipTo {
+  name: string | null;
+  phone: string | null;
+  line1: string | null;
+  line2: string | null;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+  country: string | null;
+}
+
 interface OrderRecord {
   id: string;
   at: number;
@@ -32,6 +44,23 @@ interface OrderRecord {
   items: string[];
   preorder: boolean;
   refunded?: boolean;
+  shipTo?: ShipTo;
+  shippingPaid?: number;
+  shippingMethod?: string | null;
+  fulfilledAt?: number;
+  trackingNumber?: string | null;
+}
+
+/**
+ * Address as you'd write it on a label. Returns null when there is nothing
+ * usable, so the UI can say so rather than render an empty box.
+ */
+function formatShipTo(s: ShipTo | undefined): string | null {
+  if (!s || !s.line1) return null;
+  const cityLine = [s.city, s.state, s.postalCode].filter(Boolean).join(" ");
+  return [s.name, s.line1, s.line2, cityLine, s.country]
+    .filter(Boolean)
+    .join("\n");
 }
 
 interface AdminState {
@@ -101,6 +130,9 @@ export function AdminDashboard() {
   );
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(0);
+  const [fulfilling, setFulfilling] = useState<string | null>(null);
+  const [trackingDraft, setTrackingDraft] = useState<Record<string, string>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
   const [syncError, setSyncError] = useState(false);
@@ -254,6 +286,35 @@ export function AdminDashboard() {
       );
     } finally {
       setSyncing(false);
+    }
+  }
+
+  /** Mark an order dispatched (or undo), then refresh the log. */
+  async function markShipped(id: string, fulfilled: boolean) {
+    setFulfilling(id);
+    try {
+      await fetch("/api/admin/fulfil", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          fulfilled,
+          tracking: fulfilled ? (trackingDraft[id] ?? "") : "",
+        }),
+      });
+      await loadState();
+    } finally {
+      setFulfilling(null);
+    }
+  }
+
+  async function copyAddress(id: string, text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 1500);
+    } catch {
+      // Clipboard blocked (insecure context) — the address is on screen.
     }
   }
 
@@ -734,42 +795,126 @@ export function AdminDashboard() {
           </p>
         </div>
         {state && state.orders.length > 0 ? (
-          <ul className="max-h-96 divide-y divide-neutral-100 overflow-y-auto">
-            {state.orders.map((o) => (
-              <li key={o.id} className="flex items-start gap-4 px-6 py-3.5">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-neutral-900">
-                    {o.items.join(", ") || `${o.quantity} card${o.quantity === 1 ? "" : "s"}`}
-                  </p>
-                  <p className="mt-0.5 text-xs text-neutral-400">
-                    {new Date(o.at).toLocaleString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
-                    {o.email ? ` · ${o.email}` : ""}
-                  </p>
-                </div>
-                <div className="flex flex-shrink-0 items-center gap-2">
-                  {o.preorder && (
-                    <span className="rounded-sm bg-violet-100 px-1.5 py-0.5 text-[11px] font-bold text-violet-700">
-                      Pre-order
-                    </span>
+          <ul className="max-h-[32rem] divide-y divide-neutral-100 overflow-y-auto">
+            {state.orders.map((o) => {
+              const addr = formatShipTo(o.shipTo);
+              return (
+                <li key={o.id} className="px-6 py-3.5">
+                  <div className="flex items-start gap-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-neutral-900">
+                        {o.items.join(", ") ||
+                          `${o.quantity} card${o.quantity === 1 ? "" : "s"}`}
+                      </p>
+                      <p className="mt-0.5 text-xs text-neutral-400">
+                        {new Date(o.at).toLocaleString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                        {o.email ? ` · ${o.email}` : ""}
+                      </p>
+                    </div>
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                      {o.preorder && (
+                        <span className="rounded-sm bg-violet-100 px-1.5 py-0.5 text-[11px] font-bold text-violet-700">
+                          Pre-order
+                        </span>
+                      )}
+                      {o.refunded && (
+                        <span className="rounded-sm bg-neutral-200 px-1.5 py-0.5 text-[11px] font-bold text-neutral-600">
+                          Refunded
+                        </span>
+                      )}
+                      {o.fulfilledAt && !o.refunded && (
+                        <span className="rounded-sm bg-emerald-100 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                          Shipped
+                        </span>
+                      )}
+                      <span
+                        className={`text-sm font-bold ${o.refunded ? "text-neutral-400 line-through" : "text-neutral-900"}`}
+                      >
+                        ${o.total.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Ship-to block: everything needed to address the parcel. */}
+                  {addr ? (
+                    <div className="mt-2.5 rounded-md border border-neutral-200 bg-neutral-50 p-3">
+                      <div className="flex items-start gap-2">
+                        <Truck className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-neutral-400" />
+                        <div className="min-w-0 flex-1">
+                          <p className="whitespace-pre-line text-xs leading-relaxed text-neutral-700">
+                            {addr}
+                          </p>
+                          <p className="mt-1 text-[11px] text-neutral-400">
+                            {o.shipTo?.phone ? `${o.shipTo.phone} · ` : ""}
+                            {o.shippingMethod ?? "Shipping"}
+                            {typeof o.shippingPaid === "number"
+                              ? ` · $${o.shippingPaid.toFixed(2)} collected`
+                              : ""}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => copyAddress(o.id, addr)}
+                          className="flex-shrink-0 rounded-sm border border-neutral-300 bg-white px-2 py-1 text-[11px] font-bold text-neutral-600 transition-colors hover:border-neutral-500 hover:text-neutral-900"
+                        >
+                          {copiedId === o.id ? "Copied" : "Copy"}
+                        </button>
+                      </div>
+
+                      <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-neutral-200 pt-2.5">
+                        {o.fulfilledAt ? (
+                          <>
+                            <span className="text-[11px] text-neutral-500">
+                              Shipped{" "}
+                              {new Date(o.fulfilledAt).toLocaleDateString()}
+                              {o.trackingNumber
+                                ? ` · ${o.trackingNumber}`
+                                : ""}
+                            </span>
+                            <button
+                              onClick={() => markShipped(o.id, false)}
+                              className="ml-auto text-[11px] font-semibold text-neutral-400 underline hover:text-neutral-700"
+                            >
+                              Undo
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <input
+                              value={trackingDraft[o.id] ?? ""}
+                              onChange={(e) =>
+                                setTrackingDraft((t) => ({
+                                  ...t,
+                                  [o.id]: e.target.value,
+                                }))
+                              }
+                              placeholder="Tracking number (optional)"
+                              className="min-w-0 flex-1 rounded-sm border border-neutral-300 px-2 py-1 text-[11px] focus:border-neutral-500 focus:outline-none"
+                            />
+                            <button
+                              onClick={() => markShipped(o.id, true)}
+                              disabled={fulfilling === o.id}
+                              className="rounded-sm bg-neutral-900 px-2.5 py-1 text-[11px] font-bold text-white transition-colors hover:bg-neutral-700 disabled:opacity-50"
+                            >
+                              {fulfilling === o.id ? "Saving…" : "Mark shipped"}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-[11px] text-neutral-400">
+                      No delivery address on this order — it was placed before
+                      addresses were logged. Open it in Stripe to ship it.
+                    </p>
                   )}
-                  {o.refunded && (
-                    <span className="rounded-sm bg-neutral-200 px-1.5 py-0.5 text-[11px] font-bold text-neutral-600">
-                      Refunded
-                    </span>
-                  )}
-                  <span
-                    className={`text-sm font-bold ${o.refunded ? "text-neutral-400 line-through" : "text-neutral-900"}`}
-                  >
-                    ${o.total.toFixed(2)}
-                  </span>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className="px-6 py-8 text-center text-sm text-neutral-400">

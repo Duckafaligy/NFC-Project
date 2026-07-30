@@ -6,6 +6,7 @@ import {
   incrementStock,
   logOrder,
   markOrderRefunded,
+  type ShipTo,
 } from "@/lib/adminStore";
 
 /**
@@ -92,6 +93,36 @@ async function handlePaidOrder(
   stripe: Stripe,
   session: Stripe.Checkout.Session,
 ) {
+  // The delivery address is only on the full Session object, and the rate
+  // needs expanding to get its display name — the webhook payload carries
+  // neither, so re-fetch rather than log an order we cannot ship.
+  let full: Stripe.Checkout.Session = session;
+  try {
+    full = await stripe.checkout.sessions.retrieve(session.id, {
+      expand: ["shipping_cost.shipping_rate"],
+    });
+  } catch (e) {
+    console.error("Could not expand session for shipping details:", e);
+  }
+
+  const shipping = full.collected_information?.shipping_details ?? null;
+  const address = shipping?.address ?? null;
+  const shipTo: ShipTo = {
+    // Fall back to the payer's name when no separate recipient was given.
+    name: shipping?.name ?? full.customer_details?.name ?? null,
+    phone: full.customer_details?.phone ?? null,
+    line1: address?.line1 ?? null,
+    line2: address?.line2 ?? null,
+    city: address?.city ?? null,
+    state: address?.state ?? null,
+    postalCode: address?.postal_code ?? null,
+    country: address?.country ?? null,
+  };
+
+  const rate = full.shipping_cost?.shipping_rate;
+  const shippingMethod =
+    rate && typeof rate === "object" ? (rate.display_name ?? null) : null;
+
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
     limit: 100,
   });
@@ -116,6 +147,9 @@ async function handlePaidOrder(
       (li) => `${li.description ?? "Card"} ×${li.quantity ?? 1}`,
     ),
     preorder: Boolean(session.metadata?.preorder),
+    shipTo,
+    shippingPaid: (full.shipping_cost?.amount_total ?? 0) / 100,
+    shippingMethod,
   });
 }
 

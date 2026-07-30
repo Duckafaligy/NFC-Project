@@ -33,7 +33,11 @@ export async function GET(request: Request) {
   let session: Stripe.Checkout.Session;
   try {
     session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["line_items.data.price.product", "invoice"],
+      expand: [
+        "line_items.data.price.product",
+        "invoice",
+        "shipping_cost.shipping_rate",
+      ],
     });
   } catch {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
@@ -74,6 +78,27 @@ export async function GET(request: Request) {
     amountShipping: (session.total_details?.amount_shipping ?? 0) / 100,
     amountTotal: (session.amount_total ?? 0) / 100,
     preorder: Boolean(session.metadata?.preorder),
+    // Where it's going and how, so the buyer can check the address they
+    // entered without digging out the Stripe receipt.
+    shipping: (() => {
+      const details = session.collected_information?.shipping_details;
+      const a = details?.address;
+      if (!a?.line1) return null;
+      const rate = session.shipping_cost?.shipping_rate;
+      return {
+        name: details?.name ?? session.customer_details?.name ?? null,
+        address: [
+          a.line1,
+          a.line2,
+          [a.city, a.state, a.postal_code].filter(Boolean).join(" "),
+          a.country,
+        ]
+          .filter(Boolean)
+          .join(", "),
+        method:
+          rate && typeof rate === "object" ? (rate.display_name ?? null) : null,
+      };
+    })(),
     lines,
     invoice: invoiceReady
       ? {
