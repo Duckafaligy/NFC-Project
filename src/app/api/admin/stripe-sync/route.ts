@@ -9,6 +9,11 @@ import {
   type Product,
 } from "@/lib/products";
 import { effectivePrices } from "@/lib/adminStore";
+import {
+  shippingZones,
+  tierRangeLabel,
+  SHIPPING_UNITS,
+} from "@/lib/shipping";
 import { site } from "@/lib/site";
 
 /**
@@ -62,7 +67,14 @@ function variantsFor(product: Product): PriceVariant[] {
   return variants;
 }
 
-export async function POST() {
+/** Product artwork, so Stripe's dashboard, payment page and invoices show it. */
+const IMAGES: Record<string, string> = {
+  "review-card": "/images/products/google-white.webp",
+  "instagram-card": "/images/products/instagram.webp",
+  "acrylic-stand": "/images/products/google-white.webp",
+};
+
+export async function POST(request: Request) {
   const jar = await cookies();
   if (!verifySessionToken(jar.get(SESSION_COOKIE)?.value)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -78,23 +90,38 @@ export async function POST() {
 
   const stripe = new Stripe(key);
   const currency = site.currency.code.toLowerCase();
+  const liveMode = key.startsWith("sk_live_") || key.startsWith("rk_live_");
+  // Absolute origin, so the images we hand Stripe actually resolve.
+  const origin =
+    request.headers.get("origin") ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    site.url;
   // Sync the live (admin-overridden) prices, not just the catalog defaults.
   const prices = await effectivePrices();
   let productsCreated = 0;
   let productsUpdated = 0;
   let pricesCreated = 0;
   let pricesUnchanged = 0;
+  let pricesArchived = 0;
+  let shippingRatesCreated = 0;
+  let shippingRatesUnchanged = 0;
 
   try {
     for (const product of products) {
       const stripeId = `taplink-${product.id}`;
+      const image = IMAGES[product.id];
       const productData = {
         name: product.name,
         description: `${product.tagline}. ${product.summary}`,
+        ...(image ? { images: [`${origin}${image}`] } : {}),
+        shippable: true,
+        unit_label: product.formFactor.toLowerCase(),
         metadata: {
           taplink_id: product.id,
           slug: product.slug,
           category: product.category,
+          form_factor: product.formFactor,
+          shipping_units: String(SHIPPING_UNITS[product.formFactor]),
         },
       };
 
@@ -123,10 +150,12 @@ export async function POST() {
       });
 
       let defaultPriceId: string | null = null;
+      const wantedKeys = new Set<string>();
       for (const variant of variantsFor(
         withPriceOverride(product, prices[product.id]),
       )) {
         const lookupKey = `${stripeId}-${variant.suffix}`;
+        wantedKeys.add(lookupKey);
         const match = existing.data.find((p) => p.lookup_key === lookupKey);
 
         if (
@@ -162,6 +191,61 @@ export async function POST() {
           default_price: defaultPriceId,
         });
       }
+
+      // Retire prices for variants this product no longer offers — e.g. when
+      // custom design is switched off, its prices must stop being live.
+      for (const stale of existing.data) {
+        if (
+          stale.lookup_key &&
+          stale.lookup_key.startsWith(`${stripeId}-`) &&
+          !wantedKeys.has(stale.lookup_key) &&
+          stale.id !== defaultPriceId
+        ) {
+          await stripe.prices.update(stale.id, { active: false });
+          pricesArchived++;
+        }
+      }
+    }
+
+    // Shipping rates, one per zone/bracket. Checkout binds its own inline
+    // rate (the amount depends on the cart), but having these in the account
+    // means refunds, manual invoices and reporting all use the same numbers.
+    const existingRates = await stripe.shippingRates.list({
+      active: true,
+      limit: 100,
+    });
+    for (const zone of shippingZones) {
+      for (let i = 0; i < zone.tiers.length; i++) {
+        const tier = zone.tiers[i];
+        const amount = Math.round(tier.price * 100);
+        const displayName = `${zone.label} — ${tierRangeLabel(zone, i)} cards`;
+        const match = existingRates.data.find(
+          (r) => r.metadata?.taplink_key === `${zone.id}-${tier.minQty}`,
+        );
+        if (
+          match &&
+          match.fixed_amount?.amount === amount &&
+          match.fixed_amount?.currency === currency
+        ) {
+          shippingRatesUnchanged++;
+          continue;
+        }
+        // Shipping rate amounts are immutable too: supersede and archive.
+        await stripe.shippingRates.create({
+          display_name: displayName,
+          type: "fixed_amount",
+          fixed_amount: { amount, currency },
+          delivery_estimate: {
+            minimum: { unit: "business_day", value: zone.etaMin },
+            maximum: { unit: "business_day", value: zone.etaMax },
+          },
+          metadata: { taplink_key: `${zone.id}-${tier.minQty}` },
+        });
+        shippingRatesCreated++;
+        if (match) {
+          await stripe.shippingRates.update(match.id, { active: false });
+        }
+      }
     }
   } catch (err) {
     console.error("Stripe catalog sync failed:", err);
@@ -174,9 +258,14 @@ export async function POST() {
 
   return NextResponse.json({
     ok: true,
+    liveMode,
+    currency: currency.toUpperCase(),
     productsCreated,
     productsUpdated,
     pricesCreated,
     pricesUnchanged,
+    pricesArchived,
+    shippingRatesCreated,
+    shippingRatesUnchanged,
   });
 }

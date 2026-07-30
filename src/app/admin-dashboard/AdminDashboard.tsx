@@ -232,11 +232,20 @@ export function AdminDashboard() {
       const res = await fetch("/api/admin/stripe-sync", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Sync failed.");
-      const created = data.productsCreated + data.pricesCreated;
+
+      // Report every kind of change, so it's clear what the button did.
+      const parts: string[] = [];
+      if (data.productsCreated) parts.push(`${data.productsCreated} product(s) created`);
+      if (data.productsUpdated) parts.push(`${data.productsUpdated} updated`);
+      if (data.pricesCreated) parts.push(`${data.pricesCreated} price(s) created`);
+      if (data.pricesArchived) parts.push(`${data.pricesArchived} old price(s) archived`);
+      if (data.shippingRatesCreated)
+        parts.push(`${data.shippingRatesCreated} shipping rate(s) created`);
+      const mode = data.liveMode ? "LIVE" : "test";
       setSyncMessage(
-        created > 0
-          ? `Synced: ${data.productsCreated} products created, ${data.productsUpdated} updated, ${data.pricesCreated} prices created.`
-          : "Already in sync — nothing to change.",
+        parts.length > 0
+          ? `Synced to ${mode} mode (${data.currency}): ${parts.join(", ")}.`
+          : `Already in sync — ${mode} mode catalog, prices and shipping rates all match.`,
       );
     } catch (err) {
       setSyncError(true);
@@ -673,9 +682,16 @@ export function AdminDashboard() {
           </p>
         </div>
         <p className="mt-2 text-sm text-neutral-500">
-          Pushes your card products (with standard / custom / designed-by-us
-          prices) into your Stripe dashboard. Safe to run again any time — it
-          only changes what&apos;s out of date.
+          Pushes everything Stripe needs into your account: each product with
+          its artwork and the prices you set above, plus every shipping bracket
+          for Canada and the US. Prices for options you have switched off get
+          archived. Safe to run again any time — it only changes what&apos;s out
+          of date, and it tells you whether it hit test or live mode.
+        </p>
+        <p className="mt-2 text-xs text-neutral-400">
+          Run this after changing any price above, otherwise your Stripe
+          dashboard reports the old numbers. Checkout always charges the prices
+          set here regardless.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button

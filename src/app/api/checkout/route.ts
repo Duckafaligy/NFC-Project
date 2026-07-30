@@ -3,7 +3,11 @@ import Stripe from "stripe";
 import { products, configuredUnitPrice, withPriceOverride } from "@/lib/products";
 import { site } from "@/lib/site";
 import { unitAmountCents, discountRate } from "@/lib/pricing";
-import { getShippingZone, shippingCost } from "@/lib/shipping";
+import {
+  getShippingZone,
+  shippingCost,
+  shippingUnitsFor,
+} from "@/lib/shipping";
 import {
   effectiveProductPreorder,
   effectiveStock,
@@ -51,11 +55,9 @@ export async function POST(request: Request) {
     effectivePrices(),
   ]);
 
-  // Total cards (for shipping tiers) + per-product quantities (for stock).
-  const totalCards = items.reduce(
-    (sum, item) => sum + Math.max(0, Math.floor(Number(item.quantity)) || 0),
-    0,
-  );
+  // Billable shipping units (a stand takes more room than a card) and
+  // per-product quantities (for stock).
+  const shippingUnits = shippingUnitsFor(items);
   const qtyByProduct: Record<string, number> = {};
   for (const item of items) {
     const q = Math.max(0, Math.floor(Number(item.quantity)) || 0);
@@ -148,7 +150,7 @@ export async function POST(request: Request) {
   // charged always matches where it ships and how many cards. An
   // invalid/absent zone falls back to the default (Canada — home base).
   const zone = getShippingZone(body.zoneId);
-  const shippingAmount = shippingCost(zone, totalCards);
+  const shippingAmount = shippingCost(zone, shippingUnits);
   const currency = site.currency.code.toLowerCase();
   // Whether any line is on pre-order (for the invoice/metadata wording).
   const anyPreorder = items.some((i) => productPreorder[i.productId] ?? false);

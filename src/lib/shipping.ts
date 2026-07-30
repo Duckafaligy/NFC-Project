@@ -1,4 +1,5 @@
 import { site } from "./site";
+import { products, type FormFactor } from "./products";
 
 /**
  * Destination + quantity based shipping, derived from site.ts. The checkout
@@ -38,6 +39,29 @@ export const shippingZones: ShippingZone[] = site.shipping.zones.map((z) => ({
   etaMax: z.etaMax,
 }));
 
+/**
+ * How much of a shipping bracket each form factor takes up. Cards go several
+ * to one flat mailer; the acrylic stand is rigid and boxed, so it occupies
+ * roughly the room of three cards. Without this a cart of stands would ship
+ * at the one-card rate and lose money on every order.
+ */
+export const SHIPPING_UNITS: Record<FormFactor, number> = {
+  Card: 1,
+  Stand: 3,
+};
+
+/** Billable shipping units for a cart. Unknown product ids count as a card. */
+export function shippingUnitsFor(
+  items: { productId: string; quantity: number }[],
+): number {
+  return items.reduce((sum, item) => {
+    const qty = Math.max(0, Math.floor(Number(item.quantity)) || 0);
+    const product = products.find((p) => p.id === item.productId);
+    const per = product ? SHIPPING_UNITS[product.formFactor] : 1;
+    return sum + qty * per;
+  }, 0);
+}
+
 /** First zone (Canada — home base) is the default selection. */
 export const defaultZoneId = shippingZones[0].id;
 
@@ -48,11 +72,12 @@ export function getShippingZone(id: string | null | undefined): ShippingZone {
 
 /**
  * Shipping cost for an order: the price of the highest tier whose minQty is
- * <= the quantity. Cards ship together, so this steps up in brackets rather
- * than charging per card. Empty or invalid quantities are treated as 1.
+ * <= the billable units (see `shippingUnitsFor`). Everything ships together,
+ * so this steps up in brackets rather than charging per item. Empty or
+ * invalid quantities are treated as 1.
  */
-export function shippingCost(zone: ShippingZone, quantity: number): number {
-  const q = Math.max(1, Math.floor(quantity) || 1);
+export function shippingCost(zone: ShippingZone, units: number): number {
+  const q = Math.max(1, Math.floor(units) || 1);
   let price = zone.tiers[0]?.price ?? 0;
   for (const tier of zone.tiers) {
     if (q >= tier.minQty) price = tier.price;

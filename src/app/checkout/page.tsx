@@ -19,6 +19,7 @@ import {
   getShippingZone,
   defaultZoneId,
   shippingCost,
+  shippingUnitsFor,
 } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 import { unitPriceFor, lineTotal, discountRate } from "@/lib/pricing";
@@ -38,12 +39,16 @@ export default function CheckoutPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [zoneId, setZoneId] = useState(defaultZoneId);
 
-  // Destination + quantity based shipping: the buyer picks their region here,
-  // the tiered rate for the cart's card count is bound to the Stripe session,
-  // and the address is locked to that zone. Rate rises in brackets, so it
-  // updates live as the region or quantity changes.
+  // Destination + size based shipping: the buyer picks their region here, the
+  // tiered rate for the cart's billable units is bound to the Stripe session,
+  // and the address is locked to that zone. A stand counts for more than a
+  // card, so this is units rather than a raw item count. Updates live as the
+  // region or the cart changes.
   const zone = getShippingZone(zoneId);
-  const shipping = shippingCost(zone, itemCount);
+  const units = shippingUnitsFor(
+    items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+  );
+  const shipping = shippingCost(zone, units);
   const total = subtotal + shipping;
 
   async function handlePay() {
@@ -251,14 +256,16 @@ export default function CheckoutPage() {
               >
                 {shippingZones.map((z) => (
                   <option key={z.id} value={z.id}>
-                    {z.label} — {formatPrice(shippingCost(z, itemCount))}
+                    {z.label} — {formatPrice(shippingCost(z, units))}
                   </option>
                 ))}
               </select>
               <p className="mt-1.5 text-xs text-neutral-400">
-                Rate covers all {itemCount} card{itemCount === 1 ? "" : "s"} in
-                your order. Arrives in about {zone.etaMin}–{zone.etaMax} business
-                days; you confirm your exact address on the secure Stripe page.
+                One rate covers all {itemCount} item
+                {itemCount === 1 ? "" : "s"} in your order — they ship together.
+                Stands are boxed, so they take up more of the rate than a card.
+                Arrives in about {zone.etaMin}–{zone.etaMax} business days; you
+                confirm your exact address on the secure Stripe page.
               </p>
             </div>
 

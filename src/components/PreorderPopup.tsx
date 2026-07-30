@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BadgePercent, X } from "lucide-react";
 import { useStoreStatus } from "@/context/StoreStatus";
@@ -114,11 +115,31 @@ export function PreorderPopup() {
           <X className="h-[1.15rem] w-[1.15rem]" />
         </button>
 
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-[#2E7DFF] text-white">
-          <BadgePercent className="h-7 w-7" />
-        </span>
+        {/* The actual cards, so the offer is attached to the product. */}
+        <div className="flex items-end justify-center gap-1">
+          {[
+            { src: "/images/products/google-white.webp", w: 604, h: 948, rot: "-9deg", z: "z-0" },
+            { src: "/images/products/instagram.webp", w: 555, h: 870, rot: "0deg", z: "z-10" },
+            { src: "/images/products/google-black.webp", w: 596, h: 944, rot: "9deg", z: "z-0" },
+          ].map((c, i) => (
+            <Image
+              key={c.src}
+              src={c.src}
+              alt=""
+              aria-hidden
+              width={c.w}
+              height={c.h}
+              sizes="110px"
+              className={`${c.z} h-24 w-auto rounded-md drop-shadow-[0_5px_12px_rgba(0,0,0,0.18)] ${
+                i === 1 ? "h-28 -mx-1" : ""
+              }`}
+              style={{ transform: `rotate(${c.rot})` }}
+            />
+          ))}
+        </div>
 
-        <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
+        <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
+          <BadgePercent className="h-4 w-4" />
           Pre-order is open
         </p>
         <h2
