@@ -28,6 +28,8 @@ interface StoreStatus {
   stock: Record<string, number>;
   /** Effective per-product prices (admin overrides merged with defaults). */
   prices: Record<string, PriceOverride>;
+  /** Stripe Tax is active, so tax is added on the Stripe payment page. */
+  taxEnabled: boolean;
   loaded: boolean;
 }
 
@@ -50,6 +52,7 @@ const StoreStatusContext = createContext<StoreStatus>({
   productPreorder: DEFAULT_PRODUCT_PREORDER,
   stock: DEFAULT_STOCK,
   prices: DEFAULT_PRICES,
+  taxEnabled: false,
   loaded: false,
 });
 
@@ -59,6 +62,7 @@ export function StoreStatusProvider({ children }: { children: ReactNode }) {
     productPreorder: DEFAULT_PRODUCT_PREORDER,
     stock: DEFAULT_STOCK,
     prices: DEFAULT_PRICES,
+    taxEnabled: false,
     loaded: false,
   });
 
@@ -82,6 +86,7 @@ export function StoreStatusProvider({ children }: { children: ReactNode }) {
             data.prices && typeof data.prices === "object"
               ? { ...DEFAULT_PRICES, ...data.prices }
               : DEFAULT_PRICES,
+          taxEnabled: Boolean(data.taxEnabled),
           loaded: true,
         });
       })

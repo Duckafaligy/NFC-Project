@@ -116,6 +116,8 @@ export async function POST(request: Request) {
         ...(image ? { images: [`${origin}${image}`] } : {}),
         shippable: true,
         unit_label: product.formFactor.toLowerCase(),
+        // General tangible goods, so Stripe Tax can rate these correctly.
+        tax_code: "txcd_99999999",
         metadata: {
           taplink_id: product.id,
           slug: product.slug,

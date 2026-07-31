@@ -76,6 +76,7 @@ export async function GET(request: Request) {
     amountSubtotal: (session.amount_subtotal ?? 0) / 100,
     amountDiscount: (session.total_details?.amount_discount ?? 0) / 100,
     amountShipping: (session.total_details?.amount_shipping ?? 0) / 100,
+    amountTax: (session.total_details?.amount_tax ?? 0) / 100,
     amountTotal: (session.amount_total ?? 0) / 100,
     preorder: Boolean(session.metadata?.preorder),
     // Where it's going and how, so the buyer can check the address they

@@ -32,7 +32,7 @@ import { getProduct } from "@/lib/products";
 type PayState = "idle" | "loading" | "demo-placed" | "error";
 
 export default function CheckoutPage() {
-  const { productPreorder } = useStoreStatus();
+  const { productPreorder, taxEnabled } = useStoreStatus();
   const { items, itemCount, subtotal, compareSubtotal, setQuantity, removeItem, clear } =
     useCart();
   const [payState, setPayState] = useState<PayState>("idle");
@@ -294,11 +294,23 @@ export default function CheckoutPage() {
                 <dt>Shipping to {zone.label}</dt>
                 <dd>{formatPrice(shipping)}</dd>
               </div>
+              {taxEnabled && (
+                <div className="flex justify-between text-neutral-600">
+                  <dt>Tax</dt>
+                  <dd className="text-neutral-400">Calculated at payment</dd>
+                </div>
+              )}
               <div className="flex justify-between border-t border-neutral-200 pt-3 text-base font-extrabold text-neutral-900">
-                <dt>Total</dt>
+                <dt>{taxEnabled ? "Total before tax" : "Total"}</dt>
                 <dd>{formatPrice(total)}</dd>
               </div>
             </dl>
+            {taxEnabled && (
+              <p className="mt-2 text-xs text-neutral-400">
+                Sales tax is worked out from your delivery address on the next
+                page, before you pay.
+              </p>
+            )}
 
             {payState === "error" && (
               <div className="mt-4 flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">

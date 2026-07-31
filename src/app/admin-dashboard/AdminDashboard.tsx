@@ -74,6 +74,7 @@ interface AdminState {
   persistentStore: boolean;
   defaultPassword: boolean;
   webhookConfigured: boolean;
+  taxEnabled: boolean;
   stripeConfigured: boolean;
   stripeLiveMode: boolean;
 }
@@ -468,6 +469,13 @@ export function AdminDashboard() {
                 hint: state.persistentStore
                   ? "Settings and orders survive redeploys."
                   : "Not connected — settings reset on redeploy.",
+              },
+              {
+                ok: state.taxEnabled,
+                label: "Sales tax (GST/HST)",
+                hint: state.taxEnabled
+                  ? "Stripe Tax adds tax from the delivery address at payment."
+                  : "Off — no tax is charged. Activate Stripe Tax (origin address + registrations), then set STRIPE_TAX_ENABLED=1 in Vercel.",
               },
             ].map((c) => (
               <li

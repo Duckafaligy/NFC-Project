@@ -155,6 +155,21 @@ export async function POST(request: Request) {
   // Whether any line is on pre-order (for the invoice/metadata wording).
   const anyPreorder = items.some((i) => productPreorder[i.productId] ?? false);
 
+  /**
+   * Sales tax (GST/HST here, US state tax where you have nexus) is calculated
+   * by Stripe Tax from the delivery address. It stays OFF until
+   * STRIPE_TAX_ENABLED=1, because turning it on before Stripe Tax is
+   * activated — with an origin address and registrations added — makes every
+   * session creation fail, which would take the whole store down.
+   *
+   * "exclusive" means tax is added on top of our prices rather than assumed
+   * to be inside them, which is the norm in Canada and the US.
+   */
+  const taxEnabled = process.env.STRIPE_TAX_ENABLED === "1";
+  // Stripe tax codes: general tangible goods, and shipping.
+  const GOODS_TAX_CODE = "txcd_99999999";
+  const SHIPPING_TAX_CODE = "txcd_92010001";
+
   try {
     const stripe = new Stripe(key);
     const origin =
@@ -184,12 +199,15 @@ export async function POST(request: Request) {
         price_data: {
           currency,
           unit_amount: line.unitCents,
+          ...(taxEnabled ? { tax_behavior: "exclusive" as const } : {}),
           product_data: {
             name: line.name,
             description: line.description,
+            ...(taxEnabled ? { tax_code: GOODS_TAX_CODE } : {}),
           },
         },
       })),
+      automatic_tax: { enabled: taxEnabled },
       shipping_address_collection: {
         allowed_countries:
           zone.countries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
@@ -204,6 +222,14 @@ export async function POST(request: Request) {
               currency,
               amount: Math.round(shippingAmount * 100),
             },
+            // Shipping is taxable in Canada, so it needs its own code and
+            // behaviour or Stripe cannot rate it.
+            ...(taxEnabled
+              ? {
+                  tax_behavior: "exclusive" as const,
+                  tax_code: SHIPPING_TAX_CODE,
+                }
+              : {}),
             delivery_estimate: {
               minimum: { unit: "business_day", value: zone.etaMin },
               maximum: { unit: "business_day", value: zone.etaMax },

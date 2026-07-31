@@ -38,6 +38,7 @@ interface OrderSummary {
   amountSubtotal: number;
   amountDiscount: number;
   amountShipping: number;
+  amountTax: number;
   amountTotal: number;
   preorder: boolean;
   shipping: {
@@ -210,6 +211,12 @@ function SuccessContent() {
                       : formatPrice(order?.amountShipping ?? 0)}
                   </dd>
                 </div>
+                {(order?.amountTax ?? 0) > 0 && (
+                  <div className="flex justify-between text-neutral-600">
+                    <dt>Tax</dt>
+                    <dd>{formatPrice(order?.amountTax ?? 0)}</dd>
+                  </div>
+                )}
                 {/* Confirm the address back to the buyer while it can still
                     be corrected by replying to the order. */}
                 {order?.shipping?.address && (

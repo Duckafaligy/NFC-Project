@@ -64,6 +64,7 @@ export async function GET() {
     webhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
     stripeLiveMode: (process.env.STRIPE_SECRET_KEY ?? "").startsWith("sk_live_"),
+    taxEnabled: process.env.STRIPE_TAX_ENABLED === "1",
   });
 }
 
