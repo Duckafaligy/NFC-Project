@@ -23,11 +23,12 @@ menus, and link to their website — all with a single tap.
 7. [Product catalog (data model)](#product-catalog-data-model)
 8. [Custom vs. standard design flow](#custom-vs-standard-design-flow)
 9. [Cart & checkout](#cart--checkout)
-10. [What is mocked / not yet real](#whats-mocked--not-yet-real)
-11. [How to do common tasks](#how-to-do-common-tasks)
-12. [Roadmap](#roadmap)
-13. [Change log](#change-log)
-14. [Notes for future sessions](#notes-for-future-sessions)
+10. [Sales tax](#sales-tax)
+11. [What is mocked / not yet real](#whats-mocked--not-yet-real)
+12. [How to do common tasks](#how-to-do-common-tasks)
+13. [Roadmap](#roadmap)
+14. [Change log](#change-log)
+15. [Notes for future sessions](#notes-for-future-sessions)
 
 ---
 
@@ -65,6 +66,7 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for the `/api/stripe-webhook` endpoint (events: `checkout.session.completed`, `charge.refunded`). Paid orders subtract from the shared pool, full refunds add back, orders get logged for the dashboard. |
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
+| `STRIPE_TAX_ENABLED` | Only once registered | Set to `1` to charge sales tax. See [Sales tax](#sales-tax). Leave unset until Stripe Tax is activated — turning it on early makes every checkout fail. |
 
 **To turn on real payments:**
 1. Create a [Stripe](https://stripe.com) account → Dashboard → Developers → API keys.
@@ -288,6 +290,80 @@ nothing gets lost.
 - `/checkout` lists items, has a **Ship to** region selector that binds the
   matching destination rate (from `site.shipping.zones`) + total, and on
   submit opens Stripe Checkout (or the labelled test-order flow without a key).
+
+---
+
+## Sales tax
+
+**None of this is tax advice — confirm your own situation with an accountant
+or the CRA.** What follows is how the code behaves and the order to do things
+in.
+
+### Do you even have to charge it?
+
+In Canada you are a **small supplier** until your gross revenue passes
+**$30,000 CAD across four consecutive calendar quarters**. Under that you are
+not required to register for GST/HST, and **if you are not registered you must
+not charge it** — collecting tax you are not registered for is its own
+problem. So for a store just opening, `STRIPE_TAX_ENABLED` unset is very
+probably the correct setting.
+
+Once you cross the threshold (or register voluntarily, which some do to claim
+input tax credits) you must register with the CRA and start charging.
+
+Selling into the **US** is separate: state sales tax is only owed once you
+have *economic nexus* in a state — typically $100k of sales or 200
+transactions into that one state per year. A Canadian seller shipping a few
+cards into the US almost certainly has none, so do not register US states
+until the numbers say you must.
+
+### Turning it on
+
+Do these in order. Steps 1-4 are in Stripe and only you can do them.
+
+1. **Register with the CRA** and get your GST/HST number. Quebec (QST), BC,
+   Saskatchewan and Manitoba run their own provincial registrations with their
+   own thresholds — check whether you need those too.
+2. **Stripe Dashboard → Tax** → activate Stripe Tax. It will ask for your
+   **origin address** (your Canadian business address) — this is what decides
+   domestic vs cross-border.
+3. **Tax → Registrations** → add your CRA registration (Canada, GST/HST), plus
+   any provincial ones. Stripe only charges tax where you have told it you are
+   registered, so this list is what actually drives collection.
+4. Leave the **default product tax code** as tangible goods. The sync already
+   stamps `txcd_99999999` on every product and the checkout stamps
+   `txcd_92010001` on shipping, so you should not need to touch either.
+5. **Vercel → Settings → Environment Variables** → add `STRIPE_TAX_ENABLED=1`
+   → **Redeploy**.
+6. Confirm in **/admin-dashboard → Connections**: the *Sales tax* row turns
+   green. Then run a test order and check tax appears on Stripe's payment
+   page before you pay.
+
+### Why it is behind a flag
+
+`automatic_tax` is rejected by Stripe until Stripe Tax is activated on the
+account. If the code sent it unconditionally, every checkout session would
+fail the moment it deployed — the whole store, not just the tax line. The flag
+means the default path is the safe one.
+
+### What the code does when it is on
+
+- Line items and the shipping rate both go up as `tax_behavior: "exclusive"`,
+  i.e. tax is added on top of the listed price rather than assumed to be
+  inside it. That is the norm in Canada and the US.
+- Shipping carries its own tax code because **shipping is taxable in Canada**.
+  Miss that and you under-collect on every order.
+- `/checkout` relabels its total to **"Total before tax"** and adds a
+  "calculated at payment" row, since the real number depends on the address
+  the buyer has not entered yet.
+- The success page and the Stripe invoice both show the tax actually charged.
+
+### Filing
+
+Stripe calculates and collects; it does **not** remit for you. **Stripe
+Dashboard → Tax → Registrations → Reports** gives you the totals per
+jurisdiction to file your GST/HST return with. Filing frequency (annual,
+quarterly, monthly) is set by the CRA when you register.
 
 ---
 
