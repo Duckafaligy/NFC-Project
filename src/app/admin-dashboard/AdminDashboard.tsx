@@ -79,6 +79,10 @@ interface AdminState {
   taxEnabled: boolean;
   stripeConfigured: boolean;
   stripeLiveMode: boolean;
+  siteUrl: string;
+  siteUrlConfigured: boolean;
+  contactEmail: string;
+  contactEmailConfigured: boolean;
 }
 
 interface ProductPrice {
@@ -495,6 +499,20 @@ export function AdminDashboard() {
                 hint: state.persistentStore
                   ? "Settings and orders survive redeploys."
                   : "Not connected — settings reset on redeploy.",
+              },
+              {
+                ok: state.siteUrlConfigured,
+                label: "Public site URL",
+                hint: state.siteUrlConfigured
+                  ? `${state.siteUrl} — used for links, Stripe redirects and product images.`
+                  : "Falling back to localhost. Turn on system environment variables in Vercel, or set NEXT_PUBLIC_SITE_URL.",
+              },
+              {
+                ok: state.contactEmailConfigured,
+                label: "Contact email",
+                hint: state.contactEmailConfigured
+                  ? `${state.contactEmail} — shown on legal pages and every invoice.`
+                  : "Still the placeholder. Customers on your legal pages and invoices are told to write to an address that does not exist. Set NEXT_PUBLIC_CONTACT_EMAIL.",
               },
               {
                 ok: state.taxEnabled,

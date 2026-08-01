@@ -18,7 +18,7 @@ import {
   type AdminSettings,
 } from "@/lib/adminStore";
 import { DEFAULT_CARD_STOCK, products } from "@/lib/products";
-import { site } from "@/lib/site";
+import { site, PLACEHOLDER_EMAIL } from "@/lib/site";
 
 async function authed(): Promise<boolean> {
   const jar = await cookies();
@@ -62,6 +62,12 @@ export async function GET() {
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
     stripeLiveMode: (process.env.STRIPE_SECRET_KEY ?? "").startsWith("sk_live_"),
     taxEnabled: process.env.STRIPE_TAX_ENABLED === "1",
+    // Public identity: both feed customer-facing output (metadata, Stripe
+    // redirects, product image URLs, invoice footer, legal pages).
+    siteUrl: site.url,
+    siteUrlConfigured: !site.url.startsWith("http://localhost"),
+    contactEmail: site.email,
+    contactEmailConfigured: site.email !== PLACEHOLDER_EMAIL,
   });
 }
 

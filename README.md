@@ -63,9 +63,11 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | Variable            | Required | What it does                                                        |
 | ------------------- | -------- | ------------------------------------------------------------------- |
 | `STRIPE_SECRET_KEY` | For real payments | Enables Stripe Checkout. Without it, checkout falls back to a clearly-labelled test-order flow (no card charged). |
-| `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for the `/api/stripe-webhook` endpoint (events: `checkout.session.completed`, `charge.refunded`). Paid orders subtract from the shared pool, full refunds add back, orders get logged for the dashboard. |
+| `STRIPE_WEBHOOK_SECRET` | For stock sync | Signing secret for `/api/stripe-webhook` (events: `checkout.session.completed`, `charge.refunded`). Paid orders subtract stock, full refunds add it back. Orders themselves are read live from Stripe, so without this you still see every order — you just adjust stock by hand. |
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
-| `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, dashboard changes reset on redeploy/cold start. |
+| `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, stock/price/pre-order edits reset on redeploy or cold start. Orders are never stored here, so none can be lost. |
+| `NEXT_PUBLIC_SITE_URL` | Once on a custom domain | Public base URL. If unset, Vercel's own production domain is used automatically (enable **Automatically expose System Environment Variables** in project settings). Feeds canonical/OG URLs, the sitemap, Stripe redirects and the product image URLs sent to Stripe. |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | **Yes, before selling** | The address customers are told to write to — all four legal pages, the success page and the footer of every Stripe invoice. Until set it shows a placeholder that does not exist. |
 | `STRIPE_TAX_ENABLED` | Only once registered | Set to `1` to charge sales tax. See [Sales tax](#sales-tax). Leave unset until Stripe Tax is activated — turning it on early makes every checkout fail. |
 
 **To turn on real payments:**
@@ -85,8 +87,9 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 3. You're redirected to `/checkout/success`, which fetches the order and
    shows an **on-page invoice**: line items, discount, shipping, total, plus
    **View invoice** / **Download PDF** buttons (Stripe-hosted invoice).
-4. If the webhook is connected, stock drops in /admin-dashboard and the order
-   appears under **Recent orders**.
+4. The order appears under **Recent orders** in /admin-dashboard with the full
+   delivery address (read live from Stripe). If the webhook is connected,
+   stock drops too.
 5. Refund the payment in the Stripe dashboard → stock goes back up and the
    order is flagged **Refunded**.
 
@@ -121,16 +124,17 @@ it costs you a stock count, never a customer's address.
 | --------------- | ---------------------------------------- |
 | Framework       | **Next.js 15** (App Router, TypeScript)  |
 | UI runtime      | React 19                                 |
-| Styling         | **Tailwind CSS 3.4** (custom dark theme) |
+| Styling         | **Tailwind CSS 3.4** (light theme, blue accent) |
 | Animation       | **framer-motion** (scroll reveals)       |
 | Icons           | **lucide-react**                         |
 | Utilities       | clsx + tailwind-merge (`cn()` helper)    |
-| Fonts           | Inter (body) + Sora (display) via `next/font` |
+| Fonts           | Inter (body) + Archivo (display) via `next/font` |
 | State           | React Context + `useReducer` (cart)      |
-| Persistence     | `localStorage` (cart survives refresh)   |
+| Persistence     | `localStorage` (cart) + Upstash Redis (store settings) |
 
-There is **no database and no server/API layer yet** — the product catalog is a
-static TypeScript file. This is intentional for a fast, deployable base.
+The product catalog is a static TypeScript file (`src/lib/products.ts`); there
+is no product database. Everything mutable lives elsewhere on purpose: store
+settings (stock, prices, pre-order) in Upstash Redis, and orders in Stripe.
 
 ---
 
@@ -146,9 +150,18 @@ src/
 │   ├── products/
 │   │   ├── page.tsx                # Product listing (server) + category filter
 │   │   └── [slug]/page.tsx         # Individual product page (SSG per product)
-│   ├── checkout/page.tsx           # Cart + shipping form + order summary
-│   ├── how-it-works/page.tsx       # Explains NFC + FAQ
-│   ├── contact/page.tsx            # Contact form + details
+│   ├── checkout/page.tsx           # Cart + destination + order summary
+│   ├── checkout/success/page.tsx   # Post-payment receipt + invoice links
+│   ├── admin-dashboard/            # Password-walled store controls
+│   ├── sitemap.ts / robots.ts      # SEO
+│   ├── t/[code]/route.ts           # NFC tap -> redirect (tag hub)
+│   ├── tag/[code]/page.tsx         # Customer claims / re-points their tag
+│   ├── api/
+│   │   ├── checkout/               # Create Stripe session; look one up
+│   │   ├── stripe-webhook/         # Stock decrement + refund restock
+│   │   ├── store-status/           # Public: stock, prices, pre-order, tax
+│   │   ├── tag/[code]/             # Tag claim + update
+│   │   └── admin/                  # state, login, logout, orders, fulfil, stripe-sync
 │   └── legal/
 │       ├── terms/page.tsx
 │       ├── privacy/page.tsx
@@ -160,15 +173,23 @@ src/
 │   ├── Button.tsx                  # Button + ButtonLink (variants: primary/secondary/ghost)
 │   ├── ProductCard.tsx             # Grid card
 │   ├── ProductGrid.tsx             # Client grid w/ category filter
-│   ├── ProductVisual.tsx           # CSS-rendered "product photo" (no images needed)
+│   ├── ProductVisual.tsx           # Real card artwork (public/images/products)
+│   ├── PreorderPopup.tsx           # Pre-order modal, fires after the hero
 │   ├── ProductConfigurator.tsx     # Standard/Custom choice + upload/we-design + add to cart
 │   ├── LegalLayout.tsx             # Shared layout for legal pages
 │   └── Reveal.tsx                  # framer-motion fade-in-on-scroll wrapper
 ├── context/
-│   └── CartContext.tsx             # Cart state, localStorage persistence, useCart() hook
+│   ├── CartContext.tsx             # Cart state, localStorage persistence, useCart() hook
+│   └── StoreStatus.tsx             # Live stock/prices/pre-order/tax from the API
 └── lib/
     ├── products.ts                 # PRODUCT CATALOG (single source of truth) + types
-    ├── site.ts                     # Brand config: name, contact, shipping rules
+    ├── site.ts                     # Brand config, currency, shipping zones
+    ├── shipping.ts                 # Zones, quantity tiers, form-factor units
+    ├── pricing.ts                  # Pre-order discount + cent conversion
+    ├── adminStore.ts               # Store settings in Upstash Redis (no orders)
+    ├── adminAuth.ts                # Dashboard password + session token
+    ├── tags.ts / tagPresets.ts     # Tag hub: claim, re-point, tap counting
+    ├── kv.ts                       # Upstash REST helper for the tag hub
     └── utils.ts                    # cn() + formatPrice()
 ```
 
@@ -181,7 +202,11 @@ src/
 | `/`                       | Landing page — cinematic hero, use cases, best sellers, custom-design banner, CTAs |
 | `/products`               | All products with a category filter                              |
 | `/products/[slug]`        | Individual product: visual, description, features, specs, and the **configurator** |
-| `/checkout`               | Cart items, shipping form, order summary, place-order flow       |
+| `/checkout`               | Cart items, destination selector, order summary, pay             |
+| `/checkout/success`       | Receipt: lines, shipping, tax, delivery address, invoice links   |
+| `/admin-dashboard`        | Password-walled: prices, stock, pre-order, orders, Stripe sync   |
+| `/t/[code]`               | NFC tap → 302 to the tag's destination                           |
+| `/tag/[code]`             | Customer claims a tag and re-points it without a reprint         |
 | `/legal/terms`            | Terms of Service                                                 |
 | `/legal/privacy`          | Privacy Policy                                                   |
 | `/legal/shipping`         | Shipping Policy                                                  |
@@ -191,46 +216,35 @@ src/
 
 ## Design system
 
-**Monochrome minimal.** White and black do the work; one orange accent pops
-in a handful of deliberate places. Corners are tight (rounded-md max).
+**Light and quiet, one blue accent.** White page, hairline borders, tight
+corners. The product artwork is the only place strong colour appears.
 
-- **Surfaces:** pure white page; white cards via `.card` (rounded-md,
-  neutral-200 hairline border, faint `shadow-soft`); `.card-hover` darkens
-  the border. neutral-100 panels and one black (neutral-900) hero stat tile
-  for contrast.
+- **Surfaces:** white page; white cards via `.card` (rounded-md, neutral-200
+  hairline, faint `shadow-soft`); neutral-50/100 panels for section
+  contrast; one neutral-900 panel for the closing CTA.
 - **Text:** neutral-900 headings, neutral-600 body, neutral-400 secondary.
-- **Accent colors are semantic and small** (the base stays monotone):
-  - **orange-600**: logo mark, Best seller badge (brand identity)
-  - **blue-600**: cart count badge, shipping/truck icons, $0 hero stat,
-    step labels (info)
-  - **emerald-500/600**: discount amounts, guarantee shields, success
-    states (money/positive)
-  - **violet-600**: everything pre-order (announcement chip, price chip,
-    "(pre-order price)" labels)
-  - **amber-400/500**: review stars, support icon (highlight)
-  Follow these meanings when adding UI; never introduce a sixth color.
-- **Buttons:** rounded-md; primary = black fill, secondary = white with
-  neutral border that darkens on hover.
+- **Accents are semantic and sparing:**
+  - **#2E7DFF (blue)**: logo mark, primary accent, active states, step
+    numbers, progress rails. `#1B5FD9` when it needs to pass contrast on
+    white.
+  - **emerald**: discounts, guarantees, shipped state (money/positive)
+  - **violet**: everything pre-order (badges, price chips)
+  - **amber `#F5A623`**: review stars, matching the printed cards
+  Keep to these; do not introduce another hue.
+- **Buttons:** rounded-md; primary = neutral-900 fill, secondary = white with
+  a neutral border that darkens on hover. One CTA per section — "Check it
+  out" is the standard label.
 - **Radius scale:** rounded-md for cards/buttons/inputs, rounded-sm for tiny
-  chips. No pills, no rounded-2xl/3xl.
-- **Type:** Plus Jakarta Sans display, Inter body, sentence case.
-- **Product visuals:** black card on a neutral-100 panel with a single small
-  accent-color chip per product (`accent[0]` in products.ts).
-- Bento hero, industries photo bento, cart drawer, comparison table, and all
-  conversion features carry over from the previous iteration unchanged.
-
-**E-commerce conversion checklist built in:**
-- Slide-out cart drawer (opens on add-to-cart)
-- Destination selector in checkout that binds the correct shipping rate
-- Estimated delivery date on product pages
-- Payment method badges (checkout + footer)
-- Newsletter signup with 10% first-order incentive (needs email service +
-  a WELCOME10 promo code in Stripe; checkout has allow_promotion_codes on)
-- Benefits strip, trust rows, guarantee banner, FAQ, comparison table,
-  volume pack discounts
-
-**Copy rules:** no em dashes, no AI-flavored filler. Short sentences, concrete
-counter-moment language. Keep this voice when adding content.
+  chips, rounded-2xl only for large feature panels.
+- **Type:** Archivo display (`font-display`), Inter body, sentence case.
+- **Motion:** `Reveal` for scroll fade-ins; the hero scrubs on scroll; the
+  step and gallery timers use `useAutoAdvance`, which writes progress
+  straight to the DOM so pausing freezes rather than restarts. Everything
+  respects `prefers-reduced-motion`.
+- **Product visuals:** the real card artwork from
+  `public/images/products/*.webp`, rendered by `ProductVisual`. The Google
+  card always shows both faces, because it ships white one side and black the
+  other.
 
 ---
 
@@ -379,11 +393,13 @@ quarterly, monthly) is set by the CRA when you register.
 | Area              | Current behaviour                        | To make real                                  |
 | ----------------- | ---------------------------------------- | --------------------------------------------- |
 | **Payments**      | ✅ **REAL** — Stripe Checkout via `/api/checkout` once `STRIPE_SECRET_KEY` is set. Prices recomputed server-side (tamper-proof). Falls back to a labelled test-order flow without the key. | Add the env var (see [Environment variables](#environment-variables)) |
-| **Order storage** | Paid orders live in the Stripe Dashboard (with design notes in metadata) | Optionally add a DB + email notifications      |
+| **Order storage** | ✅ **REAL** — read live from Stripe via `/api/admin/orders`, with delivery address, shipping paid and fulfilment state. Nothing is duplicated locally. | Nothing needed |
+| **Sales tax**     | Off. Correct while under the CRA $30k small-supplier threshold. | See [Sales tax](#sales-tax) |
+| **Customer email**| None sent. Stripe emails the receipt/invoice if enabled in its settings. | Add Resend for a shipped-with-tracking notification |
 | **File uploads**  | Captures filename only (attached to order metadata) | Upload to storage (e.g. Vercel Blob/S3) + attach URL |
-| **Contact form**  | Simulates send                           | Wire to an email service / form endpoint       |
 | **Testimonials**  | ⚠️ Placeholder quotes, visibly labelled "Example" (`src/components/Testimonials.tsx`) | Replace with real customer quotes (with permission). **Never ship invented testimonials as real — FTC rules prohibit it.** |
 | **Analytics**     | None                                     | Add Vercel Analytics or similar                |
+| **SEO**           | ✅ sitemap.xml, robots.txt, per-product canonical + OG tags, Product JSON-LD with live price/availability | Nothing needed |
 
 ---
 
@@ -408,7 +424,6 @@ Ordered roughly by priority. Update as things get done.
 - [ ] **Replace placeholder testimonials with real customer quotes** (legally required before ads).
 - [ ] **Order backend** — persist orders + send confirmation emails (Stripe webhook → email).
 - [ ] **Real file uploads** for custom artwork (Vercel Blob / S3).
-- [ ] **Contact form backend** (email delivery).
 - [ ] Product photography / 3D to replace CSS `ProductVisual` (optional).
 - [ ] Volume / bulk pricing tiers.
 - [ ] Admin view to manage products without editing code (CMS or DB).
@@ -420,6 +435,30 @@ Ordered roughly by priority. Update as things get done.
 ## Change log
 
 Newest first. **Add an entry for every meaningful change.**
+
+### 2026-08-01 — Production configuration: identity, SEO, tax, orders from Stripe
+
+- **Site identity is no longer a placeholder.** `site.url` resolves from
+  `NEXT_PUBLIC_SITE_URL`, else Vercel's own production domain, else
+  localhost. It was hardcoded to `https://taplink.example`, which meant
+  `metadataBase`, the Stripe redirect fallback and the product image URLs
+  handed to Stripe all pointed at a domain that does not exist.
+  `site.email` now reads `NEXT_PUBLIC_CONTACT_EMAIL`; it appears on all four
+  legal pages and in every invoice footer.
+- **SEO existed nowhere.** Added `sitemap.ts` and `robots.ts` (tag hub and
+  admin excluded), per-product canonical + OpenGraph tags with the real card
+  artwork, and Product JSON-LD carrying live price and stock. Product pages
+  revalidate every 5 minutes so that structured data cannot contradict the
+  page. `/tag/*` also carries a header-level noindex.
+- **Orders read from Stripe** via `/api/admin/orders` instead of a KV copy
+  that could be lost on a cold start. Fulfilment state (shipped, tracking,
+  refunded) lives in the session's own metadata.
+- **Sales tax** wired through `automatic_tax` with tax codes on goods and
+  shipping, gated behind `STRIPE_TAX_ENABLED`. See [Sales tax](#sales-tax).
+- **Shipping charges by form factor** — `SHIPPING_UNITS` counts a stand as 3
+  cards, since a boxed stand cannot ship at the flat-mailer rate.
+- Dashboard **Connections** panel now reports all six: Stripe, webhook, KV,
+  site URL, contact email, sales tax.
 
 ### 2026-07-13 — Stripe invoices with full order configuration
 - **Post-payment invoices enabled** (`invoice_creation` on the Checkout

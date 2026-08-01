@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check, ChevronRight } from "lucide-react";
-import { getAllSlugs, getProduct, products } from "@/lib/products";
+import {
+  getAllSlugs,
+  getProduct,
+  products,
+  configuredUnitPrice,
+  withPriceOverride,
+} from "@/lib/products";
+import { effectivePrices, effectiveStock } from "@/lib/adminStore";
+import { discountRate } from "@/lib/pricing";
+import { site } from "@/lib/site";
 import { ProductVisual } from "@/components/ProductVisual";
 import { ProductConfigurator } from "@/components/ProductConfigurator";
 import { ProductCard } from "@/components/ProductCard";
@@ -12,6 +21,20 @@ export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
 }
 
+/**
+ * Re-render periodically so the structured data below (price, availability)
+ * cannot drift from what the dashboard is actually charging. Google treats a
+ * price in structured data that disagrees with the page as an error.
+ */
+export const revalidate = 300;
+
+/** Artwork per product, for link previews. */
+const OG_IMAGE: Record<string, string> = {
+  "review-card": "/images/products/google-white.webp",
+  "instagram-card": "/images/products/instagram.webp",
+  "acrylic-stand": "/images/products/google-white.webp",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -20,9 +43,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) return { title: "Product not found" };
+  const image = OG_IMAGE[product.id];
   return {
     title: product.name,
     description: product.summary,
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: {
+      title: `${product.name} | ${site.name}`,
+      description: product.summary,
+      type: "website",
+      url: `/products/${product.slug}`,
+      ...(image ? { images: [{ url: image }] } : {}),
+    },
   };
 }
 
@@ -41,8 +73,44 @@ export default async function ProductPage({
   const fallback = products.filter((p) => p.id !== product.id).slice(0, 3);
   const suggestions = related.length ? related : fallback;
 
+  // Structured data uses the same live numbers the storefront charges, so
+  // Google never sees a price or stock state the page contradicts.
+  const [prices, stock] = await Promise.all([
+    effectivePrices(),
+    effectiveStock(),
+  ]);
+  const priced = withPriceOverride(product, prices[product.id]);
+  const listPrice = configuredUnitPrice(priced, "standard");
+  const inStock = (stock[product.id] ?? 0) > 0;
+  const image = OG_IMAGE[product.id];
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.summary,
+    category: product.category,
+    ...(image ? { image: [`${site.url}${image}`] } : {}),
+    brand: { "@type": "Brand", name: site.name },
+    offers: {
+      "@type": "Offer",
+      url: `${site.url}/products/${product.slug}`,
+      priceCurrency: site.currency.code,
+      price: listPrice.toFixed(2),
+      availability: inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        // Values are our own catalog data, not user input.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-neutral-400">
         <Link

@@ -2,16 +2,46 @@
  * Central brand / site configuration.
  * Update values here to rebrand the whole site in one place.
  */
+
+/** Placeholder markers, so the dashboard can flag anything still unset. */
+export const PLACEHOLDER_EMAIL = "hello@taplink.example";
+
+/**
+ * Public base URL. Resolution order:
+ *
+ *  1. `NEXT_PUBLIC_SITE_URL` — set this once you have a custom domain.
+ *  2. `NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL` — Vercel fills this in
+ *     automatically when "Automatically expose System Environment Variables"
+ *     is enabled in project settings, so the production domain is correct
+ *     without configuring anything.
+ *  3. localhost, for `next dev`.
+ *
+ * This matters beyond metadata: it is the fallback origin for Stripe's
+ * success/cancel redirects and for the product image URLs handed to Stripe,
+ * which must be publicly fetchable.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicit) return explicit.replace(/\/+$/, "");
+  const vercel = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (vercel) return `https://${vercel.replace(/\/+$/, "")}`;
+  return "http://localhost:3000";
+}
+
 export const site = {
   name: "TapLink",
   tagline: "NFC cards that get you Google reviews",
   description:
     "NFC review cards and smart tags for local businesses. A customer taps their phone on the card and your Google review page opens. No app, no QR code. More reviews, more followers, instant menus and bookings.",
-  // Contact + business details. Replace with your real info.
-  email: "hello@taplink.example",
+  /**
+   * Customer-facing contact address. It appears on all four legal pages, the
+   * order success page and the footer of every Stripe invoice — so leaving it
+   * as the placeholder means customers are told to write to an address that
+   * does not exist. Set `NEXT_PUBLIC_CONTACT_EMAIL`.
+   */
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || PLACEHOLDER_EMAIL,
   phone: "(555) 000-0000",
-  // Base URL used for metadata (set to your Vercel/production domain).
-  url: "https://taplink.example",
+  url: resolveSiteUrl(),
   social: {
     instagram: "https://instagram.com/",
     facebook: "https://facebook.com/",
