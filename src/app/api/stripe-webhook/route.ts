@@ -4,9 +4,6 @@ import {
   claimStripeEvent,
   decrementStock,
   incrementStock,
-  logOrder,
-  markOrderRefunded,
-  type ShipTo,
 } from "@/lib/adminStore";
 
 /**
@@ -90,67 +87,17 @@ function parseProductQtys(raw: string | undefined): Record<string, number> {
 }
 
 async function handlePaidOrder(
-  stripe: Stripe,
+  _stripe: Stripe,
   session: Stripe.Checkout.Session,
 ) {
-  // The delivery address is only on the full Session object, and the rate
-  // needs expanding to get its display name — the webhook payload carries
-  // neither, so re-fetch rather than log an order we cannot ship.
-  let full: Stripe.Checkout.Session = session;
-  try {
-    full = await stripe.checkout.sessions.retrieve(session.id, {
-      expand: ["shipping_cost.shipping_rate"],
-    });
-  } catch (e) {
-    console.error("Could not expand session for shipping details:", e);
-  }
-
-  const shipping = full.collected_information?.shipping_details ?? null;
-  const address = shipping?.address ?? null;
-  const shipTo: ShipTo = {
-    // Fall back to the payer's name when no separate recipient was given.
-    name: shipping?.name ?? full.customer_details?.name ?? null,
-    phone: full.customer_details?.phone ?? null,
-    line1: address?.line1 ?? null,
-    line2: address?.line2 ?? null,
-    city: address?.city ?? null,
-    state: address?.state ?? null,
-    postalCode: address?.postal_code ?? null,
-    country: address?.country ?? null,
-  };
-
-  const rate = full.shipping_cost?.shipping_rate;
-  const shippingMethod =
-    rate && typeof rate === "object" ? (rate.display_name ?? null) : null;
-
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-    limit: 100,
-  });
-  const quantity = lineItems.data.reduce(
-    (sum, li) => sum + (li.quantity ?? 0),
-    0,
-  );
-
-  // Decrement each product's own stock from the compact metadata map.
+  // Nothing is copied out of Stripe here: the dashboard reads orders (and
+  // their delivery addresses) from Stripe directly, so there is no second
+  // copy to keep in step or lose. Stock is the one thing Stripe cannot track
+  // for us, so that is all this does.
   const qtys = parseProductQtys(session.metadata?.product_qtys);
   for (const [pid, q] of Object.entries(qtys)) {
     await decrementStock(pid, q);
   }
-
-  await logOrder({
-    id: session.id,
-    at: Date.now(),
-    email: session.customer_details?.email ?? null,
-    total: (session.amount_total ?? 0) / 100,
-    quantity,
-    items: lineItems.data.map(
-      (li) => `${li.description ?? "Card"} ×${li.quantity ?? 1}`,
-    ),
-    preorder: Boolean(session.metadata?.preorder),
-    shipTo,
-    shippingPaid: (full.shipping_cost?.amount_total ?? 0) / 100,
-    shippingMethod,
-  });
 }
 
 async function handleRefund(stripe: Stripe, charge: Stripe.Charge) {
@@ -170,5 +117,14 @@ async function handleRefund(stripe: Stripe, charge: Stripe.Charge) {
   for (const [pid, q] of Object.entries(qtys)) {
     await incrementStock(pid, q);
   }
-  await markOrderRefunded(session.id);
+
+  // Flag it on the session itself, so the dashboard sees the refund without
+  // us keeping an order log of our own.
+  try {
+    await stripe.checkout.sessions.update(session.id, {
+      metadata: { refunded: "yes" },
+    });
+  } catch (e) {
+    console.error("Could not flag session refunded:", e);
+  }
 }

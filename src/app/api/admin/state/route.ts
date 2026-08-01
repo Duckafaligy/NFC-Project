@@ -8,7 +8,6 @@ import {
 import {
   getSettings,
   saveSettings,
-  getOrders,
   persistentStore,
   effectivePrices,
   effectiveStock,
@@ -31,9 +30,8 @@ export async function GET() {
   if (!(await authed())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const [settings, orders, prices, stock, productPreorder] = await Promise.all([
+  const [settings, prices, stock, productPreorder] = await Promise.all([
     getSettings(),
-    getOrders(),
     effectivePrices(),
     effectiveStock(),
     effectiveProductPreorder(),
@@ -58,7 +56,6 @@ export async function GET() {
       cardStock: DEFAULT_CARD_STOCK,
     },
     products: productList,
-    orders,
     persistentStore,
     defaultPassword: usingDefaultPassword(),
     webhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),

@@ -103,8 +103,15 @@ custom-we-design, stable lookup keys). Idempotent — rerun after any price
 change in `src/lib/products.ts`. Checkout still charges via inline
 `price_data` because the pre-order discount changes amounts dynamically.
 
-Order details (product, design choice, customer notes) appear in the Stripe
-Dashboard on each payment under **metadata** — that's your fulfilment queue.
+**Orders come from Stripe, not from us.** /admin-dashboard reads
+`/api/admin/orders`, which lists Checkout Sessions live — delivery address,
+recipient, phone, shipping paid, lines. Nothing is copied into KV, so no order
+can be lost if KV is absent. Marking one shipped writes `fulfilled_at` and
+`tracking` into that session's own metadata (and refunds write `refunded`), so
+fulfilment state lives with the order in Stripe and is visible there too.
+
+KV therefore only holds store settings — stock, prices, pre-order flags. Losing
+it costs you a stock count, never a customer's address.
 
 ---
 

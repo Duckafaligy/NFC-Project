@@ -40,6 +40,7 @@ interface OrderRecord {
   at: number;
   email: string | null;
   total: number;
+  currency: string;
   quantity: number;
   items: string[];
   preorder: boolean;
@@ -47,8 +48,10 @@ interface OrderRecord {
   shipTo?: ShipTo;
   shippingPaid?: number;
   shippingMethod?: string | null;
-  fulfilledAt?: number;
+  tax?: number;
+  fulfilledAt?: number | null;
   trackingNumber?: string | null;
+  stripeUrl?: string;
 }
 
 /**
@@ -70,7 +73,6 @@ interface AdminState {
   };
   defaults: { preorder: boolean; cardStock: number };
   products: ProductPrice[];
-  orders: OrderRecord[];
   persistentStore: boolean;
   defaultPassword: boolean;
   webhookConfigured: boolean;
@@ -114,6 +116,9 @@ type View = "loading" | "login" | "dashboard";
 export function AdminDashboard() {
   const [view, setView] = useState<View>("loading");
   const [state, setState] = useState<AdminState | null>(null);
+  // Orders come straight from Stripe, not from our own store.
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [ordersError, setOrdersError] = useState("");
 
   // Login state
   const [password, setPassword] = useState("");
@@ -174,9 +179,30 @@ export function AdminDashboard() {
     setView("dashboard");
   }, []);
 
+  /** Orders live in Stripe; this never reads our own store. */
+  const loadOrders = useCallback(async () => {
+    setOrdersError("");
+    try {
+      const res = await fetch("/api/admin/orders");
+      if (res.status === 401) return;
+      const data = await res.json();
+      if (!res.ok) {
+        setOrdersError(data.error || "Could not load orders from Stripe.");
+        return;
+      }
+      setOrders(Array.isArray(data.orders) ? data.orders : []);
+    } catch {
+      setOrdersError("Could not reach Stripe.");
+    }
+  }, []);
+
   useEffect(() => {
     loadState();
   }, [loadState]);
+
+  useEffect(() => {
+    if (view === "dashboard") loadOrders();
+  }, [view, loadOrders]);
 
   // Lockout countdown ticker.
   useEffect(() => {
@@ -303,7 +329,7 @@ export function AdminDashboard() {
           tracking: fulfilled ? (trackingDraft[id] ?? "") : "",
         }),
       });
-      await loadState();
+      await loadOrders();
     } finally {
       setFulfilling(null);
     }
@@ -799,12 +825,18 @@ export function AdminDashboard() {
           <ReceiptText className="h-4 w-4 text-neutral-500" />
           <p className="text-sm font-bold text-neutral-900">Recent orders</p>
           <p className="ml-auto text-xs text-neutral-400">
-            Last {state?.orders.length ?? 0} · logged automatically from Stripe
+            {orders.length} most recent · read live from Stripe
           </p>
+          <button
+            onClick={loadOrders}
+            className="rounded-sm border border-neutral-300 bg-white px-2 py-1 text-[11px] font-bold text-neutral-600 transition-colors hover:border-neutral-500 hover:text-neutral-900"
+          >
+            Refresh
+          </button>
         </div>
-        {state && state.orders.length > 0 ? (
+        {orders.length > 0 ? (
           <ul className="max-h-[32rem] divide-y divide-neutral-100 overflow-y-auto">
-            {state.orders.map((o) => {
+            {orders.map((o) => {
               const addr = formatShipTo(o.shipTo);
               return (
                 <li key={o.id} className="px-6 py-3.5">
@@ -916,8 +948,8 @@ export function AdminDashboard() {
                     </div>
                   ) : (
                     <p className="mt-2 text-[11px] text-neutral-400">
-                      No delivery address on this order — it was placed before
-                      addresses were logged. Open it in Stripe to ship it.
+                      No delivery address on this order — nothing physical to
+                      send, or it predates address collection.
                     </p>
                   )}
                 </li>
@@ -926,8 +958,11 @@ export function AdminDashboard() {
           </ul>
         ) : (
           <p className="px-6 py-8 text-center text-sm text-neutral-400">
-            No orders logged yet. They appear here automatically once the
-            Stripe webhook is connected and the first order comes in.
+            {ordersError
+              ? ordersError
+              : state?.stripeConfigured
+                ? "No orders yet. They appear here the moment one is paid — read live from Stripe, so nothing can be lost."
+                : "Add STRIPE_SECRET_KEY to see orders."}
           </p>
         )}
       </div>

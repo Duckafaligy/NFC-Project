@@ -45,46 +45,6 @@ export interface AdminSettings {
   > | null;
 }
 
-/** One fulfilled Stripe order, logged by the webhook for the dashboard. */
-/** Where an order physically goes. Everything needed to print a label. */
-export interface ShipTo {
-  /** Recipient name as given at checkout (may differ from the payer). */
-  name: string | null;
-  phone: string | null;
-  line1: string | null;
-  line2: string | null;
-  city: string | null;
-  /** State / province. */
-  state: string | null;
-  postalCode: string | null;
-  /** ISO 3166-1 alpha-2. */
-  country: string | null;
-}
-
-export interface OrderRecord {
-  /** Stripe checkout session id. */
-  id: string;
-  /** ms epoch when the webhook processed it. */
-  at: number;
-  email: string | null;
-  /** Dollars actually charged. */
-  total: number;
-  /** Cards in the order (what was subtracted from the pool). */
-  quantity: number;
-  /** Human line summaries, e.g. "Google Review Card ×2". */
-  items: string[];
-  preorder: boolean;
-  refunded?: boolean;
-  /** Delivery address + contact. Absent on orders logged before this existed. */
-  shipTo?: ShipTo;
-  /** Dollars charged for shipping, and which rate was applied. */
-  shippingPaid?: number;
-  shippingMethod?: string | null;
-  /** Set once you've dispatched it, from the dashboard. */
-  fulfilledAt?: number;
-  trackingNumber?: string | null;
-}
-
 export interface AttemptRecord {
   fails: number;
   stage: number;
@@ -348,8 +308,6 @@ export async function incrementStock(
 // ---------------------------------------------------------------------------
 
 const EVENT_PREFIX = "taplink:stripe:event:";
-const ORDERS_KEY = "taplink:admin:orders";
-const ORDERS_KEPT = 50;
 
 /**
  * Claim a Stripe event id so retried/duplicate webhook deliveries are
@@ -361,70 +319,6 @@ export async function claimStripeEvent(eventId: string): Promise<boolean> {
   if (await kvGet(key)) return false;
   await kvSet(key, "1", 7 * 24 * 3600);
   return true;
-}
-
-/** Most recent orders first. */
-export async function getOrders(): Promise<OrderRecord[]> {
-  try {
-    const raw = await kvGet(ORDERS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as OrderRecord[];
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch {
-    // Corrupt value: treat as empty.
-  }
-  return [];
-}
-
-/** Prepend an order, keeping the most recent ORDERS_KEPT. */
-export async function logOrder(order: OrderRecord): Promise<void> {
-  const orders = await getOrders();
-  const next = [order, ...orders.filter((o) => o.id !== order.id)].slice(
-    0,
-    ORDERS_KEPT,
-  );
-  await kvSet(ORDERS_KEY, JSON.stringify(next));
-}
-
-/** Flag a logged order as refunded (if it is still in the log). */
-export async function markOrderRefunded(sessionId: string): Promise<void> {
-  const orders = await getOrders();
-  let changed = false;
-  const next = orders.map((o) => {
-    if (o.id === sessionId && !o.refunded) {
-      changed = true;
-      return { ...o, refunded: true };
-    }
-    return o;
-  });
-  if (changed) await kvSet(ORDERS_KEY, JSON.stringify(next));
-}
-
-/**
- * Mark an order dispatched (or undo it). `tracking` is stored as given so it
- * can be pasted straight into a carrier's site; it is never used as a link.
- */
-export async function setOrderFulfilled(
-  sessionId: string,
-  fulfilled: boolean,
-  tracking?: string | null,
-): Promise<boolean> {
-  const orders = await getOrders();
-  let changed = false;
-  const next = orders.map((o) => {
-    if (o.id !== sessionId) return o;
-    changed = true;
-    return fulfilled
-      ? {
-          ...o,
-          fulfilledAt: o.fulfilledAt ?? Date.now(),
-          trackingNumber: (tracking ?? "").trim().slice(0, 64) || null,
-        }
-      : { ...o, fulfilledAt: undefined, trackingNumber: null };
-  });
-  if (changed) await kvSet(ORDERS_KEY, JSON.stringify(next));
-  return changed;
 }
 
 export async function getAttempts(ip: string): Promise<AttemptRecord> {
