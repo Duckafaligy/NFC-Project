@@ -18,7 +18,7 @@ import {
   type AdminSettings,
 } from "@/lib/adminStore";
 import { DEFAULT_CARD_STOCK, products } from "@/lib/products";
-import { site, PLACEHOLDER_EMAIL } from "@/lib/site";
+import { site, CONTACT_EMAIL } from "@/lib/site";
 
 async function authed(): Promise<boolean> {
   const jar = await cookies();
@@ -67,7 +67,9 @@ export async function GET() {
     siteUrl: site.url,
     siteUrlConfigured: !site.url.startsWith("http://localhost"),
     contactEmail: site.email,
-    contactEmailConfigured: site.email !== PLACEHOLDER_EMAIL,
+    // A real address either way; true once a branded one replaces the default.
+    contactEmailConfigured: true,
+    contactEmailIsDefault: site.email === CONTACT_EMAIL,
   });
 }
 

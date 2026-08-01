@@ -67,7 +67,7 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | `ADMIN_PASSWORD`    | Strongly recommended | Password for /admin-dashboard. Until set, the owner-chosen default hardcoded in `src/lib/adminAuth.ts` works (visible to anyone with repo access — the dashboard warns until the env var exists). |
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, stock/price/pre-order edits reset on redeploy or cold start. Orders are never stored here, so none can be lost. |
 | `NEXT_PUBLIC_SITE_URL` | Once on a custom domain | Public base URL. If unset, Vercel's own production domain is used automatically (enable **Automatically expose System Environment Variables** in project settings). Feeds canonical/OG URLs, the sitemap, Stripe redirects and the product image URLs sent to Stripe. |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | **Yes, before selling** | The address customers are told to write to — all four legal pages, the success page and the footer of every Stripe invoice. Until set it shows a placeholder that does not exist. |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Optional | The address customers are told to write to — all four legal pages, the success page and the footer of every Stripe invoice. Defaults to the owner address in `src/lib/site.ts`; set this to use a `support@` address on a custom domain instead. |
 | `STRIPE_TAX_ENABLED` | Only once registered | Set to `1` to charge sales tax. See [Sales tax](#sales-tax). Leave unset until Stripe Tax is activated — turning it on early makes every checkout fail. |
 
 **To turn on real payments:**

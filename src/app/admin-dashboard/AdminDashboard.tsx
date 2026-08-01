@@ -83,6 +83,7 @@ interface AdminState {
   siteUrlConfigured: boolean;
   contactEmail: string;
   contactEmailConfigured: boolean;
+  contactEmailIsDefault: boolean;
 }
 
 interface ProductPrice {
@@ -510,9 +511,11 @@ export function AdminDashboard() {
               {
                 ok: state.contactEmailConfigured,
                 label: "Contact email",
-                hint: state.contactEmailConfigured
-                  ? `${state.contactEmail} — shown on legal pages and every invoice.`
-                  : "Still the placeholder. Customers on your legal pages and invoices are told to write to an address that does not exist. Set NEXT_PUBLIC_CONTACT_EMAIL.",
+                hint: `${state.contactEmail} — shown on legal pages and every invoice.${
+                  state.contactEmailIsDefault
+                    ? " Set NEXT_PUBLIC_CONTACT_EMAIL to use a support@ address instead."
+                    : ""
+                }`,
               },
               {
                 ok: state.taxEnabled,

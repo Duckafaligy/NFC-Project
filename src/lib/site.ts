@@ -3,8 +3,8 @@
  * Update values here to rebrand the whole site in one place.
  */
 
-/** Placeholder markers, so the dashboard can flag anything still unset. */
-export const PLACEHOLDER_EMAIL = "hello@taplink.example";
+/** Default contact address, overridable per-environment (see `site.email`). */
+export const CONTACT_EMAIL = "brendanhllau@gmail.com";
 
 /**
  * Public base URL. Resolution order:
@@ -34,13 +34,18 @@ export const site = {
   description:
     "NFC review cards and smart tags for local businesses. A customer taps their phone on the card and your Google review page opens. No app, no QR code. More reviews, more followers, instant menus and bookings.",
   /**
-   * Customer-facing contact address. It appears on all four legal pages, the
-   * order success page and the footer of every Stripe invoice — so leaving it
-   * as the placeholder means customers are told to write to an address that
-   * does not exist. Set `NEXT_PUBLIC_CONTACT_EMAIL`.
+   * Customer-facing contact address, shown on all four legal pages, the order
+   * success page and the footer of every Stripe invoice. Override with
+   * `NEXT_PUBLIC_CONTACT_EMAIL` when a support@ address on a custom domain
+   * exists — no code change needed, and nothing else has to be touched.
    */
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || PLACEHOLDER_EMAIL,
-  phone: "(555) 000-0000",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || CONTACT_EMAIL,
+  /**
+   * No phone support. Left blank rather than shown as a placeholder, since a
+   * number nobody answers is worse than none — `site.phone` is not rendered
+   * anywhere while it is empty.
+   */
+  phone: "",
   url: resolveSiteUrl(),
   social: {
     instagram: "https://instagram.com/",
