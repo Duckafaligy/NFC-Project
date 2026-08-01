@@ -68,6 +68,7 @@ This is a standard Next.js App Router project — Vercel auto-detects it.
 | `KV_REST_API_URL` + `KV_REST_API_TOKEN` | For persistent admin settings | Auto-created by the Vercel/Upstash KV integration (Storage tab). Without them, stock/price/pre-order edits reset on redeploy or cold start. Orders are never stored here, so none can be lost. |
 | `NEXT_PUBLIC_SITE_URL` | Once on a custom domain | Public base URL. If unset, Vercel's own production domain is used automatically (enable **Automatically expose System Environment Variables** in project settings). Feeds canonical/OG URLs, the sitemap, Stripe redirects and the product image URLs sent to Stripe. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Optional | The address customers are told to write to — all four legal pages, the success page and the footer of every Stripe invoice. Defaults to the owner address in `src/lib/site.ts`; set this to use a `support@` address on a custom domain instead. |
+| `RESEND_API_KEY` + `EMAIL_FROM` | For customer emails | Order confirmation on payment and a shipped notice with tracking. `EMAIL_FROM` must be on a domain verified in Resend (e.g. `TapLink <orders@yourdomain.com>`) — a gmail from-address is rejected. Without both, nothing is sent and nothing breaks. |
 | `STRIPE_TAX_ENABLED` | Only once registered | Set to `1` to charge sales tax. See [Sales tax](#sales-tax). Leave unset until Stripe Tax is activated — turning it on early makes every checkout fail. |
 
 **To turn on real payments:**
@@ -395,11 +396,11 @@ quarterly, monthly) is set by the CRA when you register.
 | **Payments**      | ✅ **REAL** — Stripe Checkout via `/api/checkout` once `STRIPE_SECRET_KEY` is set. Prices recomputed server-side (tamper-proof). Falls back to a labelled test-order flow without the key. | Add the env var (see [Environment variables](#environment-variables)) |
 | **Order storage** | ✅ **REAL** — read live from Stripe via `/api/admin/orders`, with delivery address, shipping paid and fulfilment state. Nothing is duplicated locally. | Nothing needed |
 | **Sales tax**     | Off. Correct while under the CRA $30k small-supplier threshold. | See [Sales tax](#sales-tax) |
-| **Customer email**| None sent. Stripe emails the receipt/invoice if enabled in its settings. | Add Resend for a shipped-with-tracking notification |
+| **Customer email**| ✅ **REAL** — order confirmation + shipped-with-tracking via Resend, once `RESEND_API_KEY`/`EMAIL_FROM` are set. Silently skipped otherwise. | Add the env vars |
 | **File uploads**  | Captures filename only (attached to order metadata) | Upload to storage (e.g. Vercel Blob/S3) + attach URL |
 | **Testimonials**  | ⚠️ Placeholder quotes, visibly labelled "Example" (`src/components/Testimonials.tsx`) | Replace with real customer quotes (with permission). **Never ship invented testimonials as real — FTC rules prohibit it.** |
-| **Analytics**     | None                                     | Add Vercel Analytics or similar                |
-| **SEO**           | ✅ sitemap.xml, robots.txt, per-product canonical + OG tags, Product JSON-LD with live price/availability | Nothing needed |
+| **Analytics**     | ✅ Vercel Analytics (`@vercel/analytics`, no cookies) | Enable Analytics in the Vercel project |
+| **SEO**           | ✅ sitemap.xml, robots.txt, generated OG image, per-product canonical + OG tags, Product JSON-LD with live price/availability | Nothing needed |
 
 ---
 
@@ -421,13 +422,19 @@ quarterly, monthly) is set by the CRA when you register.
 Ordered roughly by priority. Update as things get done.
 
 - [x] **Payments** — Stripe Checkout integrated; just add `STRIPE_SECRET_KEY` in Vercel.
-- [ ] **Replace placeholder testimonials with real customer quotes** (legally required before ads).
-- [ ] **Order backend** — persist orders + send confirmation emails (Stripe webhook → email).
-- [ ] **Real file uploads** for custom artwork (Vercel Blob / S3).
-- [ ] Product photography / 3D to replace CSS `ProductVisual` (optional).
-- [ ] Volume / bulk pricing tiers.
-- [ ] Admin view to manage products without editing code (CMS or DB).
-- [ ] Analytics + basic SEO polish (sitemap, richer OG images).
+- [x] **Order backend** — orders read live from Stripe; confirmation + shipped
+      emails via Resend.
+- [x] **Product imagery** — the real card artwork, in `public/images/products`.
+- [x] **Analytics + SEO** — Vercel Analytics, sitemap, robots, OG image,
+      Product JSON-LD.
+- [x] **Admin control of prices/stock/pre-order** without editing code.
+- [ ] **Real testimonials.** Currently one illustrative "Unknown user" block,
+      labelled as an example. Never ship invented quotes as real — FTC rules
+      prohibit it.
+- [ ] **Sales tax** — turn on once registered. See [Sales tax](#sales-tax).
+- [ ] **Real file uploads** for custom artwork (Vercel Blob / S3). Not needed
+      while custom design is switched off on every product.
+- [ ] Volume / bulk pricing tiers (currently a bulk-enquiry mailto).
 - [ ] Accounts / order history (if desired).
 
 ---

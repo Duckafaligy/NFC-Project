@@ -6,6 +6,7 @@ import { StoreStatusProvider } from "@/context/StoreStatus";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/site";
 
 const inter = Inter({
@@ -31,7 +32,19 @@ export const metadata: Metadata = {
     title: `${site.name} | ${site.tagline}`,
     description: site.description,
     type: "website",
+    url: "/",
+    siteName: site.name,
+    locale: "en_CA",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.name} | ${site.tagline}`,
+    description: site.description,
+  },
+  alternates: { canonical: "/" },
+  // Nothing here is behind a login, so let crawlers index freely; robots.ts
+  // carves out the admin and per-customer tag routes.
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -49,6 +62,8 @@ export default function RootLayout({
             <Footer />
             <CartDrawer />
           </CartProvider>
+          {/* No cookies, no consent banner needed. */}
+          <Analytics />
         </StoreStatusProvider>
       </body>
     </html>

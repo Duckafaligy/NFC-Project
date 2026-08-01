@@ -19,6 +19,7 @@ import {
 } from "@/lib/adminStore";
 import { DEFAULT_CARD_STOCK, products } from "@/lib/products";
 import { site, CONTACT_EMAIL } from "@/lib/site";
+import { emailConfigured } from "@/lib/email";
 
 async function authed(): Promise<boolean> {
   const jar = await cookies();
@@ -70,6 +71,7 @@ export async function GET() {
     // A real address either way; true once a branded one replaces the default.
     contactEmailConfigured: true,
     contactEmailIsDefault: site.email === CONTACT_EMAIL,
+    emailConfigured,
   });
 }
 

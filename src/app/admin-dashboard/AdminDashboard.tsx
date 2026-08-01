@@ -84,6 +84,7 @@ interface AdminState {
   contactEmail: string;
   contactEmailConfigured: boolean;
   contactEmailIsDefault: boolean;
+  emailConfigured: boolean;
 }
 
 interface ProductPrice {
@@ -144,6 +145,7 @@ export function AdminDashboard() {
   const [fulfilling, setFulfilling] = useState<string | null>(null);
   const [trackingDraft, setTrackingDraft] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [shipNote, setShipNote] = useState("");
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
   const [syncError, setSyncError] = useState(false);
@@ -325,7 +327,7 @@ export function AdminDashboard() {
   async function markShipped(id: string, fulfilled: boolean) {
     setFulfilling(id);
     try {
-      await fetch("/api/admin/fulfil", {
+      const res = await fetch("/api/admin/fulfil", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -334,6 +336,17 @@ export function AdminDashboard() {
           tracking: fulfilled ? (trackingDraft[id] ?? "") : "",
         }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (fulfilled && data.emailed) {
+        setShipNote(
+          data.emailed === "sent"
+            ? "Shipped — customer emailed."
+            : data.emailed === "failed"
+              ? "Shipped, but the email did not send. Check Resend."
+              : "Shipped. No email sent (customer emails are off).",
+        );
+        setTimeout(() => setShipNote(""), 5000);
+      }
       await loadOrders();
     } finally {
       setFulfilling(null);
@@ -516,6 +529,13 @@ export function AdminDashboard() {
                     ? " Set NEXT_PUBLIC_CONTACT_EMAIL to use a support@ address instead."
                     : ""
                 }`,
+              },
+              {
+                ok: state.emailConfigured,
+                label: "Customer emails",
+                hint: state.emailConfigured
+                  ? "Order confirmation on payment, and a shipped notice with tracking when you mark one shipped."
+                  : "Off — customers get nothing from us when you ship. Add RESEND_API_KEY and EMAIL_FROM (verified domain) in Vercel.",
               },
               {
                 ok: state.taxEnabled,
@@ -855,6 +875,11 @@ export function AdminDashboard() {
             Refresh
           </button>
         </div>
+        {shipNote && (
+          <p className="border-b border-neutral-200 bg-emerald-50 px-6 py-2 text-xs font-semibold text-emerald-700">
+            {shipNote}
+          </p>
+        )}
         {orders.length > 0 ? (
           <ul className="max-h-[32rem] divide-y divide-neutral-100 overflow-y-auto">
             {orders.map((o) => {

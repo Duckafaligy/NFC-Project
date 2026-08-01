@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import Stripe from "stripe";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/adminAuth";
+import { emailConfigured } from "@/lib/email";
+import { sendShippedEmail } from "@/lib/orderEmails";
 
 /**
  * POST /api/admin/fulfil — marks an order dispatched, or clears that.
@@ -45,6 +47,7 @@ export async function POST(request: Request) {
   const tracking =
     typeof body.tracking === "string" ? body.tracking.trim().slice(0, 64) : "";
 
+  let emailed: string = "skipped";
   try {
     const stripe = new Stripe(key);
     await stripe.checkout.sessions.update(id, {
@@ -54,6 +57,21 @@ export async function POST(request: Request) {
         tracking: fulfilled ? tracking : "",
       },
     });
+
+    // Tell the customer it is on its way. Only on the way in — undoing a
+    // dispatch should not send anything. A send failure must not lose the
+    // fulfilment state we just recorded, so it is reported, not thrown.
+    if (fulfilled && emailConfigured) {
+      try {
+        const full = await stripe.checkout.sessions.retrieve(id, {
+          expand: ["shipping_cost.shipping_rate"],
+        });
+        emailed = await sendShippedEmail(full, tracking);
+      } catch (e) {
+        console.error("Shipped email failed:", e);
+        emailed = "failed";
+      }
+    }
   } catch (err) {
     console.error("Could not update fulfilment:", err);
     const message =
@@ -63,5 +81,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, emailed });
 }

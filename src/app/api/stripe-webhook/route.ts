@@ -5,19 +5,23 @@ import {
   decrementStock,
   incrementStock,
 } from "@/lib/adminStore";
+import { emailConfigured } from "@/lib/email";
+import { sendOrderConfirmation } from "@/lib/orderEmails";
 
 /**
  * Keeps the store in sync with Stripe.
  *
  * - checkout.session.completed: subtracts each product's quantity from its
- *   stock (stock bars/buy buttons update immediately) and logs the order for
- *   the dashboard.
+ *   stock (stock bars/buy buttons update immediately) and sends the order
+ *   confirmation email.
  * - charge.refunded (full refunds only): adds the quantities back and flags
- *   the order refunded in the log. Partial refunds are left for a manual
- *   stock adjustment in the dashboard.
+ *   the session refunded. Partial refunds are left for a manual stock
+ *   adjustment in the dashboard.
  *
- * Customer receipts/invoices are handled by Stripe itself (invoice_creation
- * on the Checkout session), so this endpoint sends no email of its own.
+ * Orders themselves are not stored here — the dashboard reads them from
+ * Stripe. Receipts/invoices are Stripe's (invoice_creation on the session);
+ * this only sends the confirmation, and the shipped notice comes from
+ * /api/admin/fulfil.
  *
  * Every event id is claimed in the store first, so Stripe's retries and
  * duplicate deliveries can never subtract stock twice.
@@ -87,16 +91,28 @@ function parseProductQtys(raw: string | undefined): Record<string, number> {
 }
 
 async function handlePaidOrder(
-  _stripe: Stripe,
+  stripe: Stripe,
   session: Stripe.Checkout.Session,
 ) {
-  // Nothing is copied out of Stripe here: the dashboard reads orders (and
-  // their delivery addresses) from Stripe directly, so there is no second
-  // copy to keep in step or lose. Stock is the one thing Stripe cannot track
-  // for us, so that is all this does.
+  // No order is copied out of Stripe: the dashboard reads orders (and their
+  // delivery addresses) from Stripe directly, so there is no second copy to
+  // keep in step or lose. Stock is the one thing Stripe cannot track for us.
   const qtys = parseProductQtys(session.metadata?.product_qtys);
   for (const [pid, q] of Object.entries(qtys)) {
     await decrementStock(pid, q);
+  }
+
+  // Confirmation email. Skips silently when Resend is not configured, and a
+  // failure here must never cost us the stock adjustment above.
+  if (emailConfigured) {
+    try {
+      const full = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ["line_items"],
+      });
+      await sendOrderConfirmation(full, full.line_items?.data ?? []);
+    } catch (e) {
+      console.error("Order confirmation email failed:", e);
+    }
   }
 }
 
