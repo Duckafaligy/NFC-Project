@@ -98,7 +98,7 @@ export function DesignShowcase() {
   return (
     <section
       id="designs"
-      className="relative scroll-mt-20 border-y border-neutral-200 bg-neutral-50 py-24 lg:py-32"
+      className="relative scroll-mt-20 border-y border-neutral-200 bg-neutral-50 py-16 sm:py-24 lg:py-32"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
@@ -106,7 +106,7 @@ export function DesignShowcase() {
             The lineup
           </p>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
-            <h2 className="max-w-2xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+            <h2 className="max-w-2xl text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
               Three ways to get asked
             </h2>
             <p className="max-w-md text-base leading-relaxed text-neutral-600">

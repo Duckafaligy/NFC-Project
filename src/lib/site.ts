@@ -67,13 +67,13 @@ export const site = {
   // Shipping / fulfilment defaults surfaced across the store.
   shipping: {
     handlingDays: "1-2 business days",
-    deliveryDays: "3-10 business days",
+    deliveryDays: "3-5 business days",
     /**
-     * Destination + quantity based shipping (in the store currency, CAD).
-     * Checkout asks which
-     * region the buyer is in and how many cards they're ordering, then binds
-     * the matching rate to the Stripe session and locks the shipping address
-     * to that zone's countries — so the rate always matches where it's going.
+     * Quantity-based shipping (in the store currency, CAD).
+     *
+     * Canada only. Checkout binds this zone's rate for the order's billable
+     * units to the Stripe session and locks the shipping address to the
+     * zone's countries, so nothing outside Canada can be ordered.
      *
      * Rates scale in brackets (`tiers`), not per-card: several cards ship in
      * one mailer, so the price steps up at set quantities instead of adding
@@ -81,13 +81,13 @@ export const site = {
      * charge is the price of the highest tier whose `minQty` is <= the order
      * quantity. Keep tiers sorted by `minQty` ascending, starting at 1.
      *
-     * Edit tiers, delivery estimates, and countries here in one place; every
-     * country in shipping_address_collection must belong to exactly one zone.
+     * Edit tiers, delivery estimates, and countries here in one place. Adding
+     * a second zone brings back the destination picker at checkout on its
+     * own — nothing else needs changing.
      */
     zones: [
       {
-        // Home base: shipping within Canada is domestic (cheapest) and the
-        // default selection. Listed first so it's the default zone.
+        // The only zone we ship to. Domestic Canada Post.
         id: "ca",
         label: "Canada",
         countries: ["CA"],
@@ -102,23 +102,6 @@ export const site = {
         ],
         etaMin: 3,
         etaMax: 5,
-      },
-      {
-        // Cross-border from Canada: a step up from domestic.
-        id: "us",
-        label: "United States",
-        countries: ["US"],
-        tiers: [
-          { minQty: 1, price: 4.99 },
-          { minQty: 2, price: 7.49 },
-          { minQty: 5, price: 12.99 },
-          { minQty: 10, price: 16.99 },
-          { minQty: 25, price: 24.99 },
-          { minQty: 50, price: 34.99 },
-          { minQty: 100, price: 49.99 },
-        ],
-        etaMin: 5,
-        etaMax: 10,
       },
     ],
   },

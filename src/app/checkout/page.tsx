@@ -11,6 +11,7 @@ import {
   Lock,
   ShieldCheck,
   AlertTriangle,
+  Truck,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { site } from "@/lib/site";
@@ -240,26 +241,30 @@ export default function CheckoutPage() {
               Order summary
             </h2>
 
-            {/* Shipping destination — binds the correct rate to Stripe */}
+            {/* Destination. With a single zone there is nothing to choose,
+                so it states where we ship instead of offering a select with
+                one option in it. */}
             <div className="mt-4">
-              <label
-                htmlFor="ship-zone"
-                className="text-sm font-bold text-neutral-900"
-              >
-                Ship to
-              </label>
-              <select
-                id="ship-zone"
-                value={zoneId}
-                onChange={(e) => setZoneId(e.target.value)}
-                className="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
-              >
-                {shippingZones.map((z) => (
-                  <option key={z.id} value={z.id}>
-                    {z.label} — {formatPrice(shippingCost(z, units))}
-                  </option>
-                ))}
-              </select>
+              <p className="text-sm font-bold text-neutral-900">Ship to</p>
+              {shippingZones.length > 1 ? (
+                <select
+                  aria-label="Shipping destination"
+                  value={zoneId}
+                  onChange={(e) => setZoneId(e.target.value)}
+                  className="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+                >
+                  {shippingZones.map((z) => (
+                    <option key={z.id} value={z.id}>
+                      {z.label} — {formatPrice(shippingCost(z, units))}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-neutral-700">
+                  <Truck className="h-4 w-4 text-neutral-400" />
+                  {zone.label} only
+                </p>
+              )}
               <p className="mt-1.5 text-xs text-neutral-400">
                 One rate covers all {itemCount} item
                 {itemCount === 1 ? "" : "s"} in your order — they ship together.

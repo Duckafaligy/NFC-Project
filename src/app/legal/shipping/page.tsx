@@ -77,9 +77,8 @@ export default function ShippingPage() {
 
       <LegalSection heading="Where we ship">
         <p>
-          We ship within North America — Canada and the United States. For
-          cross-border orders into the US, any customs fees or import taxes are
-          the responsibility of the recipient.
+          We ship within Canada only. Checkout will not accept an address
+          outside Canada, so no order can be placed that we cannot fulfil.
         </p>
       </LegalSection>
 

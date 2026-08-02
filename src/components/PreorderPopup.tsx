@@ -152,7 +152,7 @@ export function PreorderPopup() {
           {allOnPreorder
             ? "The discount is applied automatically at checkout — no code needed."
             : "Cards marked “Pre-order” are discounted automatically at checkout — no code needed."}{" "}
-          {site.preorder.shipNote}. Ships across Canada &amp; the US.
+          {site.preorder.shipNote}. Ships anywhere in Canada.
         </p>
 
         <div className="mt-7 flex flex-col gap-2.5">

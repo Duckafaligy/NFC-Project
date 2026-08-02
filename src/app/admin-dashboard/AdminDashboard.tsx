@@ -823,7 +823,7 @@ export function AdminDashboard() {
         <p className="mt-2 text-sm text-neutral-500">
           Pushes everything Stripe needs into your account: each product with
           its artwork and the prices you set above, plus every shipping bracket
-          for Canada and the US. Prices for options you have switched off get
+          for Canada. Prices for options you have switched off get
           archived. Safe to run again any time — it only changes what&apos;s out
           of date, and it tells you whether it hit test or live mode.
         </p>

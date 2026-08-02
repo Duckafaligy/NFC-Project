@@ -398,7 +398,7 @@ export function ProductConfigurator({ product }: { product: Product }) {
         <div>
           <Truck className="mx-auto h-4 w-4 text-blue-600" />
           <p className="mt-1 text-[11px] leading-tight text-neutral-500">
-            Flat-rate North America shipping
+            Flat-rate shipping across Canada
           </p>
         </div>
         <div>

@@ -49,13 +49,13 @@ const ROWS: { label: string; detail: string; generic: string | false; ours: stri
 
 export function ComparisonStrip() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
       <Reveal>
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
             The difference
           </p>
-          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+          <h2 className="mt-3 text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
             Why ours costs more than a blank tag
           </h2>
           <p className="mt-4 text-base text-neutral-600">
@@ -190,7 +190,7 @@ export function PricingTiers() {
   return (
     <section
       id="pricing"
-      className="relative scroll-mt-20 border-y border-neutral-200 bg-neutral-50 py-24 lg:py-32"
+      className="relative scroll-mt-20 border-y border-neutral-200 bg-neutral-50 py-16 sm:py-24 lg:py-32"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
@@ -198,7 +198,7 @@ export function PricingTiers() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
               Pricing
             </p>
-            <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+            <h2 className="mt-3 text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
               Buy it once. Own it forever.
             </h2>
             <p className="mt-4 text-base text-neutral-600">
@@ -346,14 +346,14 @@ const QUOTES = [
 
 export function SocialProof() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
       <Reveal>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
               Where it goes
             </p>
-            <h2 className="mt-3 max-w-xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+            <h2 className="mt-3 max-w-xl text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
               Counters, chairs and tables
             </h2>
           </div>
@@ -436,8 +436,8 @@ export function FinalCTA() {
               </h2>
               <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-300">
                 Pick a product, send us your review link or profile, and
-                we&apos;ll program it and ship it. Canada in 3–5 business days,
-                the US in 5–10.
+                we&apos;ll program it and ship it — anywhere in Canada, in
+                3–5 business days.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link

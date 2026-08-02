@@ -187,7 +187,7 @@ export default async function ProductPage({
           {IN_USE[product.id] && (
             <Reveal delay={0.05}>
               <figure className="card mt-3 overflow-hidden p-0">
-                <div className="grid gap-px bg-neutral-200 sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]">
+                <div className="grid grid-cols-2 gap-px bg-neutral-200">
                   {IN_USE[product.id].map((shot) => (
                     <Image
                       key={shot.src}

@@ -60,14 +60,14 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="relative mx-auto max-w-7xl scroll-mt-20 px-4 py-24 sm:px-6 lg:px-8 lg:py-32"
+      className="relative mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32"
     >
       <Reveal>
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
           How it works
         </p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
-          <h2 className="max-w-xl text-balance font-display text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
+          <h2 className="max-w-xl text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
             Three seconds, start to finish
           </h2>
           <p className="max-w-md text-base leading-relaxed text-neutral-600">
@@ -137,8 +137,8 @@ export function HowItWorks() {
                           </p>
 
                           {/* Step timer + the one detail worth pulling out. */}
-                          <div className="mt-4 flex items-center gap-3">
-                            <span className="h-[3px] flex-1 overflow-hidden rounded-full bg-neutral-200">
+                          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                            <span className="h-[3px] w-full overflow-hidden rounded-full bg-neutral-200 sm:flex-1">
                               <span
                                 ref={bindBar(i)}
                                 style={{ transform: "scaleX(0)" }}
@@ -147,7 +147,7 @@ export function HowItWorks() {
                             </span>
                             <span
                               className={cn(
-                                "flex-shrink-0 text-[11px] font-semibold uppercase tracking-wider transition-colors",
+                                "flex-shrink-0 text-[10px] font-semibold uppercase tracking-wider transition-colors sm:text-[11px]",
                                 on ? "text-[#1B5FD9]" : "text-neutral-400",
                               )}
                             >
