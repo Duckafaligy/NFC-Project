@@ -116,22 +116,21 @@ export function PreorderPopup() {
         </button>
 
         {/* The actual cards, so the offer is attached to the product. */}
-        <div className="flex items-end justify-center gap-1">
+        <div className="flex items-end justify-center gap-2">
           {[
-            { src: "/images/products/google-white.webp", w: 604, h: 948, rot: "-9deg", z: "z-0" },
-            { src: "/images/products/instagram.webp", w: 555, h: 870, rot: "0deg", z: "z-10" },
-            { src: "/images/products/google-black.webp", w: 596, h: 944, rot: "9deg", z: "z-0" },
-          ].map((c, i) => (
+            { src: "/images/products/google-white.webp", rot: "-8deg", big: false },
+            { src: "/images/products/instagram.webp", rot: "6deg", big: true },
+          ].map((c) => (
             <Image
               key={c.src}
               src={c.src}
               alt=""
               aria-hidden
-              width={c.w}
-              height={c.h}
-              sizes="110px"
-              className={`${c.z} h-24 w-auto rounded-md drop-shadow-[0_5px_12px_rgba(0,0,0,0.18)] ${
-                i === 1 ? "h-28 -mx-1" : ""
+              width={688}
+              height={1100}
+              sizes="120px"
+              className={`w-auto rounded-md drop-shadow-[0_5px_12px_rgba(0,0,0,0.18)] ${
+                c.big ? "h-28" : "h-24"
               }`}
               style={{ transform: `rotate(${c.rot})` }}
             />

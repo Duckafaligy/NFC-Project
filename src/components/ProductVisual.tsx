@@ -18,9 +18,8 @@ interface ProductVisualProps {
 }
 
 const ART = {
-  googleWhite: { src: "/images/products/google-white.webp", w: 604, h: 948 },
-  googleBlack: { src: "/images/products/google-black.webp", w: 596, h: 944 },
-  instagram: { src: "/images/products/instagram.webp", w: 555, h: 870 },
+  googleWhite: { src: "/images/products/google-white.webp", w: 688, h: 1100 },
+  instagram: { src: "/images/products/instagram.webp", w: 688, h: 1100 },
 } as const;
 
 export function ProductVisual({
@@ -32,30 +31,19 @@ export function ProductVisual({
   let body: React.ReactNode = null;
 
   if (visual === "google") {
-    const faces = [
-      { tag: "Front", art: ART.googleWhite },
-      { tag: "Back", art: ART.googleBlack },
-    ];
+    // Only the printed face is photographed. The reverse is shown once there
+    // is a real shot of it — pairing a photograph with drawn artwork looked
+    // obviously mismatched.
     body = (
-      <div className="flex h-full w-full items-center justify-center gap-[6%] px-[5%]">
-        {faces.map((f) => (
-          <figure
-            key={f.tag}
-            className="flex h-full flex-col items-center justify-center"
-          >
-            <figcaption className="mb-[3%] font-display text-[11px] font-bold italic text-neutral-400">
-              {f.tag}
-            </figcaption>
-            <Image
-              src={f.art.src}
-              alt={`${name} — ${f.tag.toLowerCase()} face`}
-              width={f.art.w}
-              height={f.art.h}
-              sizes="(max-width: 640px) 40vw, 260px"
-              className="h-[70%] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.16)]"
-            />
-          </figure>
-        ))}
+      <div className="flex h-full w-full items-center justify-center">
+        <Image
+          src={ART.googleWhite.src}
+          alt={name}
+          width={ART.googleWhite.w}
+          height={ART.googleWhite.h}
+          sizes="(max-width: 640px) 55vw, 320px"
+          className="h-[84%] w-auto object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.18)]"
+        />
       </div>
     );
   } else if (visual === "instagram") {

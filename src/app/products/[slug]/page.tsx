@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check, ChevronRight } from "lucide-react";
@@ -27,6 +28,21 @@ export function generateStaticParams() {
  * price in structured data that disagrees with the page as an error.
  */
 export const revalidate = 300;
+
+/**
+ * A real photo of the product on a counter, shown under the studio shot.
+ * Only for products that have been photographed in place.
+ */
+const IN_USE: Record<string, { src: string; alt: string }> = {
+  "review-card": {
+    src: "/images/hero/lifestyle-google.webp",
+    alt: "The Google review card sitting on a counter",
+  },
+  "instagram-card": {
+    src: "/images/hero/lifestyle-instagram.webp",
+    alt: "The Instagram card sitting on a counter",
+  },
+};
 
 /** Artwork per product, for link previews. */
 const OG_IMAGE: Record<string, string> = {
@@ -136,6 +152,24 @@ export default async function ProductPage({
               />
             </div>
           </Reveal>
+
+          {IN_USE[product.id] && (
+            <Reveal delay={0.05}>
+              <figure className="card mt-3 overflow-hidden p-0">
+                <Image
+                  src={IN_USE[product.id].src}
+                  alt={IN_USE[product.id].alt}
+                  width={1400}
+                  height={1050}
+                  sizes="(max-width: 1024px) 100vw, 560px"
+                  className="h-auto w-full"
+                />
+                <figcaption className="px-4 py-2.5 text-xs text-neutral-500">
+                  The actual card — photographed, not a render.
+                </figcaption>
+              </figure>
+            </Reveal>
+          )}
 
           <Reveal delay={0.05}>
             <div className="mt-6">

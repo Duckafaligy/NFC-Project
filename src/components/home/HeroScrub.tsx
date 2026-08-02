@@ -192,22 +192,17 @@ export function HeroScrub() {
                 }
                 className="absolute inset-0 flex items-center justify-center [transform-style:preserve-3d]"
               >
-                {/* The product shot lives in a floating tile, so the studio
-                    plate reads as a deliberate surface as the stage rotates. */}
-                <div className="relative aspect-square h-[92%] max-h-[28rem] w-auto max-w-[92%] overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.45)] ring-1 ring-inset ring-white/[0.06] sm:rounded-[2rem]">
-                  <Image
-                    src="/images/hero/card-hero.webp"
-                    alt="Premium matte black NFC review card"
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 90vw, 448px"
-                    className="object-cover"
-                  />
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-white/[0.07] via-transparent to-transparent"
-                  />
-                </div>
+                {/* The card itself, cut out, so the scroll rotation turns the
+                    product rather than a photograph of a countertop. */}
+                <Image
+                  src="/images/products/google-white.webp"
+                  alt="The TapLink Google review card"
+                  width={688}
+                  height={1100}
+                  priority
+                  sizes="(max-width: 1024px) 60vw, 320px"
+                  className="h-[88%] max-h-[30rem] w-auto object-contain drop-shadow-[0_40px_60px_rgba(0,0,0,0.28)]"
+                />
               </motion.div>
             </div>
           </div>
