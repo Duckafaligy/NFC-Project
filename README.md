@@ -443,6 +443,28 @@ Ordered roughly by priority. Update as things get done.
 
 Newest first. **Add an entry for every meaningful change.**
 
+### 2026-08-02 — Real product photography replaces all drawn artwork
+
+Three batches of owner photos now cover every product. `tools/` holds the
+pipeline: `detect.py` finds a card and corrects rotation + camera tilt in one
+perspective transform, `finish.py` trims and white-balances, `lifestyle.py`
+crops the angled shots. See `tools/README.md`.
+
+- Both Google faces and the Instagram card are photographs, cut out with
+  rounded alpha corners. The hero floats the cut-out card so the scroll
+  rotation turns the product, not a photo of a countertop.
+- The acrylic stand turned out to be two clear plates screwed around the card
+  in an angled foot — not the frosted panel on a weighted base the drawing
+  showed, and not what the copy claimed. Product copy, features, showcase
+  slide and spec table were corrected to match, and the outer dimensions are
+  no longer published because they have not been measured.
+- Clear acrylic keeps its background: it has almost no edge against a pale
+  counter, so a cut-out would hack lumps out of the panel.
+- Product pages carry an "in use" strip under the studio shot.
+
+Known gap: no photo of the stand with the Google card facing out — the front
+shot shows the TapLink demo insert.
+
 ### 2026-08-01 — Production configuration: identity, SEO, tax, orders from Stripe
 
 - **Site identity is no longer a placeholder.** `site.url` resolves from

@@ -63,14 +63,14 @@ const SLIDES: Slide[] = [
     slug: "acrylic-review-stand",
     name: "Acrylic Review Stand",
     tab: "Acrylic",
-    badge: "Cast acrylic",
+    badge: "Hand-assembled",
     headline: "Asks for you when you're slammed",
-    body: "A card works when you remember to hand it over. The stand works through a rush. It sits upright beside the terminal with the prompt facing out, so customers read it while their payment processes. Weighted base, wipes clean at close.",
+    body: "A card works when you remember to hand it over. The stand works through a rush. Two clear acrylic plates hold the card between them on an angled foot, so the prompt faces the customer while their payment processes. Cut and screwed together by hand, one at a time.",
     points: [
-      "Upright on a weighted base — always visible",
+      "Angled to face the customer — always visible",
       "Tap the face to open your Google review page",
       "No staff script to remember",
-      "Cast acrylic, wipes clean",
+      "Screw-fixed, so the card swaps without a new stand",
     ],
   },
 ];

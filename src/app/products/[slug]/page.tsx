@@ -33,21 +33,44 @@ export const revalidate = 300;
  * A real photo of the product on a counter, shown under the studio shot.
  * Only for products that have been photographed in place.
  */
-const IN_USE: Record<string, { src: string; alt: string }[]> = {
+const IN_USE: Record<
+  string,
+  { src: string; alt: string; w: number; h: number }[]
+> = {
   "review-card": [
     {
       src: "/images/hero/lifestyle-google.webp",
       alt: "The white face of the Google review card on a counter",
+      w: 1400,
+      h: 1050,
     },
     {
       src: "/images/hero/lifestyle-google-black.webp",
       alt: "The black face of the Google review card on a counter",
+      w: 1400,
+      h: 1050,
     },
   ],
   "instagram-card": [
     {
       src: "/images/hero/lifestyle-instagram.webp",
       alt: "The Instagram card on a counter",
+      w: 1400,
+      h: 1050,
+    },
+  ],
+  "acrylic-stand": [
+    {
+      src: "/images/hero/lifestyle-acrylic-side.webp",
+      alt: "Side profile of the acrylic stand, showing the angled foot",
+      w: 900,
+      h: 1200,
+    },
+    {
+      src: "/images/hero/lifestyle-acrylic-back.webp",
+      alt: "The back of the acrylic stand, showing the corner screws",
+      w: 900,
+      h: 1200,
     },
   ],
 };
@@ -56,7 +79,7 @@ const IN_USE: Record<string, { src: string; alt: string }[]> = {
 const OG_IMAGE: Record<string, string> = {
   "review-card": "/images/products/google-white.webp",
   "instagram-card": "/images/products/instagram.webp",
-  "acrylic-stand": "/images/products/google-white.webp",
+  "acrylic-stand": "/images/products/acrylic-stand.webp",
 };
 
 export async function generateMetadata({
@@ -170,15 +193,15 @@ export default async function ProductPage({
                       key={shot.src}
                       src={shot.src}
                       alt={shot.alt}
-                      width={1400}
-                      height={1050}
+                      width={shot.w}
+                      height={shot.h}
                       sizes="(max-width: 1024px) 100vw, 280px"
                       className="h-auto w-full"
                     />
                   ))}
                 </div>
                 <figcaption className="px-4 py-2.5 text-xs text-neutral-500">
-                  The actual card — photographed, not a render.
+                  The actual product — photographed, not a render.
                 </figcaption>
               </figure>
             </Reveal>

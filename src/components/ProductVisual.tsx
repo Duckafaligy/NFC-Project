@@ -21,6 +21,7 @@ const ART = {
   googleWhite: { src: "/images/products/google-white.webp", w: 685, h: 1100 },
   googleBlack: { src: "/images/products/google-black.webp", w: 636, h: 1100 },
   instagram: { src: "/images/products/instagram.webp", w: 688, h: 1100 },
+  acrylic: { src: "/images/products/acrylic-stand.webp", w: 800, h: 1100 },
 } as const;
 
 export function ProductVisual({
@@ -74,29 +75,19 @@ export function ProductVisual({
       </div>
     );
   } else {
-    // Acrylic stand: the printed white face behind a frosted panel, standing
-    // on a weighted base.
+    // Acrylic stand. Unlike the cards this keeps its background: clear
+    // acrylic has almost no edge against a pale counter, and a cut-out would
+    // hack lumps out of the panel.
     body = (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <div
-          className="relative flex h-[76%] items-center justify-center rounded-lg border border-white/70 p-[4%] shadow-[0_8px_20px_rgba(0,0,0,0.16)] ring-1 ring-inset ring-white/60"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(238,248,253,0.94) 55%, rgba(215,238,248,0.97) 100%)",
-          }}
-        >
-          <Image
-            src={ART.googleWhite.src}
-            alt={name}
-            width={ART.googleWhite.w}
-            height={ART.googleWhite.h}
-            sizes="(max-width: 640px) 45vw, 260px"
-            className="h-full w-auto object-contain"
-          />
-        </div>
-        {/* Weighted base */}
-        <div className="h-[5%] w-[46%] rounded-b-md rounded-t-sm border border-neutral-700 bg-neutral-900" />
-        <div className="h-[2%] w-[56%] rounded-[50%] bg-black/20 blur-[2px]" />
+      <div className="flex h-full w-full items-center justify-center">
+        <Image
+          src={ART.acrylic.src}
+          alt={name}
+          width={ART.acrylic.w}
+          height={ART.acrylic.h}
+          sizes="(max-width: 640px) 55vw, 320px"
+          className="h-[88%] w-auto rounded-lg object-contain shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
+        />
       </div>
     );
   }

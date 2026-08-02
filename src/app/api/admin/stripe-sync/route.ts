@@ -71,7 +71,7 @@ function variantsFor(product: Product): PriceVariant[] {
 const IMAGES: Record<string, string> = {
   "review-card": "/images/products/google-white.webp",
   "instagram-card": "/images/products/instagram.webp",
-  "acrylic-stand": "/images/products/google-white.webp",
+  "acrylic-stand": "/images/products/acrylic-stand.webp",
 };
 
 export async function POST(request: Request) {
