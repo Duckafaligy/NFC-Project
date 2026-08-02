@@ -35,12 +35,11 @@ const SLIDES: Slide[] = [
     tab: "Google",
     badge: "Double-sided",
     headline: "The review ask, already made",
-    body: "Sits flat by the register with the prompt facing the customer. They tap, your Google review page opens, and they post while the receipt prints — no app, no QR code to line up. White on one face and black on the other, so it suits a bright counter or a dark one without ordering twice.",
+    body: "Sits by the register with the prompt facing out. They tap, your review page opens, they post while the receipt prints.",
     points: [
-      "Opens your exact Google review page in one tap",
-      "White one face, black the other — both in one card",
+      "White one face, black the other",
       "Programmed to your link before it ships",
-      "Re-point it any time from your dashboard, no reprint",
+      "Re-point it any time, no reprint",
     ],
   },
   {
@@ -50,12 +49,11 @@ const SLIDES: Slide[] = [
     tab: "Instagram",
     badge: "Gradient print",
     headline: "Followers before they leave",
-    body: "Nobody searches for a handle they heard once. Hand this over at the end of an appointment and their phone opens your profile with the follow button right there — while you are still standing in front of them. That is the only moment it reliably happens.",
+    body: "Nobody searches for a handle they heard once. Hand this over and the follow happens while you are still standing there.",
     points: [
-      "Opens your Instagram profile in one tap",
+      "Opens your profile in one tap",
       "The follow happens on the spot, not “later”",
-      "Programmed to your exact profile before shipping",
-      "Matte finish that survives an apron pocket",
+      "Matte finish, survives an apron pocket",
     ],
   },
   {
@@ -65,12 +63,11 @@ const SLIDES: Slide[] = [
     tab: "Acrylic",
     badge: "Hand-assembled",
     headline: "Asks for you when you're slammed",
-    body: "A card works when you remember to hand it over. The stand works through a rush. Two clear acrylic plates hold the card between them on an angled foot, so the prompt faces the customer while their payment processes. Cut and screwed together by hand, one at a time.",
+    body: "A card works when you remember to hand it over. The stand works through a rush — angled at the customer, asking without you.",
     points: [
-      "Angled to face the customer — always visible",
-      "Tap the face to open your Google review page",
+      "Cut and assembled by hand, one at a time",
       "No staff script to remember",
-      "Screw-fixed, so the card swaps without a new stand",
+      "Screw-fixed, so the card swaps out",
     ],
   },
 ];
@@ -110,8 +107,7 @@ export function DesignShowcase() {
               Three ways to get asked
             </h2>
             <p className="max-w-md text-base leading-relaxed text-neutral-600">
-              Every one arrives programmed to your link and ready to use. Pick
-              the one that fits where your customers actually stand.
+              Every one arrives programmed and ready to use.
             </p>
           </div>
         </Reveal>
@@ -227,7 +223,7 @@ export function DesignShowcase() {
                 href={`/products/${s.slug}`}
                 className="group mt-8 inline-flex w-fit items-center gap-2 rounded-md bg-neutral-900 px-6 py-3.5 text-base font-bold text-white transition-transform hover:scale-[1.02]"
               >
-                Check it out
+                Get this one
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>

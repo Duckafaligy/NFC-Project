@@ -387,6 +387,31 @@ export function ProductConfigurator({ product }: { product: Product }) {
         </p>
       ) : null}
 
+      {/* Sticky buy bar, phones only. The real buy box is far below the
+          gallery and copy on a narrow screen, so the primary action would
+          otherwise be off-screen for most of the page. Shares this
+          component's state, so quantity and price always agree. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] backdrop-blur-md lg:hidden">
+        <div className="mx-auto flex max-w-lg items-center gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+              {qty} × {product.name}
+            </p>
+            <p className="font-display text-lg font-extrabold leading-tight text-neutral-900">
+              {formatPrice(lineTotal(unitPrice, qty, preorder))}
+            </p>
+          </div>
+          <Button
+            onClick={() => handleAdd(true)}
+            disabled={outOfStock}
+            className="ml-auto flex-shrink-0"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {outOfStock ? "Out of stock" : preorder ? "Pre-order" : "Buy now"}
+          </Button>
+        </div>
+      </div>
+
       {/* Trust row */}
       <div className="mt-4 grid grid-cols-3 gap-2 border-t border-neutral-200 pt-4 text-center">
         <div>

@@ -124,7 +124,7 @@ export function HeroScrub() {
                 href="/products"
                 className="group inline-flex items-center gap-2 rounded-md bg-neutral-900 px-7 py-4 text-base font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.99]"
               >
-                Check it out
+                Shop the cards
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>

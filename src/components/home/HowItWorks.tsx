@@ -18,7 +18,7 @@ const STEPS = [
   {
     icon: Nfc,
     title: "They tap the card",
-    body: "Hold the card to the back of any phone — top edge for iPhone, middle for Android. Nothing to download, nothing to pair, no QR code to line up in a camera.",
+    body: "Hold it to the back of any phone. No app, no QR code.",
     aside: "Works through a phone case",
     image: "/images/hero/step-tap.webp",
     alt: "A hand holding a slim black NFC card against the back of a smartphone on a cafe counter",
@@ -27,7 +27,7 @@ const STEPS = [
   {
     icon: Smartphone,
     title: "The phone opens your link",
-    body: "The screen wakes and your page loads straight in the browser — your Google review page, your Instagram profile, whatever the card is pointed at.",
+    body: "Your page opens straight in their browser, about a second later.",
     aside: "About a second, start to open",
     image: "/images/hero/step-notify.webp",
     alt: "A phone lighting up in someone's hand at a cafe counter as a page loads",
@@ -36,7 +36,7 @@ const STEPS = [
   {
     icon: Star,
     title: "They leave the review",
-    body: "They are on the review form with their thumb already on the screen. That is the whole trick — you removed every step between the good visit and the rating.",
+    body: "Thumb already on the screen, nothing left between them and the rating.",
     aside: "Re-point the card any time",
     image: "/images/hero/step-review.webp",
     alt: "A thumb tapping a five-star rating on a phone screen",
@@ -71,8 +71,8 @@ export function HowItWorks() {
             Three seconds, start to finish
           </h2>
           <p className="max-w-md text-base leading-relaxed text-neutral-600">
-            No app for you, no app for them. The card is programmed before it
-            ships, so the first tap out of the envelope already works.
+            Programmed before it ships, so the first tap out of the envelope
+            already works.
           </p>
         </div>
       </Reveal>

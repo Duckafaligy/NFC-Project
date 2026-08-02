@@ -296,7 +296,7 @@ export function PricingTiers() {
                         : "border border-neutral-300 text-neutral-900 hover:border-neutral-500",
                     )}
                   >
-                    Check it out
+                    Order {p.formFactor === "Stand" ? "the stand" : "the card"}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </div>
@@ -435,8 +435,7 @@ export function FinalCTA() {
                 Get it on your counter this week
               </h2>
               <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-300">
-                Pick a product, send us your review link or profile, and
-                we&apos;ll program it and ship it — anywhere in Canada, in
+                Send your link, we program it and ship it. Anywhere in Canada,
                 3–5 business days.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -444,7 +443,7 @@ export function FinalCTA() {
                   href="/products"
                   className="group inline-flex items-center gap-2 rounded-md bg-white px-7 py-4 text-base font-bold text-neutral-900 transition-transform hover:scale-[1.02] active:scale-[0.99]"
                 >
-                  Check it out
+                  Start getting reviews
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <span className="text-sm text-neutral-400">

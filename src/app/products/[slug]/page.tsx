@@ -152,7 +152,7 @@ export default async function ProductPage({
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 pb-28 pt-10 sm:px-6 lg:px-8 lg:pb-10">
       <script
         type="application/ld+json"
         // Values are our own catalog data, not user input.
