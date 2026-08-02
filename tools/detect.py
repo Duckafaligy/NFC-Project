@@ -34,11 +34,14 @@ def card_mask(a):
     bg_sat = (bg.max() - bg.min()) / max(bg.max(), 1)
     luma = a @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
     bg_luma = float(bg @ np.array([0.299, 0.587, 0.114]))
-    # Two ways to be card: strongly coloured (the Instagram print) or brighter
-    # than the counter (the white Google card). Deliberately NOT "different
-    # from the background", because cast shadow is different too and would be
-    # swallowed into the mask, dragging the detected corners outwards.
-    m = (sat > bg_sat + 0.14) | (luma > bg_luma + 11)
+    # Three ways to be card: strongly coloured (the Instagram print), brighter
+    # than the counter (the white Google card), or far darker than it (the
+    # black Google card). Deliberately NOT "different from the background",
+    # because cast shadow is different too and would be swallowed into the
+    # mask, dragging the detected corners outwards. The dark threshold is set
+    # well past what a shadow on a pale counter reaches, so shadow still does
+    # not qualify.
+    m = (sat > bg_sat + 0.14) | (luma > bg_luma + 11) | (luma < bg_luma - 60)
     return clean(m)
 
 

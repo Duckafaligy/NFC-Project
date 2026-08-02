@@ -12,10 +12,16 @@ from PIL import Image
 
 
 def finish(src, out, trim=0.012, lift=1.0):
+    """`trim` is a fraction of the short side, either one number for all four
+    edges or [left, top, right, bottom] — detection can overshoot on a single
+    side, and a symmetric trim would then have to eat into the artwork on the
+    other three to clear it."""
     im = Image.open(src).convert("RGB")
     w, h = im.size
-    t = round(min(w, h) * trim)
-    im = im.crop((t, t, w - t, h - t))
+    t = [trim] * 4 if isinstance(trim, (int, float)) else list(trim)
+    s = min(w, h)
+    l, tp, r, b = (round(v * s) for v in t)
+    im = im.crop((l, tp, w - r, h - b))
 
     a = np.asarray(im).astype(np.float32)
     ref = np.percentile(a.reshape(-1, 3), 97, axis=0)

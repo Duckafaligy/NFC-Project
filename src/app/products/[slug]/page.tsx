@@ -33,15 +33,23 @@ export const revalidate = 300;
  * A real photo of the product on a counter, shown under the studio shot.
  * Only for products that have been photographed in place.
  */
-const IN_USE: Record<string, { src: string; alt: string }> = {
-  "review-card": {
-    src: "/images/hero/lifestyle-google.webp",
-    alt: "The Google review card sitting on a counter",
-  },
-  "instagram-card": {
-    src: "/images/hero/lifestyle-instagram.webp",
-    alt: "The Instagram card sitting on a counter",
-  },
+const IN_USE: Record<string, { src: string; alt: string }[]> = {
+  "review-card": [
+    {
+      src: "/images/hero/lifestyle-google.webp",
+      alt: "The white face of the Google review card on a counter",
+    },
+    {
+      src: "/images/hero/lifestyle-google-black.webp",
+      alt: "The black face of the Google review card on a counter",
+    },
+  ],
+  "instagram-card": [
+    {
+      src: "/images/hero/lifestyle-instagram.webp",
+      alt: "The Instagram card on a counter",
+    },
+  ],
 };
 
 /** Artwork per product, for link previews. */
@@ -156,14 +164,19 @@ export default async function ProductPage({
           {IN_USE[product.id] && (
             <Reveal delay={0.05}>
               <figure className="card mt-3 overflow-hidden p-0">
-                <Image
-                  src={IN_USE[product.id].src}
-                  alt={IN_USE[product.id].alt}
-                  width={1400}
-                  height={1050}
-                  sizes="(max-width: 1024px) 100vw, 560px"
-                  className="h-auto w-full"
-                />
+                <div className="grid gap-px bg-neutral-200 sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]">
+                  {IN_USE[product.id].map((shot) => (
+                    <Image
+                      key={shot.src}
+                      src={shot.src}
+                      alt={shot.alt}
+                      width={1400}
+                      height={1050}
+                      sizes="(max-width: 1024px) 100vw, 280px"
+                      className="h-auto w-full"
+                    />
+                  ))}
+                </div>
                 <figcaption className="px-4 py-2.5 text-xs text-neutral-500">
                   The actual card — photographed, not a render.
                 </figcaption>
