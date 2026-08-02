@@ -35,8 +35,8 @@ export function Footer() {
   return (
     <footer className="border-t border-neutral-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-4">
-          <div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-9 md:grid-cols-4 md:gap-10">
+          <div className="col-span-2 md:col-span-1">
             <Link
               href="/"
               className="flex items-center gap-2 font-display text-lg font-extrabold text-neutral-900"
@@ -71,12 +71,14 @@ export function Footer() {
           {columns.map((col) => (
             <div key={col.title}>
               <h4 className="text-sm font-bold text-neutral-900">{col.title}</h4>
-              <ul className="mt-4 space-y-2.5">
+              {/* Links are blocks with vertical padding: as inline text they
+                  were a 17px tap target, which is awkward on a phone. */}
+              <ul className="mt-2 space-y-0.5">
                 {col.links.map((l) => (
                   <li key={l.href}>
                     <Link
                       href={l.href}
-                      className="text-sm text-neutral-500 transition-colors hover:text-neutral-900"
+                      className="-mx-2 block rounded px-2 py-2 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
                     >
                       {l.label}
                     </Link>

@@ -72,7 +72,7 @@ export function CartDrawer() {
               </p>
               <button
                 onClick={closeDrawer}
-                className="mt-2 text-sm font-semibold text-neutral-900 hover:text-neutral-900"
+                className="mt-1 rounded-md px-4 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50"
               >
                 Keep browsing →
               </button>

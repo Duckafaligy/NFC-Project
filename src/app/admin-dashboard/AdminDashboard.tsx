@@ -635,12 +635,12 @@ export function AdminDashboard() {
       {/* Per-product stock */}
       {state && state.products.length > 0 && (
         <div className="card mt-4 p-6">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <Package className="h-4 w-4 text-neutral-500" />
             <p className="text-sm font-bold text-neutral-900">
               Stock &amp; pre-order
             </p>
-            <p className="ml-auto text-xs text-neutral-400">
+            <p className="w-full text-xs text-neutral-400 sm:ml-auto sm:w-auto">
               Quantity · pre-order per product · 0 = out of stock
             </p>
           </div>
@@ -651,10 +651,12 @@ export function AdminDashboard() {
               return (
                 <div
                   key={p.id}
-                  className="flex items-center justify-between gap-3"
+                  // Stacks on a phone: side by side, the product name had no
+                  // room left and was truncating to "Google Revie…".
+                  className="flex flex-col gap-2 border-b border-neutral-100 pb-2.5 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:border-0 sm:pb-0"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-neutral-900">
+                    <p className="text-sm font-bold text-neutral-900">
                       {p.name}
                     </p>
                     <p className="text-xs text-neutral-400">
@@ -695,7 +697,8 @@ export function AdminDashboard() {
                           ),
                         }))
                       }
-                      className="w-20 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
+                      aria-label={`${p.name} stock`}
+                      className="w-20 flex-shrink-0 rounded-md border border-neutral-300 px-3 py-2 text-right text-sm font-semibold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200"
                     />
                   </div>
                 </div>

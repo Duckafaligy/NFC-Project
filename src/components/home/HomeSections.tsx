@@ -66,9 +66,60 @@ export function ComparisonStrip() {
       </Reveal>
 
       <Reveal delay={0.1}>
+        {/* Phones get stacked rows instead of the table. Three columns inside
+            390px forced every label to wrap to four lines and left no room for
+            the "Generic" values at all — they were being hidden. */}
+        <div className="mx-auto mt-10 max-w-4xl space-y-3 sm:hidden">
+          {ROWS.map((r) => (
+            <div
+              key={r.label}
+              className="overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-soft"
+            >
+              <div className="border-b border-neutral-200 px-4 py-3">
+                <p className="text-sm font-bold text-neutral-900">{r.label}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
+                  {r.detail}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 divide-x divide-neutral-200">
+                <div className="px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                    Generic
+                  </p>
+                  <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-neutral-400">
+                    {r.generic === false ? (
+                      <>
+                        <X className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2.5} />
+                        No
+                      </>
+                    ) : (
+                      <>
+                        <Minus className="h-3.5 w-3.5 flex-shrink-0" />
+                        {r.generic}
+                      </>
+                    )}
+                  </p>
+                </div>
+                <div className="bg-[#2E7DFF]/[0.06] px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#1B5FD9]">
+                    {site.name}
+                  </p>
+                  <p className="mt-1 flex items-start gap-1.5 text-xs font-bold text-neutral-900">
+                    <Check
+                      className="mt-px h-3.5 w-3.5 flex-shrink-0 text-[#2E7DFF]"
+                      strokeWidth={3}
+                    />
+                    {r.ours}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Fully outlined table: a 1px grid drawn with divide-* so every cell
             reads as a real table cell instead of floating text. */}
-        <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-neutral-300 bg-white shadow-soft">
+        <div className="mx-auto mt-12 hidden max-w-4xl overflow-hidden rounded-2xl border border-neutral-300 bg-white shadow-soft sm:block">
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="divide-x divide-neutral-300 border-b border-neutral-300 bg-neutral-50">
@@ -103,7 +154,7 @@ export function ComparisonStrip() {
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-neutral-400">
                         <Minus className="h-3.5 w-3.5 flex-shrink-0" />
-                        <span className="hidden sm:inline">{r.generic}</span>
+                        <span>{r.generic}</span>
                       </span>
                     )}
                   </td>
@@ -259,7 +310,7 @@ export function PricingTiers() {
             Kitting out several locations?{" "}
             <a
               href={`mailto:${site.email}?subject=Bulk%20order%20enquiry`}
-              className="font-semibold text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900"
+              className="inline-block py-1.5 font-semibold text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900"
             >
               Ask about bulk
             </a>{" "}

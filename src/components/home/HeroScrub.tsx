@@ -43,14 +43,15 @@ export function HeroScrub() {
   const glowScale = useTransform(scrollYProgress, [0.68, 1], [0.5, 1.25]);
 
   // --- headline hands off to the payoff line
-  const copyOneOpacity = useTransform(scrollYProgress, [0, 0.34, 0.46], [1, 1, 0]);
-  const copyOneY = useTransform(scrollYProgress, [0, 0.46], [0, -40]);
-  const copyTwoOpacity = useTransform(scrollYProgress, [0.52, 0.68], [0, 1]);
-  const copyTwoY = useTransform(scrollYProgress, [0.52, 0.68], [40, 0]);
+  const copyOneOpacity = useTransform(scrollYProgress, [0, 0.38, 0.5], [1, 1, 0]);
+  const copyOneY = useTransform(scrollYProgress, [0, 0.5], [0, -40]);
+  // Starts as the first line finishes, so a headline is always on screen.
+  const copyTwoOpacity = useTransform(scrollYProgress, [0.46, 0.6], [0, 1]);
+  const copyTwoY = useTransform(scrollYProgress, [0.46, 0.6], [40, 0]);
   const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
 
   return (
-    <div ref={trackRef} className="relative h-[320vh] md:h-[360vh]">
+    <div ref={trackRef} className="relative h-[190vh] sm:h-[260vh] md:h-[360vh]">
       {/* pt-16 clears the fixed header so the eyebrow never sits under it. */}
       <div className="sticky top-0 flex h-screen items-center overflow-hidden pt-16">
         {/* Ambient blue bloom behind the stage */}
@@ -80,7 +81,7 @@ export function HeroScrub() {
         <div className="relative mx-auto grid w-full max-w-7xl gap-4 px-4 sm:gap-8 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8">
           {/* ---------- Copy: headline only ---------- */}
           <div className="relative z-10 flex flex-col justify-center">
-            <div className="grid min-h-[11rem] grid-cols-1 grid-rows-1 sm:min-h-[15rem] lg:min-h-[18rem]">
+            <div className="grid min-h-[9rem] grid-cols-1 grid-rows-1 sm:min-h-[15rem] lg:min-h-[18rem]">
               <motion.div
                 style={reduce ? undefined : { opacity: copyOneOpacity, y: copyOneY }}
                 className="col-start-1 row-start-1 self-center"
@@ -118,7 +119,7 @@ export function HeroScrub() {
               </motion.div>
             </div>
 
-            <div className="relative z-10 mt-6 flex flex-wrap items-center gap-3">
+            <div className="relative z-10 mt-5 flex flex-wrap items-center gap-3 sm:mt-6">
               <Link
                 href="/products"
                 className="group inline-flex items-center gap-2 rounded-md bg-neutral-900 px-7 py-4 text-base font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.99]"
@@ -130,7 +131,7 @@ export function HeroScrub() {
           </div>
 
           {/* ---------- Stage ---------- */}
-          <div className="relative flex h-[17rem] items-center justify-center sm:h-[24rem] lg:h-[34rem]">
+          <div className="relative flex h-[20rem] items-center justify-center sm:h-[24rem] lg:h-[34rem]">
             <div className="relative h-full w-full" style={{ perspective: "1400px" }}>
               {/* Phone */}
               <motion.div

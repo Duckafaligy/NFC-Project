@@ -170,7 +170,7 @@ export default async function ProductPage({
         <span className="font-semibold text-neutral-700">{product.name}</span>
       </nav>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
+      <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2">
         {/* Visual + copy */}
         <div>
           <Reveal>
