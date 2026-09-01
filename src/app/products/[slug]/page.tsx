@@ -13,6 +13,7 @@ import {
 import { effectivePrices, effectiveStock } from "@/lib/adminStore";
 import { discountRate } from "@/lib/pricing";
 import { site } from "@/lib/site";
+import { cn } from "@/lib/utils";
 import { ProductVisual } from "@/components/ProductVisual";
 import { ProductConfigurator } from "@/components/ProductConfigurator";
 import { ProductCard } from "@/components/ProductCard";
@@ -164,7 +165,9 @@ export default async function ProductPage({
                 visual={product.visual}
                 name={product.name}
                 featured
-                className="aspect-[4/3.2]"
+                className={
+                  product.visual === "google" ? "aspect-[4/3.2]" : "aspect-[3/4]"
+                }
               />
             </div>
           </Reveal>
@@ -172,7 +175,12 @@ export default async function ProductPage({
           {IN_USE[product.id] && (
             <Reveal delay={0.05}>
               <figure className="card mt-3 overflow-hidden p-0">
-                <div className="grid grid-cols-2 gap-px bg-neutral-200">
+                <div
+                  className={cn(
+                    "grid gap-px bg-neutral-200",
+                    IN_USE[product.id].length > 1 ? "grid-cols-2" : "grid-cols-1",
+                  )}
+                >
                   {IN_USE[product.id].map((shot) => (
                     <Image
                       key={shot.src}
