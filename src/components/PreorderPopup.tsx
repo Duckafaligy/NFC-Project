@@ -120,7 +120,7 @@ export function PreorderPopup() {
           {[
             { src: "/images/products/google-white.webp", w: 685, rot: "-9deg", big: false },
             { src: "/images/products/instagram.webp", w: 688, rot: "0deg", big: true },
-            { src: "/images/products/google-black.webp", w: 636, rot: "9deg", big: false },
+            { src: "/images/products/google-black.webp", w: 683, rot: "9deg", big: false },
           ].map((c) => (
             <Image
               key={c.src}

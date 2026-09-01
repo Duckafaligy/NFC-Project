@@ -19,7 +19,7 @@ interface ProductVisualProps {
 
 const ART = {
   googleWhite: { src: "/images/products/google-white.webp", w: 685, h: 1100 },
-  googleBlack: { src: "/images/products/google-black.webp", w: 636, h: 1100 },
+  googleBlack: { src: "/images/products/google-black.webp", w: 908, h: 1462 },
   instagram: { src: "/images/products/instagram.webp", w: 688, h: 1100 },
 } as const;
 
