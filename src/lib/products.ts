@@ -1,10 +1,10 @@
 /**
  * Product catalog (single source of truth).
  *
- * Three real products: the Google review card, the Instagram card (both
- * portrait NFC cards, not horizontal business cards), and the acrylic review
- * stand. The cards are double-sided — white on one face, black on the other —
- * so there is no colour option to pick; you get both by flipping it.
+ * Two real products: the Google review card and the Instagram card (both
+ * portrait NFC cards, not horizontal business cards). The cards are
+ * double-sided — white on one face, black on the other — so there is no
+ * colour option to pick; you get both by flipping it.
  *
  * Pricing: cards are $34.99 standard, $42.99 custom, and "we design it" adds
  * the $4.99 design labour fee on top of custom. Prices here are the catalog
@@ -17,20 +17,18 @@
  * /admin-dashboard.
  */
 
-export type ProductCategory = "Google Reviews" | "Instagram" | "Review Stand";
+export type ProductCategory = "Google Reviews" | "Instagram";
 
-export type FormFactor = "Card" | "Stand";
+export type FormFactor = "Card";
 
 /**
  * Which SVG artwork ProductVisual renders for a product (see
  * components/ProductVisual). Each product's real card design.
  */
-export type VisualKind = "google" | "instagram" | "acrylic";
+export type VisualKind = "google" | "instagram";
 
 /** Standard price for the NFC cards. */
 export const STANDARD_PRICE = 34.99;
-/** The acrylic review stand sits above the cards. */
-export const STAND_PRICE = 15;
 /** Added when the customer chooses a custom design ($42.99 total). */
 export const CUSTOM_UPCHARGE = 8;
 /**
@@ -122,15 +120,6 @@ const CARD_SPECS = [
   { label: "Tap range", value: "Up to 4 cm" },
 ];
 
-const STAND_SPECS = [
-  // Outer dimensions are not published because they have not been measured —
-  // better to state what is verifiable than to guess a number on a spec table.
-  { label: "Material", value: "Clear cast acrylic, steel screws" },
-  { label: "Holds", value: "One 54 × 85.6 mm card, swappable" },
-  { label: "Chip", value: "NTAG215 (504 bytes)" },
-  { label: "Tap range", value: "Up to 4 cm" },
-];
-
 /** Every card is white on one face and black on the other — flip to switch. */
 const REVERSIBLE_NOTE =
   "White on one side, black on the other. Flip it to match your counter — there is no colour to choose, you get both.";
@@ -209,39 +198,6 @@ export const products: Product[] = [
     visual: "instagram",
     popular: true,
   },
-  {
-    id: "acrylic-stand",
-    slug: "acrylic-review-stand",
-    name: "Acrylic Review Stand",
-    category: "Review Stand",
-    formFactor: "Stand",
-    tagline: "The ask, sitting on your counter all day",
-    summary:
-      "A hand-assembled clear acrylic stand that holds the review card upright by your register — impossible to miss, nothing to hand over.",
-    description:
-      "A card works when you remember to hand it over. A stand works even when you are slammed. Two clear acrylic plates hold the card between them, fixed at the corners with steel screws and set into an angled acrylic foot, so the prompt faces the customer at reading height. Tap the face and your Google review page opens. Each one is cut and assembled by hand, and because the card is screwed in rather than glued, it can be swapped without replacing the stand.",
-    example:
-      "A busy café stopped asking out loud entirely. The stand sits beside the tap terminal and customers read it while their card processes — a slow, steady trickle of reviews from a counter nobody has to manage.",
-    basePrice: STAND_PRICE,
-    customUpcharge: null,
-    features: [
-      "Angled to face the customer — the prompt is always visible",
-      "Clear acrylic, so it disappears into any counter",
-      "Tap the face to open your Google review page",
-      "Screw-fixed, so the card swaps out without a new stand",
-      "Cut and assembled by hand, one at a time",
-      "Programmed to your review link before shipping",
-    ],
-    useCases: ["Cafés & bars", "Restaurants", "Reception desks", "Checkout counters"],
-    specs: STAND_SPECS,
-    box: [
-      "1 × acrylic review stand, programmed to your Google review link",
-      "Assembled and ready to stand — nothing to build",
-      "Placement guide for counters and reception desks",
-    ],
-    accent: ["#38BDF8", "#A5F3FC"],
-    visual: "acrylic",
-  },
 ];
 
 /**
@@ -270,8 +226,4 @@ export function getAllSlugs(): string[] {
   return products.map((p) => p.slug);
 }
 
-export const categories: ProductCategory[] = [
-  "Google Reviews",
-  "Instagram",
-  "Review Stand",
-];
+export const categories: ProductCategory[] = ["Google Reviews", "Instagram"];

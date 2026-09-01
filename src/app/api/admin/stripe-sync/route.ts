@@ -9,11 +9,7 @@ import {
   type Product,
 } from "@/lib/products";
 import { effectivePrices } from "@/lib/adminStore";
-import {
-  shippingZones,
-  tierRangeLabel,
-  SHIPPING_UNITS,
-} from "@/lib/shipping";
+import { shippingZones, tierRangeLabel } from "@/lib/shipping";
 import { site } from "@/lib/site";
 
 /**
@@ -71,7 +67,6 @@ function variantsFor(product: Product): PriceVariant[] {
 const IMAGES: Record<string, string> = {
   "review-card": "/images/products/google-white.webp",
   "instagram-card": "/images/products/instagram.webp",
-  "acrylic-stand": "/images/products/acrylic-stand.webp",
 };
 
 export async function POST(request: Request) {
@@ -123,7 +118,7 @@ export async function POST(request: Request) {
           slug: product.slug,
           category: product.category,
           form_factor: product.formFactor,
-          shipping_units: String(SHIPPING_UNITS[product.formFactor]),
+          shipping_units: "1",
         },
       };
 

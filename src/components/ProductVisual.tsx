@@ -7,7 +7,7 @@ import type { VisualKind } from "@/lib/products";
  * built from the supplier files by the prep step documented in the repo), not
  * drawings of them — the Google review card is shown as both faces because it
  * ships white on one side and black on the other, the Instagram card as the
- * printed gradient, and the stand as the printed face behind cast acrylic.
+ * printed gradient.
  */
 interface ProductVisualProps {
   visual: VisualKind;
@@ -21,7 +21,6 @@ const ART = {
   googleWhite: { src: "/images/products/google-white.webp", w: 685, h: 1100 },
   googleBlack: { src: "/images/products/google-black.webp", w: 636, h: 1100 },
   instagram: { src: "/images/products/instagram.webp", w: 688, h: 1100 },
-  acrylic: { src: "/images/products/acrylic-stand.webp", w: 820, h: 1100 },
 } as const;
 
 export function ProductVisual({
@@ -61,7 +60,7 @@ export function ProductVisual({
         ))}
       </div>
     );
-  } else if (visual === "instagram") {
+  } else {
     body = (
       <div className="flex h-full w-full items-center justify-center">
         <Image
@@ -71,22 +70,6 @@ export function ProductVisual({
           height={ART.instagram.h}
           sizes="(max-width: 640px) 55vw, 320px"
           className="h-[84%] w-auto object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.18)]"
-        />
-      </div>
-    );
-  } else {
-    // Acrylic stand. Unlike the cards this keeps its background: clear
-    // acrylic has almost no edge against a pale counter, and a cut-out would
-    // hack lumps out of the panel.
-    body = (
-      <div className="flex h-full w-full items-center justify-center">
-        <Image
-          src={ART.acrylic.src}
-          alt={name}
-          width={ART.acrylic.w}
-          height={ART.acrylic.h}
-          sizes="(max-width: 640px) 55vw, 320px"
-          className="h-[88%] w-auto rounded-lg object-contain shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
         />
       </div>
     );

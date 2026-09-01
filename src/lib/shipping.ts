@@ -1,5 +1,4 @@
 import { site } from "./site";
-import { products, type FormFactor } from "./products";
 
 /**
  * Destination + quantity based shipping, derived from site.ts. The checkout
@@ -39,26 +38,12 @@ export const shippingZones: ShippingZone[] = site.shipping.zones.map((z) => ({
   etaMax: z.etaMax,
 }));
 
-/**
- * How much of a shipping bracket each form factor takes up. Cards go several
- * to one flat mailer; the acrylic stand is rigid and boxed, so it occupies
- * roughly the room of three cards. Without this a cart of stands would ship
- * at the one-card rate and lose money on every order.
- */
-export const SHIPPING_UNITS: Record<FormFactor, number> = {
-  Card: 1,
-  Stand: 3,
-};
-
-/** Billable shipping units for a cart. Unknown product ids count as a card. */
+/** Billable shipping units for a cart. Every product ships in the same bracket, one unit per card. */
 export function shippingUnitsFor(
   items: { productId: string; quantity: number }[],
 ): number {
   return items.reduce((sum, item) => {
-    const qty = Math.max(0, Math.floor(Number(item.quantity)) || 0);
-    const product = products.find((p) => p.id === item.productId);
-    const per = product ? SHIPPING_UNITS[product.formFactor] : 1;
-    return sum + qty * per;
+    return sum + Math.max(0, Math.floor(Number(item.quantity)) || 0);
   }, 0);
 }
 

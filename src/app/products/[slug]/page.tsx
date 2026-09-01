@@ -59,27 +59,12 @@ const IN_USE: Record<
       h: 1050,
     },
   ],
-  "acrylic-stand": [
-    {
-      src: "/images/hero/lifestyle-acrylic-side.webp",
-      alt: "Side profile of the acrylic stand, showing the angled foot",
-      w: 900,
-      h: 1200,
-    },
-    {
-      src: "/images/hero/lifestyle-acrylic-back.webp",
-      alt: "The back of the acrylic stand, showing the corner screws",
-      w: 900,
-      h: 1200,
-    },
-  ],
 };
 
 /** Artwork per product, for link previews. */
 const OG_IMAGE: Record<string, string> = {
   "review-card": "/images/products/google-white.webp",
   "instagram-card": "/images/products/instagram.webp",
-  "acrylic-stand": "/images/products/acrylic-stand.webp",
 };
 
 export async function generateMetadata({

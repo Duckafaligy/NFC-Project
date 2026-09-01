@@ -41,10 +41,10 @@ type CartAction =
   | { type: "CLEAR" }
   | { type: "HYDRATE"; items: CartItem[] };
 
-// v4: catalog cut to three products (Google review card, Instagram card,
-// acrylic stand) and card colourways removed. Bumping the key drops carts
-// saved under the old catalog so removed products can't reach checkout.
-const STORAGE_KEY = "taplink-cart-v4";
+// v5: acrylic review stand discontinued, catalog cut to two products (Google
+// review card, Instagram card). Bumping the key drops carts saved under the
+// old catalog so removed products can't reach checkout.
+const STORAGE_KEY = "taplink-cart-v5";
 
 function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {

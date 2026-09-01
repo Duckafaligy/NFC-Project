@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 import { site } from "@/lib/site";
-import { shippingZones, tierRangeLabel, SHIPPING_UNITS } from "@/lib/shipping";
+import { shippingZones, tierRangeLabel } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -40,11 +40,6 @@ export default function ShippingPage() {
           up in brackets instead of charging full postage per card. You pick
           your region at checkout and the matching rate is applied
           automatically.
-        </p>
-        <p>
-          The brackets below are counted in cards. An acrylic review stand is
-          rigid and ships boxed, so it counts as {SHIPPING_UNITS.Stand} cards
-          toward the bracket.
         </p>
         <div className="mt-1 space-y-4">
           {shippingZones.map((z) => (

@@ -11,7 +11,7 @@ import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 /**
- * Product gallery. Auto-advances through the three products (pausing while
+ * Product gallery. Auto-advances through the two products (pausing while
  * hovered or focused) and can be driven manually. Each slide gets its own
  * description and links straight to that product.
  */
@@ -56,20 +56,6 @@ const SLIDES: Slide[] = [
       "Matte finish, survives an apron pocket",
     ],
   },
-  {
-    id: "acrylic-stand",
-    slug: "acrylic-review-stand",
-    name: "Acrylic Review Stand",
-    tab: "Acrylic",
-    badge: "Hand-assembled",
-    headline: "Asks for you when you're slammed",
-    body: "A card works when you remember to hand it over. The stand works through a rush — angled at the customer, asking without you.",
-    points: [
-      "Cut and assembled by hand, one at a time",
-      "No staff script to remember",
-      "Screw-fixed, so the card swaps out",
-    ],
-  },
 ];
 
 const SLIDE_MS = 6000;
@@ -104,7 +90,7 @@ export function DesignShowcase() {
           </p>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
             <h2 className="max-w-2xl text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
-              Three ways to get asked
+              Two ways to get asked
             </h2>
             <p className="max-w-md text-base leading-relaxed text-neutral-600">
               Every one arrives programmed and ready to use.

@@ -69,7 +69,7 @@ export default function Image() {
         </div>
 
         <div style={{ display: "flex", gap: "16px" }}>
-          {["Google Reviews", "Instagram", "Acrylic stand"].map((t) => (
+          {["Google Reviews", "Instagram"].map((t) => (
             <div
               key={t}
               style={{
