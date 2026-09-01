@@ -41,22 +41,22 @@ const IN_USE: Record<
     {
       src: "/images/hero/lifestyle-google.webp",
       alt: "The white face of the Google review card on a counter",
-      w: 1400,
-      h: 1050,
+      w: 1086,
+      h: 814,
     },
     {
       src: "/images/hero/lifestyle-google-black.webp",
       alt: "The black face of the Google review card on a counter",
-      w: 1400,
-      h: 1050,
+      w: 1086,
+      h: 814,
     },
   ],
   "instagram-card": [
     {
       src: "/images/hero/lifestyle-instagram.webp",
       alt: "The Instagram card on a counter",
-      w: 1400,
-      h: 1050,
+      w: 1086,
+      h: 814,
     },
   ],
 };

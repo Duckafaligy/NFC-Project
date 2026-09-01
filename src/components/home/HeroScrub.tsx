@@ -198,7 +198,7 @@ export function HeroScrub() {
                 <Image
                   src="/images/products/google-white.webp"
                   alt="The TapLink Google review card"
-                  width={688}
+                  width={683}
                   height={1100}
                   priority
                   sizes="(max-width: 1024px) 60vw, 320px"
