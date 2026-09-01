@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check, ChevronRight } from "lucide-react";
@@ -13,8 +12,7 @@ import {
 import { effectivePrices, effectiveStock } from "@/lib/adminStore";
 import { discountRate } from "@/lib/pricing";
 import { site } from "@/lib/site";
-import { cn } from "@/lib/utils";
-import { ProductVisual } from "@/components/ProductVisual";
+import { ProductGallery, type GalleryImage } from "@/components/ProductGallery";
 import { ProductConfigurator } from "@/components/ProductConfigurator";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
@@ -31,14 +29,24 @@ export function generateStaticParams() {
 export const revalidate = 300;
 
 /**
- * A real photo of the product on a counter, shown under the studio shot.
- * Only for products that have been photographed in place.
+ * Every photo for a product's gallery: studio shots first (transparent,
+ * true to print colour), then real photos of it in place. One list per
+ * product, shown as a big frame with a thumbnail rail underneath.
  */
-const IN_USE: Record<
-  string,
-  { src: string; alt: string; w: number; h: number }[]
-> = {
+const GALLERY: Record<string, GalleryImage[]> = {
   "review-card": [
+    {
+      src: "/images/products/google-white.webp",
+      alt: "Google Review Card — front, white face",
+      w: 908,
+      h: 1462,
+    },
+    {
+      src: "/images/products/google-black.webp",
+      alt: "Google Review Card — back, black face",
+      w: 908,
+      h: 1462,
+    },
     {
       src: "/images/hero/lifestyle-google.webp",
       alt: "The white face of the Google review card on a counter",
@@ -53,6 +61,12 @@ const IN_USE: Record<
     },
   ],
   "instagram-card": [
+    {
+      src: "/images/products/instagram.webp",
+      alt: "Instagram Card",
+      w: 908,
+      h: 1462,
+    },
     {
       src: "/images/hero/lifestyle-instagram.webp",
       alt: "The Instagram card on a counter",
@@ -160,45 +174,11 @@ export default async function ProductPage({
         {/* Visual + copy */}
         <div>
           <Reveal>
-            <div className="card overflow-hidden p-3">
-              <ProductVisual
-                visual={product.visual}
-                name={product.name}
-                featured
-                className={
-                  product.visual === "google" ? "aspect-[4/3.2]" : "aspect-[3/4]"
-                }
-              />
-            </div>
+            <ProductGallery
+              images={GALLERY[product.id] ?? []}
+              aspect={product.visual === "google" ? "aspect-[4/3.2]" : "aspect-[3/4]"}
+            />
           </Reveal>
-
-          {IN_USE[product.id] && (
-            <Reveal delay={0.05}>
-              <figure className="card mt-3 overflow-hidden p-0">
-                <div
-                  className={cn(
-                    "grid gap-px bg-neutral-200",
-                    IN_USE[product.id].length > 1 ? "grid-cols-2" : "grid-cols-1",
-                  )}
-                >
-                  {IN_USE[product.id].map((shot) => (
-                    <Image
-                      key={shot.src}
-                      src={shot.src}
-                      alt={shot.alt}
-                      width={shot.w}
-                      height={shot.h}
-                      sizes="(max-width: 1024px) 100vw, 280px"
-                      className="h-auto w-full"
-                    />
-                  ))}
-                </div>
-                <figcaption className="px-4 py-2.5 text-xs text-neutral-500">
-                  The actual product — photographed, not a render.
-                </figcaption>
-              </figure>
-            </Reveal>
-          )}
 
           <Reveal delay={0.05}>
             <div className="mt-6">
