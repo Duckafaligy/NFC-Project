@@ -40,24 +40,28 @@ const GALLERY: Record<string, GalleryImage[]> = {
       alt: "Google Review Card — front, white face",
       w: 908,
       h: 1462,
+      tone: "light",
     },
     {
       src: "/images/products/google-black.webp",
       alt: "Google Review Card — back, black face",
       w: 908,
       h: 1462,
+      tone: "dark",
     },
     {
       src: "/images/hero/lifestyle-google.webp",
       alt: "The white face of the Google review card on a counter",
       w: 1086,
       h: 814,
+      tone: "light",
     },
     {
       src: "/images/hero/lifestyle-google-black.webp",
       alt: "The black face of the Google review card on a counter",
       w: 1086,
       h: 814,
+      tone: "dark",
     },
   ],
   "instagram-card": [

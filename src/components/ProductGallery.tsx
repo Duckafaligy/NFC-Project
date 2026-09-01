@@ -9,6 +9,8 @@ export interface GalleryImage {
   alt: string;
   w: number;
   h: number;
+  /** Frame background to match the card's own colour. Defaults to "light". */
+  tone?: "light" | "dark";
 }
 
 /**
@@ -31,7 +33,8 @@ export function ProductGallery({
     <div className="card overflow-hidden p-3">
       <div
         className={cn(
-          "relative overflow-hidden rounded-md bg-neutral-100",
+          "relative overflow-hidden rounded-md transition-colors",
+          current.tone === "dark" ? "bg-neutral-900" : "bg-neutral-100",
           aspect,
         )}
       >
@@ -56,7 +59,8 @@ export function ProductGallery({
               aria-label={`Show image ${i + 1} of ${images.length}`}
               aria-current={i === active}
               className={cn(
-                "relative aspect-square w-16 flex-shrink-0 overflow-hidden rounded-md bg-neutral-100 ring-1 transition-colors sm:w-20",
+                "relative aspect-square w-16 flex-shrink-0 overflow-hidden rounded-md ring-1 transition-colors sm:w-20",
+                img.tone === "dark" ? "bg-neutral-900" : "bg-neutral-100",
                 i === active
                   ? "ring-2 ring-[#C1592E]"
                   : "ring-neutral-200 hover:ring-neutral-400",
@@ -67,7 +71,7 @@ export function ProductGallery({
                 alt=""
                 fill
                 sizes="80px"
-                className="object-contain p-1.5"
+                className="object-cover"
               />
             </button>
           ))}
