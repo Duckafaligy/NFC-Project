@@ -41,7 +41,7 @@ export function Footer() {
               href="/"
               className="flex items-center gap-2 font-display text-lg font-extrabold text-neutral-900"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-[#2E7DFF]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-[#C1592E]">
                 <Nfc className="h-5 w-5 text-white" strokeWidth={2.5} />
               </span>
               {site.name}

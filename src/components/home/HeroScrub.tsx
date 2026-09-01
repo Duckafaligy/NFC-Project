@@ -86,17 +86,17 @@ export function HeroScrub() {
                 style={reduce ? undefined : { opacity: copyOneOpacity, y: copyOneY }}
                 className="col-start-1 row-start-1 self-center"
               >
-                <span className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9] shadow-soft">
+                <span className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#9A4522] shadow-soft">
                   <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2E7DFF] opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2E7DFF]" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C1592E] opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#C1592E]" />
                   </span>
                   Tap-to-review NFC cards
                 </span>
                 <h1 className="mt-4 font-display text-[2.4rem] font-extrabold leading-[1.03] tracking-tight text-neutral-900 sm:mt-6 sm:text-6xl lg:text-7xl">
                   One tap.
                   <br />
-                  <span className="bg-gradient-to-r from-neutral-900 via-[#2E7DFF] to-[#7FB0FF] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-neutral-900 via-[#C1592E] to-[#E8A876] bg-clip-text text-transparent">
                     More reviews.
                   </span>
                 </h1>
@@ -108,13 +108,13 @@ export function HeroScrub() {
                 }
                 className="col-start-1 row-start-1 self-center"
               >
-                <span className="inline-flex items-center gap-2 rounded-md border border-[#2E7DFF]/30 bg-[#2E7DFF]/[0.08] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
+                <span className="inline-flex items-center gap-2 rounded-md border border-[#C1592E]/30 bg-[#C1592E]/[0.08] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#9A4522]">
                   Instant, every time
                 </span>
                 <h2 className="mt-4 font-display text-[2.4rem] font-extrabold leading-[1.03] tracking-tight text-neutral-900 sm:mt-6 sm:text-6xl lg:text-7xl">
                   They tap.
                   <br />
-                  <span className="text-[#2E7DFF]">You&apos;re on their screen.</span>
+                  <span className="text-[#C1592E]">You&apos;re on their screen.</span>
                 </h2>
               </motion.div>
             </div>
@@ -150,10 +150,10 @@ export function HeroScrub() {
                 <div className="relative h-[78%] w-[42%] rounded-[1.75rem] border border-neutral-300 bg-gradient-to-b from-neutral-200 to-neutral-300 p-1.5 shadow-lift">
                   <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-[1.4rem] bg-white px-3">
                     <div className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-neutral-300" />
-                    <div className="h-9 w-9 rounded-full bg-[#2E7DFF]/15 ring-1 ring-[#2E7DFF]/40" />
+                    <div className="h-9 w-9 rounded-full bg-[#C1592E]/15 ring-1 ring-[#C1592E]/40" />
                     <div className="h-1.5 w-14 rounded-full bg-neutral-300" />
                     <div className="h-1.5 w-10 rounded-full bg-neutral-200" />
-                    <div className="mt-1 h-5 w-16 rounded-md bg-[#2E7DFF]" />
+                    <div className="mt-1 h-5 w-16 rounded-md bg-[#C1592E]" />
                   </div>
                 </div>
               </motion.div>

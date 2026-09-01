@@ -16,7 +16,7 @@ import { PreorderPopup } from "@/components/PreorderPopup";
  */
 export default function HomePage() {
   return (
-    <div className="bg-white">
+    <div className="bg-cream">
       {/* Live pre-order info modal (only while a product is on pre-order) */}
       <PreorderPopup />
 

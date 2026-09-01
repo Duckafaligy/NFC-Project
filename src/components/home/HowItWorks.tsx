@@ -63,7 +63,7 @@ export function HowItWorks() {
       className="relative mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32"
     >
       <Reveal>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C1592E]">
           How it works
         </p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
@@ -98,7 +98,7 @@ export function HowItWorks() {
                       className={cn(
                         "group w-full rounded-xl border px-5 py-5 text-left transition-all duration-300 sm:px-6 sm:py-6",
                         on
-                          ? "border-[#2E7DFF]/40 bg-[#2E7DFF]/[0.04] shadow-soft"
+                          ? "border-[#C1592E]/40 bg-[#C1592E]/[0.04] shadow-soft"
                           : "border-neutral-200 bg-white hover:border-neutral-300",
                       )}
                     >
@@ -107,7 +107,7 @@ export function HowItWorks() {
                           className={cn(
                             "flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg transition-colors duration-300",
                             on
-                              ? "bg-[#2E7DFF] text-white"
+                              ? "bg-[#C1592E] text-white"
                               : "bg-neutral-100 text-neutral-500 group-hover:text-neutral-900",
                           )}
                         >
@@ -118,7 +118,7 @@ export function HowItWorks() {
                             <span
                               className={cn(
                                 "font-mono text-xs font-bold transition-colors",
-                                on ? "text-[#2E7DFF]" : "text-neutral-400",
+                                on ? "text-[#C1592E]" : "text-neutral-400",
                               )}
                             >
                               0{i + 1}
@@ -142,13 +142,13 @@ export function HowItWorks() {
                               <span
                                 ref={bindBar(i)}
                                 style={{ transform: "scaleX(0)" }}
-                                className="block h-full w-full origin-left rounded-full bg-[#2E7DFF]"
+                                className="block h-full w-full origin-left rounded-full bg-[#C1592E]"
                               />
                             </span>
                             <span
                               className={cn(
                                 "flex-shrink-0 text-[10px] font-semibold uppercase tracking-wider transition-colors sm:text-[11px]",
-                                on ? "text-[#1B5FD9]" : "text-neutral-400",
+                                on ? "text-[#9A4522]" : "text-neutral-400",
                               )}
                             >
                               {s.aside}

@@ -138,7 +138,7 @@ export function PreorderPopup() {
           ))}
         </div>
 
-        <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
+        <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#9A4522]">
           <BadgePercent className="h-4 w-4" />
           Pre-order is open
         </p>

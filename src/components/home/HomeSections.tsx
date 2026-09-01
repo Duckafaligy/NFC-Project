@@ -52,7 +52,7 @@ export function ComparisonStrip() {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
       <Reveal>
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C1592E]">
             The difference
           </p>
           <h2 className="mt-3 text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
@@ -100,13 +100,13 @@ export function ComparisonStrip() {
                     )}
                   </p>
                 </div>
-                <div className="bg-[#2E7DFF]/[0.06] px-4 py-3">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#1B5FD9]">
+                <div className="bg-[#C1592E]/[0.06] px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#9A4522]">
                     {site.name}
                   </p>
                   <p className="mt-1 flex items-start gap-1.5 text-xs font-bold text-neutral-900">
                     <Check
-                      className="mt-px h-3.5 w-3.5 flex-shrink-0 text-[#2E7DFF]"
+                      className="mt-px h-3.5 w-3.5 flex-shrink-0 text-[#C1592E]"
                       strokeWidth={3}
                     />
                     {r.ours}
@@ -129,7 +129,7 @@ export function ComparisonStrip() {
                 <th className="w-[6rem] px-2 py-4 text-center text-xs font-bold uppercase tracking-wider text-neutral-500 sm:w-[9rem] sm:px-4">
                   Generic
                 </th>
-                <th className="w-[8rem] bg-[#2E7DFF]/[0.06] px-2 py-4 text-center text-xs font-bold uppercase tracking-wider text-[#1B5FD9] sm:w-[13rem] sm:px-4">
+                <th className="w-[8rem] bg-[#C1592E]/[0.06] px-2 py-4 text-center text-xs font-bold uppercase tracking-wider text-[#9A4522] sm:w-[13rem] sm:px-4">
                   {site.name}
                 </th>
               </tr>
@@ -158,10 +158,10 @@ export function ComparisonStrip() {
                       </span>
                     )}
                   </td>
-                  <td className="bg-[#2E7DFF]/[0.06] px-2 py-4 align-middle sm:px-4">
+                  <td className="bg-[#C1592E]/[0.06] px-2 py-4 align-middle sm:px-4">
                     <span className="flex items-center justify-center gap-1.5">
                       <Check
-                        className="h-4 w-4 flex-shrink-0 text-[#2E7DFF]"
+                        className="h-4 w-4 flex-shrink-0 text-[#C1592E]"
                         strokeWidth={3}
                       />
                       <span className="text-center text-[11px] font-bold leading-tight text-neutral-900 sm:text-xs">
@@ -195,7 +195,7 @@ export function PricingTiers() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C1592E]">
               Pricing
             </p>
             <h2 className="mt-3 text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
@@ -220,14 +220,14 @@ export function PricingTiers() {
                   className={cn(
                     "relative flex h-full flex-col rounded-2xl border bg-white p-6 sm:p-7",
                     featured
-                      ? "border-[#2E7DFF]/50 shadow-lift"
+                      ? "border-[#C1592E]/50 shadow-lift"
                       : "border-neutral-200 shadow-soft",
                   )}
                 >
                   {/* Badges live in their own row, so nothing overlaps or clips. */}
                   <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
                     {featured && (
-                      <span className="rounded-md bg-[#2E7DFF] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
+                      <span className="rounded-md bg-[#C1592E] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
                         Best seller
                       </span>
                     )}
@@ -279,7 +279,7 @@ export function PricingTiers() {
                         className="flex items-start gap-2.5 text-sm leading-relaxed text-neutral-600"
                       >
                         <Check
-                          className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#2E7DFF]"
+                          className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#C1592E]"
                           strokeWidth={3}
                         />
                         {f}
@@ -350,7 +350,7 @@ export function SocialProof() {
       <Reveal>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C1592E]">
               Where it goes
             </p>
             <h2 className="mt-3 max-w-xl text-balance font-display text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
@@ -428,7 +428,7 @@ export function FinalCTA() {
 
           <div className="relative grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#9CC3FF]">
+              <span className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#F0C9A0]">
                 Ready in days, not weeks
               </span>
               <h2 className="mt-5 text-balance font-display text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl">

@@ -99,7 +99,7 @@ export function DesignShowcase() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7DFF]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C1592E]">
             The lineup
           </p>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
@@ -166,7 +166,7 @@ export function DesignShowcase() {
                         <span
                           ref={bindBar(n)}
                           style={{ transform: "scaleX(0)" }}
-                          className="block h-full w-full origin-left rounded-full bg-[#2E7DFF]"
+                          className="block h-full w-full origin-left rounded-full bg-[#C1592E]"
                         />
                       </span>
                     </button>
@@ -196,7 +196,7 @@ export function DesignShowcase() {
             {/* Detail */}
             <div key={`${s.id}-detail`} className="flex animate-[fadeIn_500ms_ease-out] flex-col justify-center">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex w-fit rounded-md border border-neutral-200 bg-white px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#1B5FD9]">
+                <span className="inline-flex w-fit rounded-md border border-neutral-200 bg-white px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#9A4522]">
                   {s.badge}
                 </span>
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -213,7 +213,7 @@ export function DesignShowcase() {
               <ul className="mt-7 space-y-3 border-t border-neutral-200 pt-7">
                 {s.points.map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm text-neutral-700">
-                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#2E7DFF]" />
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#C1592E]" />
                     {f}
                   </li>
                 ))}

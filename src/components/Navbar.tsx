@@ -52,7 +52,7 @@ export function Navbar() {
         >
           <span
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-md bg-[#2E7DFF]",
+              "flex h-9 w-9 items-center justify-center rounded-md bg-[#C1592E]",
             )}
           >
             <Nfc className="h-5 w-5 text-white" strokeWidth={2.5} />
@@ -90,7 +90,7 @@ export function Navbar() {
           >
             <ShoppingBag className="h-5 w-5" />
             {itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-md bg-[#2E7DFF] px-1 text-[11px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-md bg-[#C1592E] px-1 text-[11px] font-bold text-white">
                 {itemCount}
               </span>
             )}
